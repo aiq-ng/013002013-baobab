@@ -123,13 +123,13 @@ Not in the PRD's original site map (§3), but `design/partnership/` has real, di
 
 ---
 
-## Phase 8 — Contact Us
+## Phase 8 — Contact Us ✅ DONE
 
-- [ ] Hero with contact details
-- [ ] Form panel (first name, last name, email, phone, subject, message) → `EngagementService`
-- [ ] Location photo banner
-- [ ] FAQ accordion (`shared/ui/accordion`, single-open, first item expanded by default)
-- [ ] Closing CTA band
+- [x] Hero with contact details
+- [x] Form panel (first name, last name, email, phone, subject, message) → `EngagementService`
+- [x] Location photo banner
+- [x] FAQ accordion (`shared/ui/accordion`, single-open, first item expanded by default)
+- [x] Closing CTA band
 
 ---
 

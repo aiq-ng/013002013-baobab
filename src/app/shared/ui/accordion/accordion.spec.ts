@@ -51,6 +51,20 @@ describe('Accordion', () => {
     expect(buttons[1].attributes['aria-expanded']).toBe('true');
   });
 
+  it('opens the item at defaultOpenIndex on init', () => {
+    const fixture = TestBed.createComponent(Accordion);
+    fixture.componentInstance.items = [
+      { question: 'Q1', answer: 'A1' },
+      { question: 'Q2', answer: 'A2' },
+    ];
+    fixture.componentInstance.defaultOpenIndex = 0;
+    fixture.detectChanges();
+
+    const buttons = fixture.debugElement.queryAll(By.css('button'));
+    expect(buttons[0].attributes['aria-expanded']).toBe('true');
+    expect(fixture.nativeElement.textContent).toContain('A1');
+  });
+
   it('toggles closed when clicking the already-open trigger again', () => {
     const fixture = setup();
     const buttons = fixture.debugElement.queryAll(By.css('button'));

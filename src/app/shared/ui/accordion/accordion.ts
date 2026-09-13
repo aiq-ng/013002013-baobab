@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, signal } from '@angular/core';
 
 export interface AccordionItem {
   question: string;
@@ -12,10 +12,15 @@ export interface AccordionItem {
   templateUrl: './accordion.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Accordion {
+export class Accordion implements OnInit {
   @Input() items: AccordionItem[] = [];
+  @Input() defaultOpenIndex: number | null = null;
 
   readonly openIndex = signal<number | null>(null);
+
+  ngOnInit(): void {
+    this.openIndex.set(this.defaultOpenIndex);
+  }
 
   toggle(index: number): void {
     this.openIndex.update((current) => (current === index ? null : index));
