@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Brand greens — sampled directly from the Figma 2x exports (design/*.png) */
+  --color-brand-950: #001b0f;
+  --color-brand-900: #00341c;
+  --color-brand-800: #00522e;
+  --color-brand-700: #006b3f;
+  --color-brand-600: #018751;
+  --color-brand-500: #17a768;
+  --color-brand-400: #4cc98c;
+  --color-brand-100: #dff5e9;
+  --color-brand-50: #f2fbf6;
+
+  /* Near-black ink used for footer/dark sections — matches slate-950 exactly in exports */
+  --color-ink-950: #020617;
+  --color-ink-900: #071119;
+
+  /* Off-white / light section backgrounds */
+  --color-surface: #ffffff;
+  --color-surface-tint: #f5f8ff;
+  --color-surface-muted: #f8fafc;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --radius-card: 0.75rem;
+}
+
+html {
+  font-family: var(--font-sans);
+}

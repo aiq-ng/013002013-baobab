@@ -1,0 +1,32 @@
+<!--
+  Bare shell for Phase 0. Full header/footer content (logo, CTA button, footer columns)
+  is built in Phase 1 against the Figma exports — see design/IMPLEMENTATION_PLAN.md.
+-->
+<header class="border-b border-ink-950/10">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+    <span class="font-semibold">Baobab</span>
+    <ul class="flex gap-6 text-sm">
+      @for (link of navLinks; track link.path) {
+        <li>
+          <a
+            [routerLink]="link.path"
+            routerLinkActive="text-brand-700"
+            class="hover:text-brand-700"
+          >
+            {{ link.label }}
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="mt-16 bg-ink-950 px-4 py-10 text-sm text-white/70">
+  <div class="mx-auto max-w-7xl">
+    &copy; {{ currentYear }} The Baobab Group. All Sovereign Rights Reserved.
+  </div>
+</footer>
