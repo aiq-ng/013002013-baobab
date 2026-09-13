@@ -7,18 +7,20 @@ Each phase below should be completed and checked off before moving to the next �
 
 ---
 
-## Phase 0 — Foundation
+## Phase 0 — Foundation ✅ DONE
 
 Angular workspace, tooling, and the architectural skeleton everything else builds on.
 
-- [ ] Angular workspace (standalone bootstrap, no NgModules), strict TypeScript
-- [ ] Tailwind CSS installed + configured with design tokens (brand greens/near-black, type scale, spacing, radii, shadows) pulled from the screenshots
-- [ ] Folder structure scaffolded: `core/`, `shared/`, `features/`, `layouts/`
-- [ ] `app.routes.ts` skeleton with lazy-loaded placeholders for every feature route
-- [ ] ESLint + Prettier configured
-- [ ] `core/services`: `SeoService` (Title/Meta/OG per route), `AnalyticsService` (event wrapper, provider TBD)
-- [ ] CI pipeline: lint, typecheck, build
-- [ ] `PublicLayout` (header/footer shell wraps `router-outlet`)
+- [x] Angular workspace (standalone bootstrap, no NgModules), strict TypeScript
+- [x] Tailwind CSS installed + configured with design tokens (brand greens/near-black, type scale, spacing, radii, shadows) pulled from the screenshots
+- [x] Folder structure scaffolded: `core/`, `shared/`, `features/`, `layouts/`
+- [x] `app.routes.ts` skeleton with lazy-loaded placeholders for every feature route
+- [x] ESLint + Prettier configured
+- [x] `core/services`: `SeoService` (Title/Meta/OG per route), `AnalyticsService` (event wrapper, provider TBD)
+- [x] CI pipeline: format-check, lint, test, build (`.github/workflows/ci.yml`, mirrored by `npm run verify` and the Husky `pre-push` gate)
+- [x] `PublicLayout` (header/footer shell wraps `router-outlet`)
+
+Verified via `npm run verify` (Prettier, ESLint, Vitest, `ng build`) all green, plus a live pre-push gate test (broken code blocked the push, fixed code passed through). Unit tests added for `SeoService`, `AnalyticsService`, `errorInterceptor`, and `PublicLayout` per the TDD rule.
 
 ---
 
@@ -26,28 +28,28 @@ Angular workspace, tooling, and the architectural skeleton everything else build
 
 Built once, reused everywhere — this is what keeps every page visually consistent without repeated Tailwind class soup.
 
-- [ ] `shared/ui/button` (primary/secondary variants)
-- [ ] `shared/ui/stat-card`
-- [ ] `shared/ui/badge` (eyebrow/status labels)
-- [ ] `shared/ui/logo-strip`
-- [ ] `shared/ui/accordion` (single-open behavior, ARIA `aria-expanded`)
-- [ ] `shared/ui/timeline-item`
-- [ ] `shared/ui/cta-band`
-- [ ] `shared/ui/card`
-- [ ] `shared/theater-map` — filter pills + markers, data-driven (consumed later by Home/Programs/About with different inputs)
-- [ ] `layouts/public-layout`: header (wordmark, nav: Home/Programs/Resources/About Us/Contact Us, persistent "Strategic Partnerships" CTA routed to the engagement entry point) + footer (thematic focus, regional hubs, doctrine & records, contact details, legal links: Security Protocol, Diplomatic Status, Portal Login — link present, no auth area)
+- [x] `shared/ui/button` (primary/secondary variants)
+- [x] `shared/ui/stat-card`
+- [x] `shared/ui/badge` (eyebrow/status labels)
+- [x] `shared/ui/logo-strip`
+- [x] `shared/ui/accordion` (single-open behavior, ARIA `aria-expanded`)
+- [x] `shared/ui/timeline-item`
+- [x] `shared/ui/cta-band`
+- [x] `shared/ui/card`
+- [x] `shared/theater-map` — filter pills + markers, data-driven (consumed later by Home/Programs/About with different inputs)
+- [x] `layouts/public-layout`: header (wordmark, nav: Home/Programs/Resources/About Us/Contact Us, persistent "Strategic Partnerships" CTA routed to the engagement entry point) + footer (thematic focus, regional hubs, doctrine & records, contact details, legal links: Security Protocol, Diplomatic Status, Portal Login — link present, no auth area)
 
 ---
 
-## Phase 2 — Engagement Feature (shared submit → success flow)
+## Phase 2 — Engagement Feature (shared submit → success flow) ✅ DONE
 
 Build before any page that has a form — 5 different entry points across the site all depend on this.
 
-- [ ] `features/engagement/services/engagement.service.ts` — single `submit()` method (mocked/stubbed API call; real CMS/backend is out of scope this phase), returns a reference ID
-- [ ] `core/models/engagement-request.ts` — typed request model
-- [ ] `features/engagement/success` — shared success component: checkmark icon, headline, subtext, reference ID, primary CTA (return home), secondary link (send another) — parameterized by confirmation copy so it can serve all 5 flows
-- [ ] Route wired: `/success` (or similar), accepts params/query for reference ID + source context
-- [ ] Reactive form validation pattern established (to be reused by contact form, dispatch forms, classified gate)
+- [x] `features/engagement/services/engagement.service.ts` — single `submit()` method (mocked/stubbed API call; real CMS/backend is out of scope this phase), returns a reference ID
+- [x] `core/models/engagement-request.ts` — typed request model
+- [x] `features/engagement/success` — shared success component: checkmark icon, headline, subtext, reference ID, primary CTA (return home), secondary link (send another) — parameterized by confirmation copy so it can serve all 5 flows
+- [x] Route wired: `/success` (or similar), accepts params/query for reference ID + source context
+- [x] Reactive form validation pattern established (to be reused by contact form, dispatch forms, classified gate)
 
 ---
 
