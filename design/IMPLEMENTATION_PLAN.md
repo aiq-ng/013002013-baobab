@@ -99,11 +99,11 @@ Build before any page that has a form — 5 different entry points across the si
 
 ## Phase 6 — Resources
 
-- [ ] Hero with accreditation/cycle/language tags (static language list — no switcher)
-- [ ] Featured document card: excerpt, PDF download, addendum email capture → `EngagementService`
-- [ ] Filterable treaties archive list
-- [ ] Sovereign sanctuary doctrine explainer with classified access gate form → `EngagementService`
-- [ ] 3-item data protection summary
+- [x] Hero with accreditation/cycle/language tags (static language list — no switcher)
+- [x] Featured document card: excerpt, PDF download, addendum email capture → `EngagementService`
+- [x] Filterable treaties archive list
+- [x] Sovereign sanctuary doctrine explainer with classified access gate form → `EngagementService`
+- [x] 3-item data protection summary
 
 ---
 

@@ -1,0 +1,61 @@
+<div class="rounded-card bg-white p-6 shadow-sm ring-1 ring-ink-950/5">
+  <div class="flex items-center justify-between gap-2 border-b border-ink-950/10 pb-4">
+    <p class="inline-flex items-center gap-2 text-sm font-bold text-ink-950">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        class="h-4 w-4 text-brand-700"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 3 4 6v6c0 4.5 3.4 7.4 8 9 4.6-1.6 8-4.5 8-9V6l-8-3Z"
+        />
+      </svg>
+      Track 1.5 Access Gate
+    </p>
+    <span class="text-xs font-semibold uppercase tracking-wide text-brand-700"> Restricted </span>
+  </div>
+  <p class="mt-3 text-sm text-ink-950/60">
+    Confidential operational codices, ceasefire maps, and mediator field logs are restricted to
+    credentialed sovereign delegations, ministry desks, and verified customary representatives.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="mt-6 flex flex-col gap-4">
+    <div>
+      <label for="classified-email" class="mb-1 block text-xs font-semibold text-ink-950/70">
+        Institutional Enclave Identity
+      </label>
+      <input
+        id="classified-email"
+        type="email"
+        formControlName="email"
+        placeholder="envoy@diplomatie.gouv.*"
+        class="w-full rounded-full border border-ink-950/15 bg-surface-tint px-4 py-3 text-sm text-ink-950 placeholder:text-ink-950/40 focus:outline-none focus:ring-2 focus:ring-brand-500"
+      />
+      @if (errorFor('email')) {
+        <p role="alert" class="mt-2 text-sm text-red-600">{{ errorFor('email') }}</p>
+      }
+    </div>
+
+    <div>
+      <label for="classified-token" class="mb-1 block text-xs font-semibold text-ink-950/70">
+        Delegation Secretarial Token (Optional)
+      </label>
+      <input
+        id="classified-token"
+        type="password"
+        formControlName="token"
+        placeholder="•••••••••••"
+        class="w-full rounded-full border border-ink-950/15 bg-surface-tint px-4 py-3 text-sm text-ink-950 placeholder:text-ink-950/40 focus:outline-none focus:ring-2 focus:ring-brand-500"
+      />
+    </div>
+
+    <app-button label="Request Classified Dossier Access" type="submit" variant="primary" />
+    <p class="text-center text-xs text-ink-950/40">
+      Secured by The Baobab Group Trust HSM Architecture
+    </p>
+  </form>
+</div>

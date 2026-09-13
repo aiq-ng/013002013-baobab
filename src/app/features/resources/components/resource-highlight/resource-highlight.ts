@@ -1,0 +1,30 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AddendumDispatchForm } from '../addendum-dispatch-form/addendum-dispatch-form';
+
+/**
+ * Two-panel band: the "Annual Statecraft Review" featured document card
+ * (left) and the Sovereign Addendum Dispatch email-capture card plus its
+ * document metadata grid (right).
+ */
+@Component({
+  selector: 'app-resource-highlight',
+  standalone: true,
+  imports: [AddendumDispatchForm],
+  templateUrl: './resource-highlight.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ResourceHighlight {
+  readonly chapters = [
+    'Ch. I: Sultanate Water Rights',
+    'Ch. II: Tri-Border Dry-Season Corridors',
+    'Ch. III: Non-Kinetic Reintegration',
+    'Ch. IV: Customary Evidence Binding',
+  ];
+
+  readonly metadata = [
+    { label: 'Diplomatic Classification', value: 'Unrestricted Track 1.5' },
+    { label: 'Signatory States Referenced', value: '14 West African Nations' },
+    { label: 'Custodial Depository', value: 'Dakar High Tribunal Archive' },
+    { label: 'Jurisprudential Status', value: 'Customary-State Concurrence' },
+  ];
+}

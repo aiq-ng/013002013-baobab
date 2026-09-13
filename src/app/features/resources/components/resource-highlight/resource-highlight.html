@@ -1,0 +1,107 @@
+<section class="mx-auto max-w-7xl px-4 pb-16">
+  <div
+    class="grid grid-cols-1 gap-6 rounded-card bg-surface-tint p-6 lg:grid-cols-[1.6fr_1fr] lg:p-10"
+  >
+    <article class="rounded-card bg-white p-6 shadow-sm ring-1 ring-ink-950/5 sm:p-8">
+      <div
+        class="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide text-brand-700"
+      >
+        <span class="rounded-full bg-brand-100 px-3 py-1">Annual Codex · Vol. IX</span>
+        <span class="text-ink-950/40">REF // BBG-ASR-2024/25-DECLASS</span>
+        <span class="ml-auto rounded-full bg-brand-100 px-3 py-1">Permanent Archive Release</span>
+      </div>
+
+      <p class="mt-6 text-xs font-semibold uppercase tracking-wide text-ink-950/50">
+        Annual Statecraft Review (2024–2025)
+      </p>
+      <h2 class="mt-2 text-xl font-bold text-ink-950 sm:text-2xl">
+        De-escalating Structural Friction: Customary Jurisprudence and Pastoral Corridors in the
+        Sahel
+      </h2>
+      <p class="mt-3 text-sm text-ink-950/60">
+        A definitive strategic audit synthesis of 1,400+ elder-led grazing accords, transhumance
+        deconfliction mechanisms, and Track 1.5 sovereign pacts mediated across Mali, Niger, Burkina
+        Faso, and the Lake Chad Basin.
+      </p>
+
+      <p class="mt-6 text-xs font-semibold uppercase tracking-wide text-ink-950/50">
+        Executive Codices &amp; Chapters
+      </p>
+      <ul class="mt-3 flex flex-wrap gap-2 text-sm text-ink-950/70">
+        @for (chapter of chapters; track chapter) {
+          <li class="rounded-full bg-surface-tint px-3 py-1.5">{{ chapter }}</li>
+        }
+      </ul>
+
+      <div class="mt-6 rounded-card bg-surface-tint p-4">
+        <p class="text-xs font-semibold uppercase tracking-wide text-ink-950/50">
+          Excerpt: Article 14.3 (Customary Corridor Demarcation)
+        </p>
+        <blockquote class="mt-2 text-sm italic text-ink-950/70">
+          "Where state cadastral maps diverge from the traditional nomadic transhumance seasonal
+          lines, customary pastoral arbitration councils presided over by recognized tribal rulers
+          shall hold binding primacy for 180-day transit windows…"
+        </blockquote>
+        <p class="mt-2 text-xs text-ink-950/40">— Dakar Secretariat Depositary</p>
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center gap-6">
+        <a
+          href="/documents/annual-statecraft-review-2024-25.html"
+          class="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            class="h-4 w-4"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"
+            />
+            <circle cx="12" cy="12" r="2.5" />
+          </svg>
+          View Document Online
+        </a>
+        <a
+          href="/documents/annual-statecraft-review-2024-25.pdf"
+          download
+          class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-700"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            class="h-4 w-4"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"
+            />
+          </svg>
+          Download Dossier PDF (18.4 MB)
+        </a>
+      </div>
+    </article>
+
+    <div class="flex flex-col gap-6">
+      <app-addendum-dispatch-form />
+
+      <dl
+        class="grid grid-cols-1 gap-4 rounded-card bg-white p-6 text-sm shadow-sm ring-1 ring-ink-950/5 sm:grid-cols-2"
+      >
+        @for (item of metadata; track item.label) {
+          <div>
+            <dt class="text-xs text-ink-950/50">{{ item.label }}</dt>
+            <dd class="mt-1 font-semibold text-ink-950">{{ item.value }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+  </div>
+</section>
