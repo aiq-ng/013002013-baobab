@@ -1,0 +1,25 @@
+<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  class="mx-auto mt-6 flex w-full max-w-md flex-col gap-4 rounded-card bg-white/10 p-6 text-left backdrop-blur"
+>
+  <app-form-field label="Name" inputId="home-dialogue-name" [errorMessage]="errorFor('name')">
+    <input
+      id="home-dialogue-name"
+      type="text"
+      formControlName="name"
+      class="w-full rounded-md border border-white/30 bg-white/90 px-3 py-2 text-sm text-ink-950 focus:outline-none focus:ring-2 focus:ring-brand-300"
+    />
+  </app-form-field>
+
+  <app-form-field label="Email" inputId="home-dialogue-email" [errorMessage]="errorFor('email')">
+    <input
+      id="home-dialogue-email"
+      type="email"
+      formControlName="email"
+      class="w-full rounded-md border border-white/30 bg-white/90 px-3 py-2 text-sm text-ink-950 focus:outline-none focus:ring-2 focus:ring-brand-300"
+    />
+  </app-form-field>
+
+  <app-button label="Send Request" type="submit" variant="primary" />
+</form>

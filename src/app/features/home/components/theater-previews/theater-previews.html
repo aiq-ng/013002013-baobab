@@ -1,0 +1,34 @@
+<section class="mx-auto max-w-7xl px-4 py-16">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <div>
+      <app-eyebrow text="THEMATIC ACTION" />
+      <h2 class="mt-4 text-2xl font-bold text-ink-950 sm:text-3xl md:text-4xl">
+        Our Operational Theaters
+      </h2>
+    </div>
+    <p class="max-w-sm text-sm text-slate-600 sm:text-base">
+      Applied diplomacy grounded in the specific ecological and cultural dynamics of three key
+      frontier ecosystems.
+    </p>
+  </div>
+
+  <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    @for (theater of theaters; track theater.slug) {
+      <app-card
+        [imageUrl]="theater.imageUrl"
+        [imageAlt]="theater.imageAlt"
+        [badgeText]="theater.badgeText"
+      >
+        <h3 title class="text-lg font-semibold text-ink-950">{{ theater.title }}</h3>
+        <p body class="text-sm text-slate-600">{{ theater.description }}</p>
+        <a
+          link
+          [routerLink]="['/programs', theater.slug]"
+          class="mt-1 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800"
+        >
+          View Thematic Report →
+        </a>
+      </app-card>
+    }
+  </div>
+</section>

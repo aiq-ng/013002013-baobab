@@ -1,0 +1,38 @@
+<article>
+  <app-home-hero />
+
+  <div
+    class="bg-brand-700 py-3 text-center text-xs font-semibold uppercase tracking-wide text-white sm:text-sm"
+  >
+    Diplomatic Observers • Conciliation Endorsers Operating Under Authorized African Union &amp; UN
+    Regional Frameworks
+  </div>
+
+  <app-mission-block />
+
+  <section class="mx-auto max-w-7xl px-4 pb-16">
+    <p class="text-xs font-semibold uppercase tracking-wide text-ink-950/70">Our Supporters</p>
+    <div class="mt-6 border-t border-slate-100 pt-6">
+      <app-logo-strip [logos]="partnerLogos" />
+    </div>
+  </section>
+
+  <app-track-model />
+  <app-conciliation-cycle />
+  <app-theater-previews />
+  <app-impact-stats />
+
+  <section class="mx-auto max-w-7xl px-4 pb-16">
+    <app-cta-band
+      heading="You can contribute to building resilient sovereign dialogue and regional security."
+      subtext="Join our diplomatic consultative registry or integrate customary non-kinetic peace protocols into your development and security strategies."
+      primaryLabel="Initiate Dialogue →"
+      secondaryLabel="Download Doctrine Dossier"
+      secondaryRoute="/resources"
+      (primaryPressed)="showDialogueForm.set(true)"
+    />
+    @if (showDialogueForm()) {
+      <app-dialogue-form />
+    }
+  </section>
+</article>

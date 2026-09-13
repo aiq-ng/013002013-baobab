@@ -53,18 +53,18 @@ Build before any page that has a form — 5 different entry points across the si
 
 ---
 
-## Phase 3 — Home
+## Phase 3 — Home ✅ DONE
 
-- [ ] Hero with 4 live stat counters (km secured, pacts, de-escalation %, states)
-- [ ] Trust ribbon
-- [ ] Mission block with doctrine download
-- [ ] Partner logo strip (`shared/ui/logo-strip`)
-- [ ] Track 1.5 model — 3-column (Track 1 / Track 1.5 pivot / Track 2)
-- [ ] 4-step conciliation cycle
-- [ ] 3 operational theater previews
-- [ ] Impact stats row
-- [ ] Closing dual-CTA band
-- [ ] Home dialogue box wired to `EngagementService`
+- [x] Hero with 4 live stat counters (km secured, pacts, de-escalation %, states)
+- [x] Trust ribbon
+- [x] Mission block with doctrine download
+- [x] Partner logo strip (`shared/ui/logo-strip`)
+- [x] Track 1.5 model — 3-column (Track 1 / Track 1.5 pivot / Track 2)
+- [x] 4-step conciliation cycle
+- [x] 3 operational theater previews
+- [x] Impact stats row
+- [x] Closing dual-CTA band
+- [x] Home dialogue box wired to `EngagementService`
 
 ---
 
