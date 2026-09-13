@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Button } from '../../shared/ui/button/button';
+import { SuccessModal } from '../../features/engagement/success-modal/success-modal';
 
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, Button],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Button, SuccessModal],
   templateUrl: './public-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

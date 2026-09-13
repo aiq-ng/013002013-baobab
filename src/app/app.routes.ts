@@ -25,14 +25,14 @@ export const routes: Routes = [
           import('./features/resources/resources.routes').then((m) => m.RESOURCES_ROUTES),
       },
       {
+        path: 'partnerships',
+        loadChildren: () =>
+          import('./features/partnerships/partnerships.routes').then((m) => m.PARTNERSHIPS_ROUTES),
+      },
+      {
         path: 'contact',
         loadChildren: () =>
           import('./features/contact/contact.routes').then((m) => m.CONTACT_ROUTES),
-      },
-      {
-        path: 'success',
-        loadChildren: () =>
-          import('./features/engagement/engagement.routes').then((m) => m.ENGAGEMENT_ROUTES),
       },
       {
         path: '**',

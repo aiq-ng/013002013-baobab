@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
+import { SuccessModalService } from '../../../engagement/services/success-modal.service';
 
 /**
  * "Track 1.5 Access Gate" classified-access form: institutional enclave
@@ -20,7 +20,7 @@ import { EngagementService } from '../../../engagement/services/engagement.servi
 export class ClassifiedAccessForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
-  private readonly router = inject(Router);
+  private readonly successModalService = inject(SuccessModalService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -46,9 +46,8 @@ export class ClassifiedAccessForm {
         metadata: token ? { delegationSecretarialToken: token } : {},
       })
       .subscribe((response) => {
-        this.router.navigate(['/success'], {
-          queryParams: { ref: response.referenceId, source: 'resources-classified-access' },
-        });
+        this.successModalService.show('resources-classified-access', response.referenceId);
+        this.form.reset();
       });
   }
 }

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
+import { SuccessModalService } from '../../../engagement/services/success-modal.service';
 
 /**
  * "Sovereign Dialogue" email-capture band on the Programs listing page
@@ -19,7 +19,7 @@ import { EngagementService } from '../../../engagement/services/engagement.servi
 export class SovereignDialogueForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
-  private readonly router = inject(Router);
+  private readonly successModalService = inject(SuccessModalService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -39,9 +39,8 @@ export class SovereignDialogueForm {
     this.engagementService
       .submit({ source: 'programs-sovereign-dialogue', name: email, email })
       .subscribe((response) => {
-        this.router.navigate(['/success'], {
-          queryParams: { ref: response.referenceId, source: 'programs-sovereign-dialogue' },
-        });
+        this.successModalService.show('programs-sovereign-dialogue', response.referenceId);
+        this.form.reset();
       });
   }
 }

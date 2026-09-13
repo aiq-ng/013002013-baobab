@@ -1,24 +1,27 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { ClassifiedAccessForm } from './classified-access-form';
 import { EngagementService } from '../../../engagement/services/engagement.service';
+import { SuccessModalService } from '../../../engagement/services/success-modal.service';
 
 describe('ClassifiedAccessForm', () => {
   let fixture: ReturnType<typeof TestBed.createComponent<ClassifiedAccessForm>>;
   let submit: ReturnType<typeof vi.fn>;
-  let router: Router;
+  let show: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     submit = vi.fn();
+    show = vi.fn();
     await TestBed.configureTestingModule({
       imports: [ClassifiedAccessForm],
-      providers: [provideRouter([]), { provide: EngagementService, useValue: { submit } }],
+      providers: [
+        { provide: EngagementService, useValue: { submit } },
+        { provide: SuccessModalService, useValue: { show } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ClassifiedAccessForm);
-    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
@@ -43,7 +46,6 @@ describe('ClassifiedAccessForm', () => {
     submit.mockReturnValue(
       of({ referenceId: 'BB-TEST-4', submittedAt: '2026-01-01T00:00:00.000Z' }),
     );
-    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
     fixture.componentInstance.form.setValue({ email: 'envoy@diplomatie.gouv', token: '' });
     fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
@@ -55,16 +57,13 @@ describe('ClassifiedAccessForm', () => {
       email: 'envoy@diplomatie.gouv',
       metadata: {},
     });
-    expect(navigateSpy).toHaveBeenCalledWith(['/success'], {
-      queryParams: { ref: 'BB-TEST-4', source: 'resources-classified-access' },
-    });
+    expect(show).toHaveBeenCalledWith('resources-classified-access', 'BB-TEST-4');
   });
 
   it('passes the secretarial token as metadata when provided', () => {
     submit.mockReturnValue(
       of({ referenceId: 'BB-TEST-5', submittedAt: '2026-01-01T00:00:00.000Z' }),
     );
-    vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
     fixture.componentInstance.form.setValue({
       email: 'envoy@diplomatie.gouv',

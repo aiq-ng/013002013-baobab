@@ -47,7 +47,7 @@ describe('PublicLayout', () => {
     );
     const cta = links.find((a) => a.textContent!.includes('Strategic Partnerships'));
     expect(cta).toBeTruthy();
-    expect(cta!.getAttribute('href')).toBe('/contact');
+    expect(cta!.getAttribute('href')).toBe('/partnerships');
   });
 
   it('renders footer columns with exact copy from the design export', () => {

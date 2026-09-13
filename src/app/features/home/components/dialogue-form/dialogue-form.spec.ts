@@ -1,25 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { DialogueForm } from './dialogue-form';
 import { EngagementService } from '../../../engagement/services/engagement.service';
+import { SuccessModalService } from '../../../engagement/services/success-modal.service';
 
 describe('DialogueForm', () => {
   let fixture: ComponentFixture<DialogueForm>;
   let submit: ReturnType<typeof vi.fn>;
-  let router: Router;
+  let show: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     submit = vi.fn();
+    show = vi.fn();
 
     await TestBed.configureTestingModule({
       imports: [DialogueForm],
-      providers: [provideRouter([]), { provide: EngagementService, useValue: { submit } }],
+      providers: [
+        { provide: EngagementService, useValue: { submit } },
+        { provide: SuccessModalService, useValue: { show } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DialogueForm);
-    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
@@ -33,11 +36,10 @@ describe('DialogueForm', () => {
     expect(submit).not.toHaveBeenCalled();
   });
 
-  it('submits to EngagementService and navigates to success on valid input', () => {
+  it('submits to EngagementService and shows the success modal on valid input', () => {
     submit.mockReturnValue(
       of({ referenceId: 'BB-TEST-1', submittedAt: '2026-01-01T00:00:00.000Z' }),
     );
-    const navigateSpy = vi.spyOn(router, 'navigate');
 
     fixture.componentInstance.form.setValue({ name: 'Amina Diallo', email: 'amina@example.com' });
     fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
@@ -48,8 +50,6 @@ describe('DialogueForm', () => {
       name: 'Amina Diallo',
       email: 'amina@example.com',
     });
-    expect(navigateSpy).toHaveBeenCalledWith(['/success'], {
-      queryParams: { ref: 'BB-TEST-1', source: 'home-dialogue' },
-    });
+    expect(show).toHaveBeenCalledWith('home-dialogue', 'BB-TEST-1');
   });
 });

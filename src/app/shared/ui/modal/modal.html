@@ -1,0 +1,33 @@
+@if (open) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div
+      data-testid="modal-backdrop"
+      aria-hidden="true"
+      class="absolute inset-0 bg-ink-950/60 backdrop-blur-sm"
+      (click)="dismiss()"
+    ></div>
+
+    <div
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="label"
+      class="relative z-10 w-full max-w-lg overflow-hidden rounded-card bg-white text-center shadow-xl"
+    >
+      <button
+        type="button"
+        aria-label="Close"
+        (click)="dismiss()"
+        class="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full text-ink-950/50 hover:bg-ink-950/5 hover:text-ink-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+          <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+
+      <div class="p-8">
+        <ng-content />
+      </div>
+      <ng-content select="[modal-footer]" />
+    </div>
+  </div>
+}

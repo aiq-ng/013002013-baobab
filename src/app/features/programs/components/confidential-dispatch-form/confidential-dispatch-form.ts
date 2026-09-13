@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
+import { SuccessModalService } from '../../../engagement/services/success-modal.service';
 
 /**
  * "Confidential Dispatch" email-capture band on a program detail page.
@@ -24,7 +24,7 @@ export class ConfidentialDispatchForm {
 
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
-  private readonly router = inject(Router);
+  private readonly successModalService = inject(SuccessModalService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -49,9 +49,8 @@ export class ConfidentialDispatchForm {
         metadata: { protocolId: this.protocolId },
       })
       .subscribe((response) => {
-        this.router.navigate(['/success'], {
-          queryParams: { ref: response.referenceId, source: 'program-confidential-dispatch' },
-        });
+        this.successModalService.show('program-confidential-dispatch', response.referenceId);
+        this.form.reset();
       });
   }
 }

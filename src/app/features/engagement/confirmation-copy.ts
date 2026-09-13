@@ -1,11 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
-import { map } from 'rxjs/operators';
-import { Button } from '../../../shared/ui/button/button';
-import { EngagementSource } from '../../../core/models/engagement-request';
+import { EngagementSource } from '../../core/models/engagement-request';
 
-interface ConfirmationCopy {
+export interface ConfirmationCopy {
   headline: string;
   subtext: string;
   retryRoute: string;
@@ -49,6 +44,13 @@ const CONFIRMATION_COPY: Record<EngagementSource, ConfirmationCopy> = {
     retryRoute: '/contact',
     retryLabel: 'Send another message',
   },
+  'partnerships-dialogue': {
+    headline: 'Your message has been sent',
+    subtext:
+      "We've received your request and a member of our Strategic Partnerships team will respond within 2 business days.",
+    retryRoute: '/partnerships',
+    retryLabel: 'Send another request',
+  },
 };
 
 const FALLBACK_COPY: ConfirmationCopy = {
@@ -59,34 +61,10 @@ const FALLBACK_COPY: ConfirmationCopy = {
 };
 
 /**
- * Shared success confirmation for all 5 email-capture entry points across the
- * site. Copy is parameterized by the `source` query param so one component and
- * one route serve every flow (per PRD: all 5 CTAs -> one shared success state).
+ * Resolves the confirmation copy for one of the site's 6 email-capture entry
+ * points, shared by both the shared success modal and the deep-linkable
+ * `/success` route so the copy is defined in exactly one place.
  */
-@Component({
-  selector: 'app-success-page',
-  standalone: true,
-  imports: [Button],
-  templateUrl: './success.page.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class SuccessPage {
-  private readonly route = inject(ActivatedRoute);
-
-  private readonly queryParams = toSignal(
-    this.route.queryParamMap.pipe(
-      map((params) => ({
-        ref: params.get('ref'),
-        source: params.get('source') as EngagementSource | null,
-      })),
-    ),
-    { initialValue: { ref: null, source: null } },
-  );
-
-  readonly referenceId = computed(() => this.queryParams().ref ?? '—');
-
-  readonly copy = computed(() => {
-    const source = this.queryParams().source;
-    return (source && CONFIRMATION_COPY[source]) || FALLBACK_COPY;
-  });
+export function confirmationCopyFor(source: EngagementSource | null | undefined): ConfirmationCopy {
+  return (source && CONFIRMATION_COPY[source]) || FALLBACK_COPY;
 }

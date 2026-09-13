@@ -1,0 +1,17 @@
+<section class="mx-auto max-w-7xl px-4 py-16">
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    @for (feature of features; track feature.title) {
+      <div class="flex h-full flex-col rounded-card bg-white p-6 shadow-sm ring-1 ring-ink-950/5">
+        <span
+          aria-hidden="true"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-base"
+        >
+          {{ feature.icon }}
+        </span>
+        <h3 class="mt-4 text-lg font-bold text-ink-950">{{ feature.title }}</h3>
+        <p class="mt-2 flex-1 text-sm text-ink-950/60">{{ feature.description }}</p>
+        <p class="mt-4 text-sm font-semibold text-brand-700">{{ feature.linkLabel }} &gt;</p>
+      </div>
+    }
+  </div>
+</section>

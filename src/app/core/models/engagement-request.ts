@@ -1,11 +1,12 @@
-/** Identifies which of the site's 5 email-capture entry points produced a submission. */
+/** Identifies which of the site's 6 email-capture entry points produced a submission. */
 export type EngagementSource =
   | 'home-dialogue'
   | 'programs-sovereign-dialogue'
   | 'program-confidential-dispatch'
   | 'resources-addendum'
   | 'resources-classified-access'
-  | 'contact-form';
+  | 'contact-form'
+  | 'partnerships-dialogue';
 
 /** Typed request body for the shared (mocked) Engagement submission endpoint. */
 export interface EngagementRequest {

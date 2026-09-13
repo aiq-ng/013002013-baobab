@@ -47,9 +47,9 @@ Build before any page that has a form — 5 different entry points across the si
 
 - [x] `features/engagement/services/engagement.service.ts` — single `submit()` method (mocked/stubbed API call; real CMS/backend is out of scope this phase), returns a reference ID
 - [x] `core/models/engagement-request.ts` — typed request model
-- [x] `features/engagement/success` — shared success component: checkmark icon, headline, subtext, reference ID, primary CTA (return home), secondary link (send another) — parameterized by confirmation copy so it can serve all 5 flows
-- [x] Route wired: `/success` (or similar), accepts params/query for reference ID + source context
-- [x] Reactive form validation pattern established (to be reused by contact form, dispatch forms, classified gate)
+- [x] `features/engagement/success-modal` — shared success **modal** (`shared/ui/modal` + `SuccessModalService`): checkmark icon, headline, subtext, reference ID, primary CTA (return home) — parameterized by confirmation copy (`confirmation-copy.ts`) so it serves all 6 flows without navigating away from the originating page, per the `PARTNERSHIPS 2` design export
+- [x] Mounted once in `PublicLayout` (overlays the current route) — no dedicated `/success` route
+- [x] Reactive form validation pattern established (reused by every dispatch/dialogue form + classified gate)
 
 ---
 
@@ -107,7 +107,23 @@ Build before any page that has a form — 5 different entry points across the si
 
 ---
 
-## Phase 7 — Contact Us
+## Phase 7 — Partnerships ✅ DONE
+
+Not in the PRD's original site map (§3), but `design/partnership/` has real, distinct designs (desktop + mobile) beyond just the header CTA — added as its own phase per user request.
+
+- [x] `/partnerships` route added to `app.routes.ts` (lazy-loaded `features/partnerships`)
+- [x] Hero with video embed (headline: "Partnering to Anchor Enduring Sovereign Peace Across West Africa and the Sahel")
+- [x] 3 feature cards (Multilateral Missions / Customary Legitimacy / Zero Kinetic Escalation — exact copy read from `PARTNERSHIPS 1 (1).png`)
+- [x] Primary CTA → `EngagementService`, source `'partnerships-dialogue'`
+- [x] Partner logo strip (reused `shared/ui/logo-strip`)
+- [x] Partnerships-specific success state variant — `'partnerships-dialogue'` entry added to `CONFIRMATION_COPY` matching `PARTNERSHIPS 2.png` copy, no second success component built
+- [x] Mobile variant (mobile-first responsive Tailwind, verified at mobile/tablet/desktop widths — no separate mobile export was provided in `design/partnership/`, only the one desktop pair)
+- [x] Update `PublicLayout` header: persistent "Strategic Partnerships" CTA now routes to `/partnerships` instead of `/contact`
+- [x] Add `Partnerships` page to `SeoService` per-route metadata
+
+---
+
+## Phase 8 — Contact Us
 
 - [ ] Hero with contact details
 - [ ] Form panel (first name, last name, email, phone, subject, message) → `EngagementService`
@@ -117,7 +133,7 @@ Build before any page that has a form — 5 different entry points across the si
 
 ---
 
-## Phase 8 — Hardening & QA
+## Phase 9 — Hardening & QA
 
 - [ ] SEO: per-route Title/Meta/Open Graph via `SeoService`, semantic HTML (`nav`, `main`, `article`)
 - [ ] SSR (Angular Universal) for crawlability + first paint
@@ -138,14 +154,15 @@ Build before any page that has a form — 5 different entry points across the si
 - [ ] Programs (listing)
 - [ ] Program detail
 - [ ] Resources
+- [ ] Partnerships (added Phase 7 — not in original PRD site map, but present in the Figma exports)
 - [ ] About Us
 - [ ] Contact Us
 - [ ] Success confirmation (shared)
 
 **Global**
-- [ ] Header nav + persistent "Strategic Partnerships" CTA (same destination from every page)
+- [ ] Header nav + persistent "Strategic Partnerships" CTA, routes to `/partnerships` from every page
 - [ ] Footer (thematic focus, regional hubs, doctrine & records, contact, legal links)
-- [ ] All 5 email-capture CTAs resolve to the single shared success component
+- [ ] All 6 email-capture CTAs (5 from the PRD + the new Partnerships dialogue CTA) resolve to the single shared success component
 
 **Interaction notes**
 - [ ] Theater map filter pills drive both markers and program grid
@@ -159,5 +176,5 @@ Build before any page that has a form — 5 different entry points across the si
 
 **Success criteria**
 - [ ] Every CTA resolves to a real destination
-- [ ] All 5 form entry points connect to the single shared success state
+- [ ] All 6 form entry points connect to the single shared success state
 - [ ] Nav, filters, and accordion are functionally interactive, not static

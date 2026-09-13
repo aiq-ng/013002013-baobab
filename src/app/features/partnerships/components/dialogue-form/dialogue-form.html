@@ -1,0 +1,48 @@
+<section class="mx-auto max-w-7xl px-4 pb-16">
+  <div class="rounded-card bg-surface-tint px-6 py-12 text-center sm:px-12">
+    <p class="text-xs font-semibold uppercase tracking-wide text-brand-700">
+      Diplomatic Inquiries &amp; State Access
+    </p>
+    <h2 class="mx-auto mt-4 max-w-xl text-2xl font-bold text-ink-950 sm:text-3xl">
+      Initiate Sovereign Partnership Dialogue
+    </h2>
+    <p class="mx-auto mt-3 max-w-xl text-sm text-ink-950/60 sm:text-base">
+      Direct liaison with the Office of the Permanent Secretariat for authorized ministerial and
+      institutional envoys.
+    </p>
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="mx-auto mt-8 flex w-full max-w-lg flex-col gap-3 sm:flex-row sm:items-start"
+    >
+      <div class="flex-1 text-left">
+        <label for="partnerships-dialogue-email" class="sr-only">
+          Official delegation or ministerial email
+        </label>
+        <input
+          id="partnerships-dialogue-email"
+          type="email"
+          formControlName="email"
+          placeholder="Enter official delegation or ministerial email…"
+          class="w-full rounded-full border border-ink-950/15 bg-white px-4 py-3 text-sm text-ink-950 placeholder:text-ink-950/40 focus:outline-none focus:ring-2 focus:ring-brand-500"
+        />
+        @if (errorFor('email')) {
+          <p role="alert" class="mt-2 text-sm text-red-600">{{ errorFor('email') }}</p>
+        }
+      </div>
+      <app-button label="Initiate Dialogue →" type="submit" variant="primary" />
+    </form>
+
+    <a
+      href="/documents/sovereign-partnership-protocol-2025.pdf"
+      class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
+    >
+      ↓ Download 2025 Sovereign Partnership Protocol (PDF)
+    </a>
+
+    <p class="mt-4 text-xs text-ink-950/50">
+      Confidential bilateral clearance · Sealed under customary non-disclosure protocols
+    </p>
+  </div>
+</section>

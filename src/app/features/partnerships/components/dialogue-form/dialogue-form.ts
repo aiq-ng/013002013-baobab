@@ -1,36 +1,32 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { FormField } from '../../../../shared/ui/form-field/form-field';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
 import { SuccessModalService } from '../../../engagement/services/success-modal.service';
 
 /**
- * Inline "Initiate Dialogue" email-capture form for the Home closing CTA band.
- * Rendered by the parent page only once the CTA is pressed (progressive disclosure,
- * not a modal/popup).
+ * "Initiate Sovereign Partnership Dialogue" email-capture panel — the
+ * Partnerships page's primary CTA, source 'partnerships-dialogue'.
  */
 @Component({
-  selector: 'app-dialogue-form',
+  selector: 'app-partnerships-dialogue-form',
   standalone: true,
-  imports: [ReactiveFormsModule, FormField, Button],
+  imports: [ReactiveFormsModule, Button],
   templateUrl: './dialogue-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DialogueForm {
+export class PartnershipsDialogueForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
   private readonly successModalService = inject(SuccessModalService);
 
   readonly form = this.fb.nonNullable.group({
-    name: ['', baobabValidators.required],
     email: ['', [baobabValidators.required, baobabValidators.email]],
   });
 
-  errorFor(controlName: 'name' | 'email'): string | null {
-    const label = controlName === 'name' ? 'Name' : 'Email';
-    return errorMessageFor(this.form.get(controlName), label);
+  errorFor(controlName: 'email'): string | null {
+    return errorMessageFor(this.form.get(controlName), 'Email');
   }
 
   submit(): void {
@@ -39,11 +35,11 @@ export class DialogueForm {
       return;
     }
 
-    const { name, email } = this.form.getRawValue();
+    const { email } = this.form.getRawValue();
     this.engagementService
-      .submit({ source: 'home-dialogue', name, email })
+      .submit({ source: 'partnerships-dialogue', name: email, email })
       .subscribe((response) => {
-        this.successModalService.show('home-dialogue', response.referenceId);
+        this.successModalService.show('partnerships-dialogue', response.referenceId);
         this.form.reset();
       });
   }

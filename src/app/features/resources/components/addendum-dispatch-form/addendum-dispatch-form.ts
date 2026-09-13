@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
+import { SuccessModalService } from '../../../engagement/services/success-modal.service';
 
 /**
  * "Sovereign Addendum Dispatch" email-capture card next to the featured
@@ -19,7 +19,7 @@ import { EngagementService } from '../../../engagement/services/engagement.servi
 export class AddendumDispatchForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
-  private readonly router = inject(Router);
+  private readonly successModalService = inject(SuccessModalService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -39,9 +39,8 @@ export class AddendumDispatchForm {
     this.engagementService
       .submit({ source: 'resources-addendum', name: email, email })
       .subscribe((response) => {
-        this.router.navigate(['/success'], {
-          queryParams: { ref: response.referenceId, source: 'resources-addendum' },
-        });
+        this.successModalService.show('resources-addendum', response.referenceId);
+        this.form.reset();
       });
   }
 }

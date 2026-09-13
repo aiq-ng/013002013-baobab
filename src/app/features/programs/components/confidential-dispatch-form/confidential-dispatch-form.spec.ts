@@ -1,27 +1,30 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { ConfidentialDispatchForm } from './confidential-dispatch-form';
 import { EngagementService } from '../../../engagement/services/engagement.service';
+import { SuccessModalService } from '../../../engagement/services/success-modal.service';
 
 describe('ConfidentialDispatchForm', () => {
   let fixture: ReturnType<typeof TestBed.createComponent<ConfidentialDispatchForm>>;
   let submit: ReturnType<typeof vi.fn>;
-  let router: Router;
+  let show: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     submit = vi.fn();
+    show = vi.fn();
     await TestBed.configureTestingModule({
       imports: [ConfidentialDispatchForm],
-      providers: [provideRouter([]), { provide: EngagementService, useValue: { submit } }],
+      providers: [
+        { provide: EngagementService, useValue: { submit } },
+        { provide: SuccessModalService, useValue: { show } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ConfidentialDispatchForm);
     fixture.componentRef.setInput('heading', 'Request Confidential Addenda');
     fixture.componentRef.setInput('subtext', 'Restricted access.');
     fixture.componentRef.setInput('protocolId', 'BB-LCB-702-D');
-    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
@@ -40,11 +43,10 @@ describe('ConfidentialDispatchForm', () => {
     expect(submit).not.toHaveBeenCalled();
   });
 
-  it('submits to EngagementService with the protocol id in metadata and navigates to success', () => {
+  it('submits to EngagementService with the protocol id in metadata and shows the success modal', () => {
     submit.mockReturnValue(
       of({ referenceId: 'BB-TEST-3', submittedAt: '2026-01-01T00:00:00.000Z' }),
     );
-    const navigateSpy = vi.spyOn(router, 'navigate');
 
     fixture.componentInstance.form.setValue({ email: 'delegate@example.org' });
     fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
@@ -56,8 +58,6 @@ describe('ConfidentialDispatchForm', () => {
       email: 'delegate@example.org',
       metadata: { protocolId: 'BB-LCB-702-D' },
     });
-    expect(navigateSpy).toHaveBeenCalledWith(['/success'], {
-      queryParams: { ref: 'BB-TEST-3', source: 'program-confidential-dispatch' },
-    });
+    expect(show).toHaveBeenCalledWith('program-confidential-dispatch', 'BB-TEST-3');
   });
 });
