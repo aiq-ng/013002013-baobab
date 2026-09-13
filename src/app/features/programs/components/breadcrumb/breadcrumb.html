@@ -1,0 +1,18 @@
+<div class="mx-auto max-w-7xl px-4 pt-10">
+  <nav aria-label="Breadcrumb" class="text-sm text-ink-950/60">
+    <ol class="flex flex-wrap items-center gap-2">
+      <li><a routerLink="/programs" class="hover:text-brand-700">Programs</a></li>
+      <li aria-hidden="true">›</li>
+      <li>{{ theater }}</li>
+      <li aria-hidden="true">›</li>
+      <li class="text-ink-950">{{ title }}</li>
+    </ol>
+  </nav>
+
+  <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+    <app-badge [text]="statusTag" />
+    <p class="text-xs font-medium uppercase tracking-wide text-ink-950/50">
+      {{ referenceCode }} · {{ clearanceLevel }}
+    </p>
+  </div>
+</div>

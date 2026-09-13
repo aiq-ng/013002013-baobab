@@ -1,0 +1,47 @@
+@if (program) {
+  <article>
+    <app-program-breadcrumb
+      [theater]="program.theater"
+      [title]="program.title"
+      [statusTag]="program.statusTag"
+      [referenceCode]="program.referenceCode"
+      [clearanceLevel]="program.clearanceLevel"
+    />
+
+    <header class="mx-auto max-w-7xl px-4 pt-6 pb-4">
+      <h1 class="text-3xl font-bold text-ink-950 sm:text-4xl">{{ program.title }}</h1>
+      <p class="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">{{ program.subtitle }}</p>
+    </header>
+
+    <app-kpi-grid [kpis]="program.kpis" />
+
+    <app-doctrine-section
+      [eyebrow]="program.doctrineEyebrow"
+      [heading]="program.doctrineHeading"
+      [paragraphs]="program.doctrineParagraphs"
+      [imageUrl]="program.doctrineImageUrl"
+      [imageCaption]="program.doctrineImageCaption"
+      [stats]="program.doctrineStats"
+    />
+
+    <app-operational-pillars
+      [eyebrow]="program.pillarsEyebrow"
+      [heading]="program.pillarsHeading"
+      [description]="program.pillarsDescription"
+      [pillars]="program.pillars"
+    />
+
+    <app-accord-timeline
+      [eyebrow]="program.timelineEyebrow"
+      [heading]="program.timelineHeading"
+      [description]="program.timelineDescription"
+      [milestones]="program.milestones"
+    />
+
+    <app-confidential-dispatch-form
+      [heading]="program.dispatchHeading"
+      [subtext]="program.dispatchSubtext"
+      [protocolId]="program.referenceCode"
+    />
+  </article>
+}

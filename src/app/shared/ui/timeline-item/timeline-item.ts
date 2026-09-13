@@ -9,7 +9,9 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class TimelineItem {
   @Input({ required: true }) date = '';
+  @Input() kicker = '';
   @Input({ required: true }) title = '';
   @Input({ required: true }) description = '';
+  @Input() tags: string[] = [];
   @Input() isLast = false;
 }

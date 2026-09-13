@@ -1,0 +1,20 @@
+<section class="bg-surface-tint">
+  <div class="mx-auto max-w-7xl px-4 py-16">
+    <p class="text-xs font-semibold uppercase tracking-wide text-brand-700">{{ eyebrow }}</p>
+    <h2 class="mt-4 text-2xl font-bold text-ink-950 sm:text-3xl">{{ heading }}</h2>
+    <p class="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">{{ description }}</p>
+
+    <div class="mt-10 max-w-2xl">
+      @for (milestone of milestones; track milestone.title; let last = $last) {
+        <app-timeline-item
+          [date]="milestone.date"
+          [kicker]="milestone.kicker"
+          [title]="milestone.title"
+          [description]="milestone.description"
+          [tags]="milestone.tags"
+          [isLast]="last"
+        />
+      }
+    </div>
+  </div>
+</section>

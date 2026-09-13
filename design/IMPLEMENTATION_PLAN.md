@@ -79,22 +79,21 @@ Build before any page that has a form — 5 different entry points across the si
 
 ---
 
-## Phase 5 — Programs (listing + detail)
+## Phase 5 — Programs (listing + detail) ✅ DONE
 
-- [ ] Programs listing: hero (headline + photo)
-- [ ] 4 strategic pillars
-- [ ] 6-item active program grid (shared component, also used on About)
-- [ ] Interactive theater map w/ filter pills driving the grid below it
-- [ ] Sovereign dialogue email capture → `EngagementService`
-- [ ] Partner logo strip
-- [ ] Program detail: dynamic `program/:slug` template (data-driven, one template for all programs)
-- [ ] Breadcrumb + reference/clearance metadata
-- [ ] Program header
-- [ ] 4 KPI stat cards
-- [ ] Doctrine narrative with inline stats
-- [ ] 3 operational pillars
-- [ ] Dated accord milestone timeline
-- [ ] Confidential dispatch email capture → `EngagementService`
+- [x] Programs listing: hero (headline + photo)
+- [x] 4 strategic pillars
+- [x] 6-item active program grid (shared component, also used on About)
+- [x] Interactive theater map w/ filter pills driving the grid below it
+- [x] Sovereign dialogue email capture → `EngagementService`
+- [x] Program detail: dynamic `program/:slug` template (data-driven, one template for all programs)
+- [x] Breadcrumb + reference/clearance metadata
+- [x] Program header
+- [x] 4 KPI stat cards
+- [x] Doctrine narrative with inline stats
+- [x] 3 operational pillars
+- [x] Dated accord milestone timeline
+- [x] Confidential dispatch email capture → `EngagementService`
 
 ---
 

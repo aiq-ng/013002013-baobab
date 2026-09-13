@@ -24,6 +24,20 @@ describe('TimelineItem', () => {
     expect(text).toContain('Customary chiefs and state signatories ratify.');
   });
 
+  it('renders an optional kicker and tag list', () => {
+    const fixture = TestBed.createComponent(TimelineItem);
+    fixture.componentInstance.date = '2024-06';
+    fixture.componentInstance.kicker = 'Bilateral Treaty';
+    fixture.componentInstance.title = 'Accord Ratified';
+    fixture.componentInstance.description = 'desc';
+    fixture.componentInstance.tags = ['Zero Clashes Reported'];
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Bilateral Treaty');
+    expect(text).toContain('Zero Clashes Reported');
+  });
+
   it('hides the connecting line on the last item', () => {
     const fixture = TestBed.createComponent(TimelineItem);
     fixture.componentInstance.date = '2024-06';

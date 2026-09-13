@@ -7,7 +7,19 @@
   </div>
   <div class="pb-2">
     <p class="text-xs font-semibold uppercase tracking-wide text-brand-700">{{ date }}</p>
+    @if (kicker) {
+      <p class="text-xs text-ink-950/50">{{ kicker }}</p>
+    }
     <h4 class="mt-1 text-base font-semibold text-ink-950">{{ title }}</h4>
     <p class="mt-1 text-sm text-ink-950/70">{{ description }}</p>
+    @if (tags.length) {
+      <ul class="mt-2 flex flex-wrap gap-2">
+        @for (tag of tags; track tag) {
+          <li class="rounded-full bg-surface-tint px-2.5 py-1 text-xs font-medium text-ink-950/70">
+            {{ tag }}
+          </li>
+        }
+      </ul>
+    }
   </div>
 </div>
