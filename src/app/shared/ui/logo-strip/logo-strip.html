@@ -1,0 +1,10 @@
+<div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
+  @for (logo of logos; track logo.name) {
+    <img
+      [src]="logo.imageUrl"
+      [alt]="logo.name"
+      loading="lazy"
+      class="h-8 w-auto grayscale opacity-70 transition-opacity hover:opacity-100 sm:h-10"
+    />
+  }
+</div>

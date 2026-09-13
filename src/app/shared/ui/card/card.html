@@ -1,0 +1,20 @@
+<article
+  class="flex flex-col overflow-hidden rounded-card border border-ink-950/10 bg-surface shadow-sm"
+>
+  @if (imageUrl) {
+    <div class="relative aspect-[4/3] w-full overflow-hidden">
+      <img [src]="imageUrl" [alt]="imageAlt" loading="lazy" class="h-full w-full object-cover" />
+      @if (badgeText) {
+        <div class="absolute left-3 top-3">
+          <app-badge [text]="badgeText" />
+        </div>
+      }
+    </div>
+  }
+  <div class="flex flex-1 flex-col gap-2 p-4">
+    <ng-content select="[title]" />
+    <ng-content select="[body]" />
+    <ng-content select="[link]" />
+    <ng-content />
+  </div>
+</article>

@@ -1,0 +1,29 @@
+<div class="divide-y divide-ink-950/10 rounded-card border border-ink-950/10">
+  @for (item of items; track item.question; let i = $index) {
+    <div>
+      <h3>
+        <button
+          type="button"
+          class="flex w-full items-center justify-between gap-4 px-4 py-4 text-left text-sm font-semibold text-ink-950 sm:text-base"
+          [attr.aria-expanded]="openIndex() === i"
+          [attr.aria-controls]="'accordion-panel-' + i"
+          [id]="'accordion-trigger-' + i"
+          (click)="toggle(i)"
+        >
+          <span>{{ item.question }}</span>
+          <span aria-hidden="true">{{ openIndex() === i ? '−' : '+' }}</span>
+        </button>
+      </h3>
+      @if (openIndex() === i) {
+        <div
+          [id]="'accordion-panel-' + i"
+          role="region"
+          [attr.aria-labelledby]="'accordion-trigger-' + i"
+          class="px-4 pb-4 text-sm text-ink-950/70"
+        >
+          {{ item.answer }}
+        </div>
+      }
+    </div>
+  }
+</div>

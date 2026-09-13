@@ -1,0 +1,14 @@
+@if (routerLink) {
+  <a [routerLink]="routerLink" [class]="baseClass + ' ' + variantClass">
+    {{ label }}
+  </a>
+} @else {
+  <button
+    [type]="type"
+    [disabled]="disabled"
+    [class]="baseClass + ' ' + variantClass"
+    (click)="onClick()"
+  >
+    {{ label }}
+  </button>
+}

@@ -1,32 +1,96 @@
-<!--
-  Bare shell for Phase 0. Full header/footer content (logo, CTA button, footer columns)
-  is built in Phase 1 against the Figma exports — see design/IMPLEMENTATION_PLAN.md.
--->
-<header class="border-b border-ink-950/10">
-  <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-    <span class="font-semibold">Baobab</span>
-    <ul class="flex gap-6 text-sm">
-      @for (link of navLinks; track link.path) {
-        <li>
-          <a
-            [routerLink]="link.path"
-            routerLinkActive="text-brand-700"
-            class="hover:text-brand-700"
-          >
-            {{ link.label }}
-          </a>
-        </li>
-      }
-    </ul>
-  </nav>
+<header class="sticky top-0 z-10 border-b border-ink-950/10 bg-surface">
+  <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
+    <a routerLink="/" class="text-lg font-semibold text-ink-950">Baobab</a>
+    <nav class="hidden md:block">
+      <ul class="flex gap-6 text-sm font-medium text-ink-950/80">
+        @for (link of navLinks; track link.path) {
+          <li>
+            <a
+              [routerLink]="link.path"
+              routerLinkActive="text-brand-700"
+              [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+              class="hover:text-brand-700"
+            >
+              {{ link.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+    <!-- Engagement/dialogue entry point isn't built until Phase 2 — routed to Contact
+         Us for now as the nearest real destination. -->
+    <app-button label="Strategic Partnerships" variant="primary" routerLink="/contact" />
+  </div>
 </header>
 
 <main>
   <router-outlet />
 </main>
 
-<footer class="mt-16 bg-ink-950 px-4 py-10 text-sm text-white/70">
-  <div class="mx-auto max-w-7xl">
-    &copy; {{ currentYear }} The Baobab Group. All Sovereign Rights Reserved.
+<footer class="mt-16 bg-ink-950 px-4 py-12 text-sm text-white/70">
+  <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <p class="text-lg font-semibold text-white">Baobab</p>
+      <p class="mt-3 max-w-xs text-white/60">
+        Dedicated to non-kinetic conflict de-escalation, customary jurisprudence, and restorative
+        statecraft across the Sahel and greater West Africa.
+      </p>
+      <p class="mt-4">
+        <span class="font-semibold text-white">Secure Dispatch:</span>
+        secretar&#64;baobab-dialogue.org
+      </p>
+      <p class="mt-1">
+        <span class="font-semibold text-white">HQ Address:</span> Almadies Diplomatic Enclave,
+        Dakar, Senegal
+      </p>
+      <p class="mt-1">
+        <span class="font-semibold text-white">Operational Comms:</span> +221 33 820 00 44
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">Thematic Focus</p>
+      <ul class="mt-3 space-y-2">
+        @for (item of thematicFocus; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </div>
+
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">Regional Hubs</p>
+      <ul class="mt-3 space-y-2">
+        @for (item of regionalHubs; track item) {
+          <li class="text-white">{{ item }}</li>
+        }
+      </ul>
+    </div>
+
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">
+        Doctrine &amp; Records
+      </p>
+      <ul class="mt-3 space-y-2">
+        @for (item of doctrineRecords; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div
+    class="mx-auto mt-10 flex max-w-7xl flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p>
+      &copy; {{ currentYear }} The Baobab Group for Strategic Statecraft. All Sovereign Rights
+      Reserved.
+    </p>
+    <ul class="flex gap-6">
+      @for (link of legalLinks; track link.label) {
+        <li>
+          <a [routerLink]="link.path" class="hover:text-white">{{ link.label }}</a>
+        </li>
+      }
+    </ul>
   </div>
 </footer>

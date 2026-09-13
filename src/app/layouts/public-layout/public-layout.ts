@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Button } from '../../shared/ui/button/button';
 
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Button],
   templateUrl: './public-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -17,5 +18,37 @@ export class PublicLayout {
     { label: 'Resources', path: '/resources' },
     { label: 'About Us', path: '/about' },
     { label: 'Contact Us', path: '/contact' },
+  ];
+
+  readonly thematicFocus = [
+    'Transhumance Grazing Pacts',
+    'Customary Sultanate Jurisprudence',
+    'Non-Kinetic Disarmament & Re-entry',
+    'Cross-Border Borderland Security',
+    'Inter-Faith Elder Councils',
+  ];
+
+  readonly regionalHubs = [
+    'Dakar (Executive HQ)',
+    'Abuja (ECOWAS Secretariat)',
+    'Niamey (Sahel Mission)',
+    'Ouagadougou (Liptako)',
+    'Accra (Littoral Liaison)',
+  ];
+
+  readonly doctrineRecords = [
+    'Annual Statecraft Review (2024–2025)',
+    'Treaties & Conciliation Archive',
+    'Track 1.5 Confidential Protocol',
+    'Privacy & Sovereign Data Protections',
+  ];
+
+  // Security Protocol / Diplomatic Status / Portal Login have no dedicated routes yet.
+  // Routed to the nearest real, already-built pages as temporary stand-ins pending
+  // dedicated legal/auth routes in a later phase — never a bare "#" dead link.
+  readonly legalLinks = [
+    { label: 'Security Protocol', path: '/about' },
+    { label: 'Diplomatic Status', path: '/about' },
+    { label: 'Portal Login', path: '/contact' },
   ];
 }
