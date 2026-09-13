@@ -68,14 +68,14 @@ Build before any page that has a form — 5 different entry points across the si
 
 ---
 
-## Phase 4 — About Us
+## Phase 4 — About Us ✅ DONE
 
-- [ ] Hero with mission/vision copy
-- [ ] Documentary video embed
-- [ ] Two-tone mission/vision panel
-- [ ] Partner logo strip (reused)
-- [ ] Active program grid (shared component, reused from Programs feature)
-- [ ] Interactive theater map (reused `shared/theater-map`)
+- [x] Hero with mission/vision copy
+- [x] Documentary video embed
+- [x] Two-tone mission/vision panel
+- [x] Partner logo strip (reused)
+- [x] Active program grid (shared component, reused from Programs feature)
+- [x] Interactive theater map (reused `shared/theater-map`)
 
 ---
 

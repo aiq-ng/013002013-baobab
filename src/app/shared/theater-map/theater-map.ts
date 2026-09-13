@@ -25,6 +25,9 @@ const ALL = 'All';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TheaterMap {
+  @Input() allLabel = 'All';
+  @Input() dataUnavailable = false;
+
   @Input() set theaters(value: TheaterEntry[]) {
     this._theaters.set(value ?? []);
     this.activeFilter.set(ALL);

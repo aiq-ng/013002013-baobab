@@ -1,0 +1,18 @@
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  @for (program of programs; track program.slug) {
+    <app-card
+      [imageUrl]="program.imageUrl"
+      [imageAlt]="program.imageAlt"
+      [badgeText]="program.badgeText"
+    >
+      <h3 title class="text-base font-semibold text-ink-950">{{ program.title }}</h3>
+      <p body class="text-sm text-slate-600">{{ program.description }}</p>
+      <app-button
+        link
+        label="Learn more"
+        variant="light"
+        [routerLink]="'/programs/' + program.slug"
+      />
+    </app-card>
+  }
+</div>

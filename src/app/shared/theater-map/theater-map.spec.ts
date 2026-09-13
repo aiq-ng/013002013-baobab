@@ -87,4 +87,23 @@ describe('TheaterMap', () => {
 
     expect(fixture.debugElement.queryAll(By.css('app-card')).length).toBe(3);
   });
+
+  it('renders an empty state instead of the card grid when dataUnavailable is set, while still showing filter pills', () => {
+    const fixture = TestBed.createComponent(TheaterMap);
+    fixture.componentInstance.dataUnavailable = true;
+    fixture.componentInstance.theaters = [
+      {
+        name: 'Liptako-Gourma Peace Corridor',
+        theater: 'Sahel Central',
+        description: 'Establishment of bi-national customary transit protocols.',
+        imageUrl: '/a.jpg',
+        route: '/programs/liptako-gourma',
+      },
+    ];
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.queryAll(By.css('app-card')).length).toBe(0);
+    expect(fixture.debugElement.queryAll(By.css('[role="group"] button')).length).toBe(2);
+    expect(fixture.nativeElement.textContent).toContain('check back soon');
+  });
 });

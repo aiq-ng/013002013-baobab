@@ -11,22 +11,33 @@
       [class.border-ink-950/15]="activeFilter() !== pill"
       [class.text-ink-950]="activeFilter() !== pill"
     >
-      {{ pill }}
+      {{ pill === 'All' ? allLabel : pill }}
     </button>
   }
 </div>
 
-<div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-  @for (item of filteredTheaters(); track item.name) {
-    <app-card [imageUrl]="item.imageUrl" [imageAlt]="item.name" [badgeText]="item.theater">
-      <h3 title class="text-base font-semibold text-ink-950">{{ item.name }}</h3>
-      <p body class="text-sm text-ink-950/70">{{ item.description }}</p>
-      <a
-        link
-        [routerLink]="item.route"
-        class="mt-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
-        >View Thematic Report →</a
-      >
-    </app-card>
-  }
-</div>
+@if (dataUnavailable) {
+  <div
+    class="mt-6 flex min-h-[280px] flex-col items-center justify-center gap-2 rounded-card border border-dashed border-ink-950/15 bg-surface-tint px-6 py-16 text-center sm:min-h-[360px] lg:min-h-[440px]"
+  >
+    <p class="text-sm font-semibold text-ink-950">Live theater data is being connected</p>
+    <p class="max-w-sm text-sm text-ink-950/60">
+      We're working on bringing real-time protocol status to this map — check back soon.
+    </p>
+  </div>
+} @else {
+  <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    @for (item of filteredTheaters(); track item.name) {
+      <app-card [imageUrl]="item.imageUrl" [imageAlt]="item.name" [badgeText]="item.theater">
+        <h3 title class="text-base font-semibold text-ink-950">{{ item.name }}</h3>
+        <p body class="text-sm text-ink-950/70">{{ item.description }}</p>
+        <a
+          link
+          [routerLink]="item.route"
+          class="mt-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
+          >View Thematic Report →</a
+        >
+      </app-card>
+    }
+  </div>
+}

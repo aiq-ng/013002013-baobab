@@ -59,6 +59,15 @@ describe('Button', () => {
     expect(el.className).not.toContain('bg-brand-600');
   });
 
+  it('applies the light variant class when requested', () => {
+    const fixture = TestBed.createComponent(Button);
+    fixture.componentInstance.label = 'Learn more';
+    fixture.componentInstance.variant = 'light';
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('button, a');
+    expect(el.className).toContain('bg-white');
+  });
+
   it('disables the button element when disabled is true', () => {
     const fixture = TestBed.createComponent(Button);
     fixture.componentInstance.label = 'Go';
