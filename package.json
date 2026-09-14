@@ -13,11 +13,13 @@
     "test:all": "ng test --watch=false",
     "e2e": "playwright test",
     "verify": "npm run format:check && npm run lint && npm run test:all && npm run build",
-    "prepare": "husky",
-    "serve:ssr:baobab": "node dist/baobab/server/server.mjs"
+    "prepare": "husky"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": "24.x"
+  },
   "dependencies": {
     "@angular/common": "^22.1.0",
     "@angular/compiler": "^22.1.0",
@@ -27,7 +29,6 @@
     "@angular/platform-server": "^22.1.0",
     "@angular/router": "^22.1.0",
     "@angular/ssr": "^22.1.8",
-    "express": "^5.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -36,9 +37,9 @@
     "@angular/cli": "^22.1.8",
     "@angular/compiler-cli": "^22.1.0",
     "@eslint/js": "^10.0.1",
+    "@netlify/angular-runtime": "^4.0.0",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "angular-eslint": "22.5.0",
     "eslint": "^10.9.1",
