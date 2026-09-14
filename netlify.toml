@@ -1,6 +1,7 @@
 [build]
   command = "npm run build"
   publish = "dist/baobab/browser"
+  # trigger a fresh deploy
 
 [[plugins]]
   package = "@netlify/angular-runtime"
