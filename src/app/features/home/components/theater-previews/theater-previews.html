@@ -12,23 +12,7 @@
     </p>
   </div>
 
-  <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    @for (theater of theaters; track theater.slug) {
-      <app-card
-        [imageUrl]="theater.imageUrl"
-        [imageAlt]="theater.imageAlt"
-        [badgeText]="theater.badgeText"
-      >
-        <h3 title class="text-lg font-semibold text-ink-950">{{ theater.title }}</h3>
-        <p body class="text-sm text-slate-600">{{ theater.description }}</p>
-        <a
-          link
-          [routerLink]="['/programs', theater.slug]"
-          class="mt-1 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800"
-        >
-          View Thematic Report →
-        </a>
-      </app-card>
-    }
+  <div class="mt-10">
+    <app-program-grid [programs]="theaters" ctaLabel="View Thematic Report →" />
   </div>
 </section>

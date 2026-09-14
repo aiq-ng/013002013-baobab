@@ -27,7 +27,7 @@ All design source material (2x exports and the PRD notes) lives under `design/`,
 
 - [ ] **One primary CTA per section.** If a section design shows a secondary action too, it must be visually subordinate (secondary button style), never competing.
 - [ ] **Every form** (contact, dispatch, classified-access gate) has real client-side validation with useful error messages — never a silent or dead submit.
-- [ ] **No dead-click CTAs** — every button/link resolves to a real route or the shared success flow (per PRD, all 5 email-capture CTAs → one shared success component).
+- [ ] **No dead-click CTAs** — every button/link resolves to a real route or the shared success flow (per PRD plus the added Partnerships page, all 6 email-capture CTAs → one shared success component).
 - [ ] **Semantic HTML + metadata**: `nav`/`main`/`article`/`footer` used correctly, per-route `Title`/`Meta`/Open Graph via `SeoService` — set up per page as it's built, not retrofitted.
 - [ ] **Accessible by default**: sufficient contrast, keyboard navigation, ARIA on interactive shared components (accordion, theater-map filter pills, modals) — build this into the shared UI kit once, so every consumer inherits it.
 - [ ] **No unnecessary popups or animation** — anything decorative that isn't in the design doesn't get added.

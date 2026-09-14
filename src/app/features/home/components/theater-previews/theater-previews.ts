@@ -1,31 +1,21 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
-import { Card } from '../../../../shared/ui/card/card';
-
-interface TheaterPreview {
-  slug: string;
-  badgeText: string;
-  imageUrl: string;
-  imageAlt: string;
-  title: string;
-  description: string;
-}
+import { ProgramGrid, ProgramPreview } from '../../../../shared/ui/program-grid/program-grid';
 
 /** "Our Operational Theaters" — 3 operational theater preview cards. */
 @Component({
   selector: 'app-theater-previews',
   standalone: true,
-  imports: [Eyebrow, Card, RouterLink],
+  imports: [Eyebrow, ProgramGrid],
   templateUrl: './theater-previews.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TheaterPreviews {
-  readonly theaters: TheaterPreview[] = [
+  readonly theaters: ProgramPreview[] = [
     {
       slug: 'liptako-gourma',
       badgeText: 'SAHEL CENTRAL',
-      imageUrl: '/images/home/theater-sahel-central.jpg',
+      imageUrl: '/images/shared/theaters/theater-liptako-gourma.jpg',
       imageAlt: 'A dust storm over the Sahel at dusk',
       title: 'Liptako-Gourma Peace Corridor',
       description:
@@ -34,7 +24,7 @@ export class TheaterPreviews {
     {
       slug: 'lake-chad-basin',
       badgeText: 'LAKE CHAD BASIN',
-      imageUrl: '/images/home/theater-lake-chad.jpg',
+      imageUrl: '/images/shared/theaters/theater-lake-chad-demobilization.jpg',
       imageAlt: 'A community gathering beside the wetlands of Lake Chad',
       title: 'Customary Demobilization',
       description:
@@ -43,7 +33,7 @@ export class TheaterPreviews {
     {
       slug: 'gulf-of-guinea',
       badgeText: 'LITTORAL BUFFER',
-      imageUrl: '/images/home/theater-littoral-buffer.jpg',
+      imageUrl: '/images/shared/theaters/theater-gulf-of-guinea.jpg',
       imageAlt: 'A misty river winding through coastal forest',
       title: 'Gulf of Guinea Northern Flank',
       description:

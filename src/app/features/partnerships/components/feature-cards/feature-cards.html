@@ -4,9 +4,35 @@
       <div class="flex h-full flex-col rounded-card bg-white p-6 shadow-sm ring-1 ring-ink-950/5">
         <span
           aria-hidden="true"
-          class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-base"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-brand-700"
         >
-          {{ feature.icon }}
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-4.5 w-4.5"
+          >
+            @switch (feature.icon) {
+              @case ('clipboard-check') {
+                <path
+                  d="M9 3.75h6a1.5 1.5 0 0 1 1.5 1.5v.75h.75A1.5 1.5 0 0 1 18.75 7.5v12A1.5 1.5 0 0 1 17.25 21h-10.5A1.5 1.5 0 0 1 5.25 19.5v-12A1.5 1.5 0 0 1 6.75 6h.75v-.75A1.5 1.5 0 0 1 9 3.75Zm0 0v1.5h6v-1.5M9 12.75l1.5 1.5L15 10.5"
+                />
+              }
+              @case ('gavel') {
+                <path
+                  d="m14.25 6.75 3 3M9.53 11.47l-6 6a1.5 1.5 0 0 0 2.12 2.12l6-6m-2.12-2.12 4.24-4.24a1.5 1.5 0 0 1 2.12 0l1.06 1.06a1.5 1.5 0 0 1 0 2.12l-4.24 4.24m-3.18-3.18 3.18 3.18M3.75 20.25h6"
+                />
+              }
+              @case ('palm-tree') {
+                <path
+                  d="M12 21v-9m0 0c-1-2-3-3-6-2.5.5-2.5 3-4 6-2m0 4.5c1-2 3-3 6-2.5-.5-2.5-3-4-6-2m0 4.5c-.5-1.5-2-3-4.5-3M12 12c.5-1.5 2-3 4.5-3M6 21c1-1.5 3-2 6-2s5 .5 6 2"
+                />
+              }
+            }
+          </svg>
         </span>
         <h3 class="mt-4 text-lg font-bold text-ink-950">{{ feature.title }}</h3>
         <p class="mt-2 flex-1 text-sm text-ink-950/60">{{ feature.description }}</p>

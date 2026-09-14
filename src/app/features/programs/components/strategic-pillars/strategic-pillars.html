@@ -13,17 +13,51 @@
   </div>
 
   <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    @for (pillar of pillars; track pillar.code) {
-      <div class="flex flex-col gap-4 rounded-card bg-ink-950 p-6 text-white">
+    @for (pillar of pillars; track pillar.code; let i = $index) {
+      <div
+        class="flex flex-col gap-4 rounded-card p-6 text-white"
+        [class.bg-brand-950]="i % 2 === 0"
+        [class.bg-brand-700]="i % 2 === 1"
+      >
         <div class="flex items-center justify-between">
           <p class="text-xs font-semibold uppercase tracking-wide text-brand-300">
             {{ pillar.code }}
           </p>
           <span
-            class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-base"
+            class="flex h-8 w-8 items-center justify-center rounded-full bg-white text-brand-700"
             aria-hidden="true"
-            >{{ pillar.icon }}</span
           >
+            @switch (pillar.icon) {
+              @case ('compass') {
+                <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="m14.5 9.5-2 5-5 2 2-5 5-2Z" stroke-linejoin="round" />
+                </svg>
+              }
+              @case ('gavel') {
+                <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m14.5 12.5-8 8a1.5 1.5 0 0 1-2-2l8-8" />
+                  <path d="m16 6 3.5 3.5" />
+                  <path d="m11.5 2.5 3 3-6.5 6.5-3-3Z" />
+                  <path d="m19 9 3-3-3.5-3.5-3 3Z" />
+                </svg>
+              }
+              @case ('shield') {
+                <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3 4 6v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V6l-8-3Z" />
+                </svg>
+              }
+              @case ('handshake') {
+                <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m11 17 2 2a1 1 0 1 0 3-3" />
+                  <path d="m14 14 3 3a1 1 0 1 0 3-3l-3.85-3.85a2 2 0 0 0-2.83 0l-.32.32a2 2 0 0 1-2.83 0L6 7" />
+                  <path d="m21 3 1 11h-2" />
+                  <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" />
+                  <path d="M3 4h8" />
+                </svg>
+              }
+            }
+          </span>
         </div>
         <h3 class="text-lg font-semibold">{{ pillar.title }}</h3>
         <p class="text-sm text-white/70">{{ pillar.description }}</p>

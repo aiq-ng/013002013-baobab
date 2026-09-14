@@ -5,7 +5,7 @@ import { KpiGrid } from './components/kpi-grid/kpi-grid';
 import { DoctrineSection } from './components/doctrine-section/doctrine-section';
 import { OperationalPillars } from './components/operational-pillars/operational-pillars';
 import { AccordTimeline } from './components/accord-timeline/accord-timeline';
-import { ConfidentialDispatchForm } from './components/confidential-dispatch-form/confidential-dispatch-form';
+import { DispatchForm } from '../../shared/ui/dispatch-form/dispatch-form';
 import { SeoService } from '../../core/services/seo.service';
 import { findProgramBySlug } from './data/programs.data';
 import { Program } from './models/program';
@@ -19,7 +19,7 @@ import { Program } from './models/program';
     DoctrineSection,
     OperationalPillars,
     AccordTimeline,
-    ConfidentialDispatchForm,
+    DispatchForm,
   ],
   templateUrl: './program-detail.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

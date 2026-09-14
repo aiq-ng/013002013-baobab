@@ -1,8 +1,8 @@
 <div class="stat-card flex flex-col gap-1" [class]="containerClass">
-  <p class="text-2xl font-bold sm:text-3xl">
+  <p class="text-2xl font-bold sm:text-3xl" [class]="valueClass">
     {{ value }}
     @if (unit) {
-      <span class="text-base font-semibold uppercase">{{ unit }}</span>
+      <span class="text-base font-semibold uppercase" [class]="containerClass">{{ unit }}</span>
     }
   </p>
   <p class="text-xs font-medium uppercase tracking-wide opacity-80 sm:text-sm">{{ label }}</p>

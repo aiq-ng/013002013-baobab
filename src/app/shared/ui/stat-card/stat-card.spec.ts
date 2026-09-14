@@ -41,4 +41,15 @@ describe('StatCard', () => {
 
     expect(fixture.nativeElement.querySelector('.stat-card')?.className).toContain('text-white');
   });
+
+  it('renders the value figure in brand green', () => {
+    const fixture = TestBed.createComponent(StatCard);
+    fixture.componentInstance.value = '184';
+    fixture.componentInstance.label = 'Pacts';
+    fixture.componentInstance.variant = 'on-dark';
+    fixture.detectChanges();
+
+    const valueEl = fixture.nativeElement.querySelector('p');
+    expect(valueEl?.className).toContain('text-brand-400');
+  });
 });

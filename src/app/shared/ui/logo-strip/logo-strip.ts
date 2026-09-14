@@ -14,4 +14,6 @@ export interface PartnerLogo {
 })
 export class LogoStrip {
   @Input() logos: PartnerLogo[] = [];
+  /** Index before which a vertical divider is rendered (grouping first N logos vs. the rest). */
+  @Input() dividerIndex = -1;
 }

@@ -9,7 +9,7 @@ export const PROGRAMS: Program[] = [
     slug: 'liptako-gourma-peace-corridor',
     theater: 'Sahel Central',
     badgeText: 'SAHEL CENTRAL',
-    imageUrl: '/images/about/program-liptako-gourma.jpg',
+    imageUrl: '/images/shared/theaters/theater-liptako-gourma.jpg',
     imageAlt: 'A ceremonial border crossing arch flying Mali and Burkina Faso flags',
     title: 'Liptako-Gourma Peace Corridor',
     description:
@@ -31,7 +31,7 @@ export const PROGRAMS: Program[] = [
       'The Liptako-Gourma tri-border zone has historically absorbed the sharpest friction between statutory border enforcement and centuries-old pastoral migration routes, with seasonal convoys routinely caught between armed groups and militarized checkpoints.',
       'The Baobab Group anchored a bi-annual transit protocol jointly ratified by traditional village elders and regional prefectural authorities, converting contested crossing points into monitored, GPS-mapped corridors with shared custodianship.',
     ],
-    doctrineImageUrl: '/images/about/program-liptako-gourma.jpg',
+    doctrineImageUrl: '/images/shared/theaters/theater-liptako-gourma.jpg',
     doctrineImageCaption:
       'SECTOR LIPTAKO · TRI-BORDER CROSSING · Joint Corridor Verification Mission',
     doctrineStats: [
@@ -107,7 +107,7 @@ export const PROGRAMS: Program[] = [
     slug: 'lake-chad-customary-demobilization',
     theater: 'Lake Chad Basin',
     badgeText: 'LAKE CHAD BASIN',
-    imageUrl: '/images/about/program-lake-chad.jpg',
+    imageUrl: '/images/shared/theaters/theater-lake-chad-demobilization.jpg',
     imageAlt: 'A gathering beneath a large tree near Lake Chad',
     title: 'Lake Chad Customary Demobilization',
     description:
@@ -129,7 +129,7 @@ export const PROGRAMS: Program[] = [
       'Decades of insurgent activity around the Lake Chad basin left thousands of former auxiliary fighters with no legitimate path back into civilian life, and state-run demobilization programs lacked standing with the communities that would have to receive them.',
       'The Baobab Group revived customary emirate truth-telling circles as the legitimizing authority for reintegration, pairing traditional restitution rituals with formal civic re-entry screening administered jointly with local ministerial observers.',
     ],
-    doctrineImageUrl: '/images/about/program-lake-chad.jpg',
+    doctrineImageUrl: '/images/shared/theaters/theater-lake-chad-demobilization.jpg',
     doctrineImageCaption:
       'SECTOR LAKE CHAD · EMIRATE COUNCIL GROUNDS · Joint Reintegration Mission',
     doctrineStats: [
@@ -205,7 +205,7 @@ export const PROGRAMS: Program[] = [
     slug: 'gulf-of-guinea-northern-flank',
     theater: 'Gulf of Guinea',
     badgeText: 'LITTORAL BUFFER',
-    imageUrl: '/images/about/program-gulf-of-guinea.jpg',
+    imageUrl: '/images/shared/theaters/theater-gulf-of-guinea.jpg',
     imageAlt: 'An aerial view of the Gulf of Guinea coastline',
     title: 'Gulf of Guinea Northern Flank',
     description:
@@ -227,7 +227,7 @@ export const PROGRAMS: Program[] = [
       'As Sahelian instability pushed southward, the littoral states of the Gulf of Guinea faced a widening jurisdictional vacuum along their northern frontiers, with local chieftaincy and municipal authorities lacking any formal early-warning channel.',
       'The Baobab Group convened pre-emptive dialogue alliances linking northern district chiefs, municipal governors, and national security liaisons, establishing a standing buffer framework before armed incursion could take hold.',
     ],
-    doctrineImageUrl: '/images/about/program-gulf-of-guinea.jpg',
+    doctrineImageUrl: '/images/shared/theaters/theater-gulf-of-guinea.jpg',
     doctrineImageCaption:
       'SECTOR NORTHERN LITTORAL · FRONTIER DISTRICTS · Joint Buffer Verification Mission',
     doctrineStats: [
@@ -303,7 +303,7 @@ export const PROGRAMS: Program[] = [
     slug: 'gourma-pastoral-wells-demarcation',
     theater: 'Sahel Central',
     badgeText: 'SAHEL CENTRAL',
-    imageUrl: '/images/about/program-gourma-wells.jpg',
+    imageUrl: '/images/shared/theaters/theater-gourma-pastoral-wells.jpg',
     imageAlt: 'Pastoral wells at dusk in the Gourma region',
     title: 'Gourma Pastoral Wells & Riparian Demarcation',
     description:
@@ -333,7 +333,7 @@ export const PROGRAMS: Program[] = [
       'In the Gourma plains spanning central Mali and the northern arc of the Niger River bend, severe climate shocks, desertification, and localized groundwater depletion historically turned strategic boreholes into severe flashpoints. Mobile Fulani pastoralists seeking survival pastures regularly came into frictional contact with sedentary Dogon and Songhai enclaves protecting essential irrigation basins.',
       'The Baobab Group established an institutional mediation framework anchoring traditional jurisprudence into bilateral municipal law. By reviving the customary authority of the Amirou Ndiyam (Customary Water Masters) and implementing rigorous time-partitioned hydraulic rotational schedules, competitive armed confrontations have been substituted with enforceable community stewardship.',
     ],
-    doctrineImageUrl: '/images/about/program-gourma-wells.jpg',
+    doctrineImageUrl: '/images/programs/detail-hero-camel-caravan.jpg',
     doctrineImageCaption:
       'SECTOR GOURMA · HOMBORI-DOUENTZA WATER BASIN · Archival Photo Dossier #SVR-2024-GOU · Joint Basin Verification Mission',
     doctrineStats: [
@@ -409,7 +409,7 @@ export const PROGRAMS: Program[] = [
     slug: 'cross-border-chieftaincy-accords',
     theater: 'Continental ECOWAS',
     badgeText: 'CONTINENTAL ECOWAS',
-    imageUrl: '/images/about/program-chieftaincy-accords.jpg',
+    imageUrl: '/images/shared/theaters/theater-cross-border-chieftaincy.jpg',
     imageAlt: 'A formal chieftaincy accord signing ceremony',
     title: 'Cross-Border Chieftaincy Accords',
     description:
@@ -439,7 +439,7 @@ export const PROGRAMS: Program[] = [
       'Formal post-colonial borders cut arbitrarily across historically unified monarchies, traditional caliphates, and agro-pastoral communities. This partition created severe statutory vacuums along borderlands where transnational syndicates, cross-border armed raiders, and contraband networks continuously exploit sovereign legal immunity and jurisdictional delays.',
       "The Baobab Group's Cheiftaincy Accords formalize reciprocal customary legal authority between traditional councils across Nigeria, Benin, Niger, Togo, Cameroon, and Ghana. By legally binding customary rulers into a ratified inter-state dispute clearinghouse, paramount chiefs enforce property restitution, transfer fugitives across borders without bureaucratic friction, and resolve transhumance disputes long before state police mobilization.",
     ],
-    doctrineImageUrl: '/images/about/program-chieftaincy-accords.jpg',
+    doctrineImageUrl: '/images/programs/detail-hero-community-gathering.jpg',
     doctrineImageCaption:
       'SECTOR GOURMA · HOMBORI-DOUENTZA WATER BASIN · Archival Photo Dossier #SVR-2024-GOU · Joint Basin Verification Mission',
     doctrineStats: [
@@ -515,7 +515,7 @@ export const PROGRAMS: Program[] = [
     slug: 'riparian-water-fishery-protocols',
     theater: 'Continental ECOWAS',
     badgeText: 'CONTINENTAL ECOWAS',
-    imageUrl: '/images/about/program-riparian-fishery.jpg',
+    imageUrl: '/images/shared/theaters/theater-riparian-fishery.jpg',
     imageAlt: 'Fishers on a river at dawn',
     title: 'Riparian Water & Fishery Protocols',
     description:
@@ -537,7 +537,7 @@ export const PROGRAMS: Program[] = [
       "Overlapping seasonal fishing claims among riparian guilds along Cameroon's tributary network had driven recurring guild confrontations and unsustainable overfishing during peak spawning windows.",
       'The Baobab Group brokered a standardized fishing calendar, jointly enforced by guild elders and departmental fisheries observers, that allocates tributary access by season and designates permanent conservation zones around spawning grounds.',
     ],
-    doctrineImageUrl: '/images/about/program-riparian-fishery.jpg',
+    doctrineImageUrl: '/images/shared/theaters/theater-riparian-fishery.jpg',
     doctrineImageCaption:
       'SECTOR RIPARIAN TRIBUTARIES · CAMEROON BASIN · Joint Fishery Verification Mission',
     doctrineStats: [

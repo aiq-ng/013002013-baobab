@@ -1,14 +1,51 @@
 <div class="mx-auto max-w-7xl px-4 py-10">
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    @for (kpi of kpis; track kpi.label; let i = $index) {
+    @for (kpi of kpis; track i; let i = $index) {
       <div class="rounded-card p-6 text-white" [class]="cardClass(i)">
-        @if (kpi.unit) {
-          <p class="text-xs font-semibold uppercase tracking-wide text-white/70">
-            {{ kpi.unit }}
-          </p>
-        }
+        <div class="flex items-start justify-between gap-2">
+          @if (kpi.unit) {
+            <p class="text-xs font-semibold uppercase tracking-wide text-white/70">
+              {{ kpi.unit }}
+            </p>
+          }
+          <span
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15"
+            aria-hidden="true"
+          >
+            <svg
+              class="h-4 w-4 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.75"
+            >
+              @switch (iconKey(i)) {
+                @case ('systems') {
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10" />
+                }
+                @case ('pacts') {
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 3l7 3v5c0 4.5-3 8.25-7 9.5-4-1.25-7-5-7-9.5V6l7-3z"
+                  />
+                }
+                @case ('security') {
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7" />
+                }
+                @case ('flow') {
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 4v5h5M20 20v-5h-5M4.5 9a7.5 7.5 0 0 1 13-4.5L20 7M19.5 15a7.5 7.5 0 0 1-13 4.5L4 17"
+                  />
+                }
+              }
+            </svg>
+          </span>
+        </div>
         <p class="mt-2 text-2xl font-bold sm:text-3xl">{{ kpi.value }}</p>
-        <p class="mt-1 text-sm text-white/70">{{ kpi.label }}</p>
+        <p class="mt-1 text-sm text-white/70">{{ label(kpi, i) }}</p>
       </div>
     }
   </div>

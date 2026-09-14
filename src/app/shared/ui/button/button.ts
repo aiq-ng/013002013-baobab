@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'light';
+export type ButtonVariant = 'primary' | 'secondary' | 'light' | 'light-accent' | 'mint' | 'outline-light';
 
 /**
  * Shared CTA button. Renders as a real routed anchor when `routerLink` is set,
@@ -32,6 +32,15 @@ export class Button {
     }
     if (this.variant === 'light') {
       return 'bg-white text-ink-950 shadow-sm hover:bg-slate-50';
+    }
+    if (this.variant === 'light-accent') {
+      return 'bg-white text-brand-700 shadow-sm hover:bg-brand-50';
+    }
+    if (this.variant === 'mint') {
+      return 'bg-brand-100 text-brand-900 hover:bg-brand-200';
+    }
+    if (this.variant === 'outline-light') {
+      return 'border border-white/70 bg-transparent text-white hover:bg-white/10';
     }
     return 'border border-current bg-transparent text-brand-700 hover:bg-brand-50';
   }

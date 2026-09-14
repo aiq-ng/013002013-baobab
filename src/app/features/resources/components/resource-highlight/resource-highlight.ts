@@ -22,9 +22,9 @@ export class ResourceHighlight {
   ];
 
   readonly metadata = [
-    { label: 'Diplomatic Classification', value: 'Unrestricted Track 1.5' },
-    { label: 'Signatory States Referenced', value: '14 West African Nations' },
-    { label: 'Custodial Depository', value: 'Dakar High Tribunal Archive' },
-    { label: 'Jurisprudential Status', value: 'Customary-State Concurrence' },
+    { label: 'Diplomatic Classification', value: 'Unrestricted Track 1.5', accent: true },
+    { label: 'Signatory States Referenced', value: '14 West African Nations', accent: false },
+    { label: 'Custodial Depository', value: 'Dakar High Tribunal Archive', accent: false },
+    { label: 'Jurisprudential Status', value: 'Customary-State Concurrence', accent: true },
   ];
 }

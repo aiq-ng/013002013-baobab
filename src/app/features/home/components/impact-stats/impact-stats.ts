@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+export type ImpactStatIcon = 'handshake' | 'cycle' | 'institution' | 'document';
+
 interface ImpactStat {
   value: string;
   label: string;
   description: string;
   valueClass: string;
   labelClass: string;
+  icon: ImpactStatIcon;
 }
 
 /** Impact stats row beneath the operational theater previews. */
@@ -23,6 +26,7 @@ export class ImpactStats {
       description: 'Enforced under customary jurisprudence',
       valueClass: 'text-ink-950',
       labelClass: 'text-brand-700',
+      icon: 'handshake',
     },
     {
       value: '100%',
@@ -30,6 +34,7 @@ export class ImpactStats {
       description: 'Zero lethal engagements deployed',
       valueClass: 'text-ink-950',
       labelClass: 'text-brand-700',
+      icon: 'cycle',
     },
     {
       value: '480',
@@ -37,6 +42,7 @@ export class ImpactStats {
       description: 'Paramount sultans, lamidos, and emirs',
       valueClass: 'text-ink-950',
       labelClass: 'text-amber-700',
+      icon: 'institution',
     },
     {
       value: '14',
@@ -44,6 +50,7 @@ export class ImpactStats {
       description: 'Signatory liaison memorandums',
       valueClass: 'text-ink-950',
       labelClass: 'text-ink-950',
+      icon: 'document',
     },
   ];
 }

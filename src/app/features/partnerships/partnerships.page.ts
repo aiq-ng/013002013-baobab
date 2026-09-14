@@ -2,18 +2,9 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { PartnershipsHero } from './components/hero/hero';
 import { PartnershipsFeatureCards } from './components/feature-cards/feature-cards';
 import { PartnershipsDialogueForm } from './components/dialogue-form/dialogue-form';
-import { LogoStrip, PartnerLogo } from '../../shared/ui/logo-strip/logo-strip';
+import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
 import { SeoService } from '../../core/services/seo.service';
-
-const PARTNER_LOGOS: PartnerLogo[] = [
-  { name: 'UN Peacebuilding Fund', imageUrl: '/images/home/logos/peacebuilding.svg' },
-  { name: 'BBC', imageUrl: '/images/home/logos/bbc.svg' },
-  { name: 'African Union', imageUrl: '/images/home/logos/african-union.svg' },
-  { name: 'United Nations', imageUrl: '/images/home/logos/united-nations.svg' },
-  { name: 'Republic of Niger', imageUrl: '/images/home/logos/niger.svg' },
-  { name: 'ECOWAS/CEDEAO', imageUrl: '/images/home/logos/ecowas.svg' },
-  { name: 'Federal Republic of Nigeria', imageUrl: '/images/home/logos/nigeria.svg' },
-];
+import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
 
 @Component({
   selector: 'app-partnerships-page',

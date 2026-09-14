@@ -15,6 +15,7 @@ import { Button } from '../button/button';
 export class CtaBand {
   @Input({ required: true }) heading = '';
   @Input() subtext = '';
+  @Input() backgroundImage = '';
   @Input({ required: true }) primaryLabel = '';
   @Input() primaryRoute: string | null = null;
   @Input() secondaryLabel = '';

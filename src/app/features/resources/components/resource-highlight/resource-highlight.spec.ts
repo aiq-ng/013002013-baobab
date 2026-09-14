@@ -17,7 +17,7 @@ describe('ResourceHighlight', () => {
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('Annual Statecraft Review');
     expect(text).toContain(
-      'De-escalating Structural Friction: Customary Jurisprudence and Pastoral Corridors in the Sahel',
+      'De-escalating Structural Friction: Customary Jurisprudence & Pastoral Corridors in the Sahel',
     );
     expect(text).toContain('Ch. I: Sultanate Water Rights');
     expect(text).toContain('View Document Online');

@@ -6,19 +6,10 @@ import { ConciliationCycle } from './components/conciliation-cycle/conciliation-
 import { TheaterPreviews } from './components/theater-previews/theater-previews';
 import { ImpactStats } from './components/impact-stats/impact-stats';
 import { DialogueForm } from './components/dialogue-form/dialogue-form';
-import { LogoStrip, PartnerLogo } from '../../shared/ui/logo-strip/logo-strip';
+import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
 import { CtaBand } from '../../shared/ui/cta-band/cta-band';
 import { SeoService } from '../../core/services/seo.service';
-
-const PARTNER_LOGOS: PartnerLogo[] = [
-  { name: 'UN Peacebuilding Fund', imageUrl: '/images/home/logos/peacebuilding.svg' },
-  { name: 'BBC', imageUrl: '/images/home/logos/bbc.svg' },
-  { name: 'African Union', imageUrl: '/images/home/logos/african-union.svg' },
-  { name: 'United Nations', imageUrl: '/images/home/logos/united-nations.svg' },
-  { name: 'Republic of Niger', imageUrl: '/images/home/logos/niger.svg' },
-  { name: 'ECOWAS/CEDEAO', imageUrl: '/images/home/logos/ecowas.svg' },
-  { name: 'Federal Republic of Nigeria', imageUrl: '/images/home/logos/nigeria.svg' },
-];
+import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
 
 @Component({
   selector: 'app-home-page',

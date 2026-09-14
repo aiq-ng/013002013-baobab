@@ -12,6 +12,6 @@ describe('StrategicPillars', () => {
     expect(text).toContain('Transhumance Corridors');
     expect(text).toContain('Customary Jurisprudence');
     expect(text).toContain('Restorative Security');
-    expect(text).toContain('Cross-Border Security');
+    expect(text).toContain('Cross-Border Accords');
   });
 });

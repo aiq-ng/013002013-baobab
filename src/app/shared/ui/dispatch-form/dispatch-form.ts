@@ -1,26 +1,27 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Button } from '../../../../shared/ui/button/button';
-import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
-import { EngagementService } from '../../../engagement/services/engagement.service';
-import { SuccessModalService } from '../../../engagement/services/success-modal.service';
+import { Button } from '../button/button';
+import { baobabValidators, errorMessageFor } from '../../forms/validators';
+import { EngagementService } from '../../../features/engagement/services/engagement.service';
+import { SuccessModalService } from '../../../features/engagement/services/success-modal.service';
+import { EngagementSource } from '../../../core/models/engagement-request';
 
 /**
- * "Confidential Dispatch" email-capture band on a program detail page.
- * Same pattern as the listing's Sovereign Dialogue form, parameterized by
- * per-program heading/subtext/reference code copy.
+ * Shared "Diplomatic Dispatches" email-capture band, used wherever the design
+ * repeats this pattern (Programs listing and program detail pages).
  */
 @Component({
-  selector: 'app-confidential-dispatch-form',
+  selector: 'app-dispatch-form',
   standalone: true,
   imports: [ReactiveFormsModule, Button],
-  templateUrl: './confidential-dispatch-form.html',
+  templateUrl: './dispatch-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConfidentialDispatchForm {
+export class DispatchForm {
   @Input({ required: true }) heading = '';
   @Input({ required: true }) subtext = '';
   @Input({ required: true }) protocolId = '';
+  @Input() source: EngagementSource = 'program-confidential-dispatch';
 
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
@@ -43,13 +44,13 @@ export class ConfidentialDispatchForm {
     const { email } = this.form.getRawValue();
     this.engagementService
       .submit({
-        source: 'program-confidential-dispatch',
+        source: this.source,
         name: email,
         email,
         metadata: { protocolId: this.protocolId },
       })
       .subscribe((response) => {
-        this.successModalService.show('program-confidential-dispatch', response.referenceId);
+        this.successModalService.show(this.source, response.referenceId);
         this.form.reset();
       });
   }

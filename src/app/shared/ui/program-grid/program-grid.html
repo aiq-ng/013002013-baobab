@@ -1,18 +1,28 @@
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
   @for (program of programs; track program.slug) {
-    <app-card
-      [imageUrl]="program.imageUrl"
-      [imageAlt]="program.imageAlt"
-      [badgeText]="program.badgeText"
+    <article
+      class="group relative aspect-[4/5] w-full overflow-hidden rounded-card shadow-sm sm:aspect-[3/4]"
     >
-      <h3 title class="text-base font-semibold text-ink-950">{{ program.title }}</h3>
-      <p body class="text-sm text-slate-600">{{ program.description }}</p>
-      <app-button
-        link
-        label="Learn more"
-        variant="light"
-        [routerLink]="'/programs/' + program.slug"
+      <img
+        [src]="program.imageUrl"
+        [alt]="program.imageAlt"
+        loading="lazy"
+        class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
-    </app-card>
+      <div class="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/20 to-transparent"></div>
+      <div class="absolute left-4 top-4">
+        <app-badge [text]="program.badgeText" />
+      </div>
+      <div class="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-5">
+        <h3 class="text-lg font-semibold text-white sm:text-xl">{{ program.title }}</h3>
+        <p class="text-sm text-white/80">{{ program.description }}</p>
+        <a
+          [routerLink]="['/programs', program.slug]"
+          class="mt-1 inline-flex items-center gap-1 text-sm font-medium text-brand-400 hover:text-brand-300"
+        >
+          {{ ctaLabel }}
+        </a>
+      </div>
+    </article>
   }
 </div>

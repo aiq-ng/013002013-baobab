@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { TheaterPreviews } from './theater-previews';
-import { Card } from '../../../../shared/ui/card/card';
 
 describe('TheaterPreviews', () => {
   let fixture: ComponentFixture<TheaterPreviews>;
@@ -23,7 +21,7 @@ describe('TheaterPreviews', () => {
   });
 
   it('renders exactly 3 theater preview cards, each with a real link', () => {
-    const cards = fixture.debugElement.queryAll(By.directive(Card));
+    const cards = fixture.nativeElement.querySelectorAll('article');
     expect(cards.length).toBe(3);
     const links: HTMLAnchorElement[] = fixture.nativeElement.querySelectorAll('a[href]');
     expect(links.length).toBe(3);

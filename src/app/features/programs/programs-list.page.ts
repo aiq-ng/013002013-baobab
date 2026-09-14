@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { ProgramsHero } from './components/hero/hero';
 import { StrategicPillars } from './components/strategic-pillars/strategic-pillars';
 import { ProgramsTheaterSection } from './components/theater-section/theater-section';
-import { SovereignDialogueForm } from './components/sovereign-dialogue-form/sovereign-dialogue-form';
+import { DispatchForm } from '../../shared/ui/dispatch-form/dispatch-form';
 import { Eyebrow } from '../../shared/ui/eyebrow/eyebrow';
 import { ProgramGrid, ProgramPreview } from '../../shared/ui/program-grid/program-grid';
 import { SeoService } from '../../core/services/seo.service';
@@ -15,7 +15,7 @@ import { PROGRAMS } from './data/programs.data';
     ProgramsHero,
     StrategicPillars,
     ProgramsTheaterSection,
-    SovereignDialogueForm,
+    DispatchForm,
     Eyebrow,
     ProgramGrid,
   ],

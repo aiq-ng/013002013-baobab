@@ -18,4 +18,8 @@ export class StatCard {
   get containerClass(): string {
     return this.variant === 'on-dark' ? 'text-white' : 'text-ink-950';
   }
+
+  get valueClass(): string {
+    return this.variant === 'on-dark' ? 'text-brand-400' : 'text-brand-700';
+  }
 }

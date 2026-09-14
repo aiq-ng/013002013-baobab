@@ -3,21 +3,12 @@ import { AboutHero } from './components/hero/hero';
 import { DocumentaryVideo } from './components/documentary-video/documentary-video';
 import { MissionVisionPanel } from './components/mission-vision-panel/mission-vision-panel';
 import { TheaterSection } from './components/theater-section/theater-section';
-import { LogoStrip, PartnerLogo } from '../../shared/ui/logo-strip/logo-strip';
+import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
 import { Eyebrow } from '../../shared/ui/eyebrow/eyebrow';
 import { ProgramGrid, ProgramPreview } from '../../shared/ui/program-grid/program-grid';
 import { SeoService } from '../../core/services/seo.service';
 import { PROGRAMS } from '../programs/data/programs.data';
-
-const PARTNER_LOGOS: PartnerLogo[] = [
-  { name: 'UN Peacebuilding Fund', imageUrl: '/images/home/logos/peacebuilding.svg' },
-  { name: 'BBC', imageUrl: '/images/home/logos/bbc.svg' },
-  { name: 'African Union', imageUrl: '/images/home/logos/african-union.svg' },
-  { name: 'United Nations', imageUrl: '/images/home/logos/united-nations.svg' },
-  { name: 'Republic of Niger', imageUrl: '/images/home/logos/niger.svg' },
-  { name: 'ECOWAS/CEDEAO', imageUrl: '/images/home/logos/ecowas.svg' },
-  { name: 'Federal Republic of Nigeria', imageUrl: '/images/home/logos/nigeria.svg' },
-];
+import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
 
 const ACTIVE_PROGRAMS: ProgramPreview[] = PROGRAMS.map((program) => ({
   slug: program.slug,

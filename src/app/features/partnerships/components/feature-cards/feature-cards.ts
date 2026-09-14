@@ -9,21 +9,21 @@ export interface PartnershipFeature {
 
 const FEATURES: PartnershipFeature[] = [
   {
-    icon: '📋',
+    icon: 'clipboard-check',
     title: 'Multilateral Missions',
     description:
       'Harmonizing African Union (AU), ECOWAS, and UN Peacebuilding frameworks under shared regional treaty doctrines.',
     linkLabel: 'Tier 1 Interoperability',
   },
   {
-    icon: '🤝',
+    icon: 'gavel',
     title: 'Customary Legitimacy',
     description:
       'Direct accords ratified across 480+ traditional emirates, sultanates, and village benches with binding local authority.',
     linkLabel: 'Ancestral Jurisprudence',
   },
   {
-    icon: '🌴',
+    icon: 'palm-tree',
     title: 'Zero Kinetic Escalation',
     description:
       '100% mediation and demilitarized transhumance corridors negotiated and secured without sovereign force.',
