@@ -1,8 +1,8 @@
 <article>
   <app-programs-hero />
-  <app-strategic-pillars />
+  <app-strategic-pillars appScrollReveal />
 
-  <section class="mx-auto max-w-7xl px-4 pb-16">
+  <section class="mx-auto max-w-7xl px-4 pb-16" appScrollReveal>
     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       <div>
         <app-eyebrow text="CONFIDENTIAL FIELD DOSSIERS" />
@@ -21,9 +21,10 @@
     </div>
   </section>
 
-  <app-programs-theater-section />
+  <app-programs-theater-section appScrollReveal />
 
   <app-dispatch-form
+    appScrollReveal
     heading="Receive Verified Field Dispatches &amp; Bi-Weekly Corridor Updates"
     subtext="Directly transmitted from Secretariat field monitors in Gao, Diffa, and Tamale. Objective, de-classified peacecraft telemetry distributed exclusively to accredited diplomatic delegations and multilateral researchers."
     protocolId="BB-PROGRAMS-GENERAL"

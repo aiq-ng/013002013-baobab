@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../../../core/services/seo.service';
+import { ScrollRevealDirective } from '../../../shared/directives/scroll-reveal.directive';
+import { BackLink } from '../../../shared/ui/back-link/back-link';
 
 export interface Directive {
   categoryTag: string;
@@ -66,7 +68,7 @@ const DIRECTIVES: Directive[] = [
 @Component({
   selector: 'app-faq-detail-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ScrollRevealDirective, BackLink],
   templateUrl: './faq-detail.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

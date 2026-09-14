@@ -6,11 +6,19 @@ import { SanctuaryDoctrine } from './components/sanctuary-doctrine/sanctuary-doc
 import { DataProtections } from './components/data-protections/data-protections';
 import { SeoService } from '../../core/services/seo.service';
 import { ARCHIVE_ENTRIES, PROTECTION_ITEMS } from './data/resources.data';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-resources-page',
   standalone: true,
-  imports: [ResourcesHero, ResourceHighlight, TreatiesArchive, SanctuaryDoctrine, DataProtections],
+  imports: [
+    ResourcesHero,
+    ResourceHighlight,
+    TreatiesArchive,
+    SanctuaryDoctrine,
+    DataProtections,
+    ScrollRevealDirective,
+  ],
   templateUrl: './resources.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

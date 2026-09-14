@@ -9,6 +9,7 @@ import { DispatchForm } from '../../shared/ui/dispatch-form/dispatch-form';
 import { SeoService } from '../../core/services/seo.service';
 import { findProgramBySlug } from './data/programs.data';
 import { Program } from './models/program';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-program-detail-page',
@@ -20,6 +21,7 @@ import { Program } from './models/program';
     OperationalPillars,
     AccordTimeline,
     DispatchForm,
+    ScrollRevealDirective,
   ],
   templateUrl: './program-detail.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

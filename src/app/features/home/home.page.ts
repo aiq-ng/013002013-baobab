@@ -10,6 +10,7 @@ import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
 import { CtaBand } from '../../shared/ui/cta-band/cta-band';
 import { SeoService } from '../../core/services/seo.service';
 import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-home-page',
@@ -24,6 +25,7 @@ import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
     DialogueForm,
     LogoStrip,
     CtaBand,
+    ScrollRevealDirective,
   ],
   templateUrl: './home.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

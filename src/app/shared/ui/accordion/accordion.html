@@ -4,7 +4,7 @@
       <h3>
         <button
           type="button"
-          class="flex w-full items-center justify-between gap-4 px-4 py-4 text-left text-sm font-semibold text-ink-950 sm:text-base"
+          class="flex w-full items-center justify-between gap-4 px-4 py-4 text-left text-sm font-semibold text-ink-950 transition-colors duration-200 hover:text-brand-700 sm:text-base"
           [attr.aria-expanded]="openIndex() === i"
           [attr.aria-controls]="'accordion-panel-' + i"
           [id]="'accordion-trigger-' + i"
@@ -19,7 +19,7 @@
           [id]="'accordion-panel-' + i"
           role="region"
           [attr.aria-labelledby]="'accordion-trigger-' + i"
-          class="px-4 pb-4 text-sm text-ink-950/70"
+          class="animate-accordion-in px-4 pb-4 text-sm text-ink-950/70"
         >
           {{ item.answer }}
         </div>

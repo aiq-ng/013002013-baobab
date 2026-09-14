@@ -13,9 +13,10 @@
       <p class="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">{{ program.subtitle }}</p>
     </header>
 
-    <app-kpi-grid [kpis]="program.kpis" />
+    <app-kpi-grid [kpis]="program.kpis" appScrollReveal />
 
     <app-doctrine-section
+      appScrollReveal
       [eyebrow]="program.doctrineEyebrow"
       [heading]="program.doctrineHeading"
       [paragraphs]="program.doctrineParagraphs"
@@ -25,6 +26,7 @@
     />
 
     <app-operational-pillars
+      appScrollReveal
       [eyebrow]="program.pillarsEyebrow"
       [heading]="program.pillarsHeading"
       [description]="program.pillarsDescription"
@@ -32,6 +34,7 @@
     />
 
     <app-accord-timeline
+      appScrollReveal
       [eyebrow]="program.timelineEyebrow"
       [heading]="program.timelineHeading"
       [description]="program.timelineDescription"
@@ -39,6 +42,7 @@
     />
 
     <app-dispatch-form
+      appScrollReveal
       [heading]="program.dispatchHeading"
       [subtext]="program.dispatchSubtext"
       [protocolId]="program.referenceCode"

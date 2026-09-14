@@ -1,16 +1,16 @@
 <article>
   <app-about-hero />
-  <app-documentary-video />
-  <app-mission-vision-panel />
+  <app-documentary-video appScrollReveal />
+  <app-mission-vision-panel appScrollReveal />
 
-  <section class="mx-auto max-w-7xl px-4 py-16">
+  <section class="mx-auto max-w-7xl px-4 py-16" appScrollReveal>
     <p class="text-xs font-semibold uppercase tracking-wide text-ink-950/70">Our Supporters</p>
     <div class="mt-6 border-t border-slate-100 pt-6">
       <app-logo-strip [logos]="partnerLogos" [dividerIndex]="3" />
     </div>
   </section>
 
-  <section class="mx-auto max-w-7xl px-4 pb-16">
+  <section class="mx-auto max-w-7xl px-4 pb-16" appScrollReveal>
     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       <div>
         <app-eyebrow text="CONFIDENTIAL FIELD DOSSIERS" />
@@ -29,5 +29,5 @@
     </div>
   </section>
 
-  <app-theater-section />
+  <app-theater-section appScrollReveal />
 </article>

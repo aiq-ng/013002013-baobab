@@ -5,11 +5,19 @@ import { ContactLocationBanner } from './components/location-banner/location-ban
 import { ContactFaq } from './components/faq/faq';
 import { CtaBand } from '../../shared/ui/cta-band/cta-band';
 import { SeoService } from '../../core/services/seo.service';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-contact-page',
   standalone: true,
-  imports: [ContactHero, ContactForm, ContactLocationBanner, ContactFaq, CtaBand],
+  imports: [
+    ContactHero,
+    ContactForm,
+    ContactLocationBanner,
+    ContactFaq,
+    CtaBand,
+    ScrollRevealDirective,
+  ],
   templateUrl: './contact.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

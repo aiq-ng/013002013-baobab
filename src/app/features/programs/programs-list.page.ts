@@ -7,6 +7,7 @@ import { Eyebrow } from '../../shared/ui/eyebrow/eyebrow';
 import { ProgramGrid, ProgramPreview } from '../../shared/ui/program-grid/program-grid';
 import { SeoService } from '../../core/services/seo.service';
 import { PROGRAMS } from './data/programs.data';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-programs-list-page',
@@ -18,6 +19,7 @@ import { PROGRAMS } from './data/programs.data';
     DispatchForm,
     Eyebrow,
     ProgramGrid,
+    ScrollRevealDirective,
   ],
   templateUrl: './programs-list.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

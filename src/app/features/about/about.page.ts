@@ -9,6 +9,7 @@ import { ProgramGrid, ProgramPreview } from '../../shared/ui/program-grid/progra
 import { SeoService } from '../../core/services/seo.service';
 import { PROGRAMS } from '../programs/data/programs.data';
 import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 const ACTIVE_PROGRAMS: ProgramPreview[] = PROGRAMS.map((program) => ({
   slug: program.slug,
@@ -30,6 +31,7 @@ const ACTIVE_PROGRAMS: ProgramPreview[] = PROGRAMS.map((program) => ({
     Eyebrow,
     ProgramGrid,
     TheaterSection,
+    ScrollRevealDirective,
   ],
   templateUrl: './about.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

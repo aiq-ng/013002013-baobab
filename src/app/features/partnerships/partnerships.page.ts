@@ -5,11 +5,18 @@ import { PartnershipsDialogueForm } from './components/dialogue-form/dialogue-fo
 import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
 import { SeoService } from '../../core/services/seo.service';
 import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-partnerships-page',
   standalone: true,
-  imports: [PartnershipsHero, PartnershipsFeatureCards, PartnershipsDialogueForm, LogoStrip],
+  imports: [
+    PartnershipsHero,
+    PartnershipsFeatureCards,
+    PartnershipsDialogueForm,
+    LogoStrip,
+    ScrollRevealDirective,
+  ],
   templateUrl: './partnerships.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -25,8 +25,67 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   --radius-card: 0.75rem;
+
+  /* Motion system — used by shared UI hover states, the scroll-reveal directive, and route transitions */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
   font-family: var(--font-sans);
+}
+
+/* Scroll-reveal: applied by the [appScrollReveal] directive. Starts hidden only once JS confirms
+   it can animate it back in — SSR/no-JS output never carries the hidden state, so content is never
+   stuck invisible. */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity 0.6s var(--ease-premium),
+    transform 0.6s var(--ease-premium);
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Accordion panel entrance */
+@keyframes accordion-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-accordion-in {
+  animation: accordion-fade-in 0.2s var(--ease-premium) both;
+}
+
+/* Native View Transitions (see withViewTransitions() in app.config.ts) — a brief, subtle cross-fade
+   between routes rather than the browser's default instant swap. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease-premium);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
