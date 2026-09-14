@@ -45,3 +45,12 @@ Thumbs.db
 
 # Design source material
 /design
+
+# Claude Code
+/.claude
+
+# Playwright
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache

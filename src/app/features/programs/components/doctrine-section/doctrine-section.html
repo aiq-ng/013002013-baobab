@@ -1,12 +1,7 @@
 <section class="bg-surface-tint">
   <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-16 lg:grid-cols-2 lg:gap-16">
     <div class="relative aspect-[4/3] w-full overflow-hidden rounded-card">
-      <img
-        [src]="imageUrl"
-        [alt]="imageCaption"
-        loading="lazy"
-        class="h-full w-full object-cover"
-      />
+      <img [ngSrc]="imageUrl" [alt]="imageCaption" fill loading="lazy" class="object-cover" />
       <p
         class="absolute inset-x-0 bottom-0 bg-ink-950/70 px-4 py-2 text-xs font-medium uppercase tracking-wide text-white"
       >

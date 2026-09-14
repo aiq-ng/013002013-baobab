@@ -1,7 +1,16 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AnalyticsService } from '../../../core/services/analytics.service';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'light' | 'light-accent' | 'mint' | 'outline-light';
+export type ButtonVariant =
+  'primary' | 'secondary' | 'light' | 'light-accent' | 'mint' | 'outline-light';
 
 /**
  * Shared CTA button. Renders as a real routed anchor when `routerLink` is set,
@@ -20,8 +29,12 @@ export class Button {
   @Input() routerLink: string | null = null;
   @Input() type: 'button' | 'submit' = 'button';
   @Input() disabled = false;
+  /** When set, every click (routed or plain) is reported via AnalyticsService.trackCtaClick. */
+  @Input() ctaId: string | null = null;
 
   @Output() readonly pressed = new EventEmitter<void>();
+
+  private readonly analyticsService = inject(AnalyticsService);
 
   readonly baseClass =
     'inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:cursor-not-allowed disabled:opacity-50';
@@ -47,7 +60,18 @@ export class Button {
 
   onClick(): void {
     if (!this.disabled) {
+      this.trackClick();
       this.pressed.emit();
+    }
+  }
+
+  onRoutedClick(): void {
+    this.trackClick();
+  }
+
+  private trackClick(): void {
+    if (this.ctaId) {
+      this.analyticsService.trackCtaClick(this.ctaId);
     }
   }
 }

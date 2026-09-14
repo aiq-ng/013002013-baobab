@@ -4,20 +4,24 @@ import { vi } from 'vitest';
 import { ContactForm } from './contact-form';
 import { EngagementService } from '../../../engagement/services/engagement.service';
 import { SuccessModalService } from '../../../engagement/services/success-modal.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
 
 describe('ContactForm', () => {
   let fixture: ReturnType<typeof TestBed.createComponent<ContactForm>>;
   let submit: ReturnType<typeof vi.fn>;
   let show: ReturnType<typeof vi.fn>;
+  let trackFormSubmit: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     submit = vi.fn();
     show = vi.fn();
+    trackFormSubmit = vi.fn();
     await TestBed.configureTestingModule({
       imports: [ContactForm],
       providers: [
         { provide: EngagementService, useValue: { submit } },
         { provide: SuccessModalService, useValue: { show } },
+        { provide: AnalyticsService, useValue: { trackFormSubmit } },
       ],
     }).compileComponents();
 
@@ -67,5 +71,6 @@ describe('ContactForm', () => {
       metadata: { phone: '+221 77 000 00 00', subject: 'Bilateral mediation inquiry' },
     });
     expect(show).toHaveBeenCalledWith('contact-form', 'BG-2026-0847');
+    expect(trackFormSubmit).toHaveBeenCalledWith('contact-form');
   });
 });

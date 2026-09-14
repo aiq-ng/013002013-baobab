@@ -4,6 +4,7 @@ import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
 import { SuccessModalService } from '../../../engagement/services/success-modal.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
 
 /**
  * "Track 1.5 Access Gate" classified-access form: institutional enclave
@@ -21,6 +22,7 @@ export class ClassifiedAccessForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
   private readonly successModalService = inject(SuccessModalService);
+  private readonly analyticsService = inject(AnalyticsService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -46,6 +48,7 @@ export class ClassifiedAccessForm {
         metadata: token ? { delegationSecretarialToken: token } : {},
       })
       .subscribe((response) => {
+        this.analyticsService.trackFormSubmit('resources-classified-access');
         this.successModalService.show('resources-classified-access', response.referenceId);
         this.form.reset();
       });

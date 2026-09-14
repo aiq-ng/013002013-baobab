@@ -5,6 +5,7 @@ import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
 import { SuccessModalService } from '../../../engagement/services/success-modal.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
 
 /**
  * Inline "Initiate Dialogue" email-capture form for the Home closing CTA band.
@@ -22,6 +23,7 @@ export class DialogueForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
   private readonly successModalService = inject(SuccessModalService);
+  private readonly analyticsService = inject(AnalyticsService);
 
   readonly form = this.fb.nonNullable.group({
     name: ['', baobabValidators.required],
@@ -43,6 +45,7 @@ export class DialogueForm {
     this.engagementService
       .submit({ source: 'home-dialogue', name, email })
       .subscribe((response) => {
+        this.analyticsService.trackFormSubmit('home-dialogue');
         this.successModalService.show('home-dialogue', response.referenceId);
         this.form.reset();
       });

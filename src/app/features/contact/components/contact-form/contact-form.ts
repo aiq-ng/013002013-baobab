@@ -4,6 +4,7 @@ import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
 import { SuccessModalService } from '../../../engagement/services/success-modal.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
 
 type ContactFormControl = 'firstName' | 'lastName' | 'email' | 'phone' | 'subject' | 'message';
 
@@ -19,6 +20,7 @@ export class ContactForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
   private readonly successModalService = inject(SuccessModalService);
+  private readonly analyticsService = inject(AnalyticsService);
 
   readonly form = this.fb.nonNullable.group({
     firstName: ['', [baobabValidators.required]],
@@ -58,6 +60,7 @@ export class ContactForm {
         metadata: { phone, subject },
       })
       .subscribe((response) => {
+        this.analyticsService.trackFormSubmit('contact-form');
         this.successModalService.show('contact-form', response.referenceId);
         this.form.reset();
       });

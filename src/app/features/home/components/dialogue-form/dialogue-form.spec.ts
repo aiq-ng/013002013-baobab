@@ -4,21 +4,25 @@ import { vi } from 'vitest';
 import { DialogueForm } from './dialogue-form';
 import { EngagementService } from '../../../engagement/services/engagement.service';
 import { SuccessModalService } from '../../../engagement/services/success-modal.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
 
 describe('DialogueForm', () => {
   let fixture: ComponentFixture<DialogueForm>;
   let submit: ReturnType<typeof vi.fn>;
   let show: ReturnType<typeof vi.fn>;
+  let trackFormSubmit: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     submit = vi.fn();
     show = vi.fn();
+    trackFormSubmit = vi.fn();
 
     await TestBed.configureTestingModule({
       imports: [DialogueForm],
       providers: [
         { provide: EngagementService, useValue: { submit } },
         { provide: SuccessModalService, useValue: { show } },
+        { provide: AnalyticsService, useValue: { trackFormSubmit } },
       ],
     }).compileComponents();
 
@@ -51,5 +55,6 @@ describe('DialogueForm', () => {
       email: 'amina@example.com',
     });
     expect(show).toHaveBeenCalledWith('home-dialogue', 'BB-TEST-1');
+    expect(trackFormSubmit).toHaveBeenCalledWith('home-dialogue');
   });
 });

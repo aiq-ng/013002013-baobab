@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
 import { Badge } from '../badge/badge';
 
 export interface ProgramPreview {
@@ -20,7 +21,7 @@ export interface ProgramPreview {
 @Component({
   selector: 'app-program-grid',
   standalone: true,
-  imports: [Badge, RouterLink],
+  imports: [Badge, RouterLink, NgOptimizedImage],
   templateUrl: './program-grid.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

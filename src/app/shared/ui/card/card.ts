@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { Badge } from '../badge/badge';
 
 /**
@@ -8,7 +9,7 @@ import { Badge } from '../badge/badge';
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [Badge],
+  imports: [Badge, NgOptimizedImage],
   templateUrl: './card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

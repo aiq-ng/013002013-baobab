@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { ProgramStat } from '../../models/program';
 
 /** Doctrine narrative with a photo dossier and inline stats, on a program detail page. */
 @Component({
   selector: 'app-doctrine-section',
   standalone: true,
+  imports: [NgOptimizedImage],
   templateUrl: './doctrine-section.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

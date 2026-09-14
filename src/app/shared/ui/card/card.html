@@ -3,7 +3,7 @@
 >
   @if (imageUrl) {
     <div class="relative aspect-[4/3] w-full overflow-hidden">
-      <img [src]="imageUrl" [alt]="imageAlt" loading="lazy" class="h-full w-full object-cover" />
+      <img [ngSrc]="imageUrl" [alt]="imageAlt" fill loading="lazy" class="object-cover" />
       @if (badgeText) {
         <div class="absolute left-3 top-3">
           <app-badge [text]="badgeText" variant="accent-on-dark" />

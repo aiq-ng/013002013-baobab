@@ -41,4 +41,14 @@ describe('SeoService', () => {
     service.update({ title: 'Home', description: 'Overview.', url: 'https://example.org' });
     expect(meta.getTag('property="og:url"')?.content).toBe('https://example.org');
   });
+
+  it('does not set a robots tag by default', () => {
+    service.update({ title: 'Home', description: 'Overview.' });
+    expect(meta.getTag('name="robots"')).toBeNull();
+  });
+
+  it('sets a noindex robots tag when noIndex is true', () => {
+    service.update({ title: 'Not Found', description: 'Missing page.', noIndex: true });
+    expect(meta.getTag('name="robots"')?.content).toBe('noindex, nofollow');
+  });
 });

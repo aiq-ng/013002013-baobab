@@ -4,20 +4,24 @@ import { vi } from 'vitest';
 import { DispatchForm } from './dispatch-form';
 import { EngagementService } from '../../../features/engagement/services/engagement.service';
 import { SuccessModalService } from '../../../features/engagement/services/success-modal.service';
+import { AnalyticsService } from '../../../core/services/analytics.service';
 
 describe('DispatchForm', () => {
   let fixture: ReturnType<typeof TestBed.createComponent<DispatchForm>>;
   let submit: ReturnType<typeof vi.fn>;
   let show: ReturnType<typeof vi.fn>;
+  let trackFormSubmit: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     submit = vi.fn();
     show = vi.fn();
+    trackFormSubmit = vi.fn();
     await TestBed.configureTestingModule({
       imports: [DispatchForm],
       providers: [
         { provide: EngagementService, useValue: { submit } },
         { provide: SuccessModalService, useValue: { show } },
+        { provide: AnalyticsService, useValue: { trackFormSubmit } },
       ],
     }).compileComponents();
 
@@ -59,6 +63,7 @@ describe('DispatchForm', () => {
       metadata: { protocolId: 'BB-LCB-702-D' },
     });
     expect(show).toHaveBeenCalledWith('program-confidential-dispatch', 'BB-TEST-3');
+    expect(trackFormSubmit).toHaveBeenCalledWith('program-confidential-dispatch');
   });
 
   it('submits with a custom source when provided', () => {

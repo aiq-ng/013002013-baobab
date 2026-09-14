@@ -5,6 +5,7 @@ import { baobabValidators, errorMessageFor } from '../../forms/validators';
 import { EngagementService } from '../../../features/engagement/services/engagement.service';
 import { SuccessModalService } from '../../../features/engagement/services/success-modal.service';
 import { EngagementSource } from '../../../core/models/engagement-request';
+import { AnalyticsService } from '../../../core/services/analytics.service';
 
 /**
  * Shared "Diplomatic Dispatches" email-capture band, used wherever the design
@@ -26,6 +27,7 @@ export class DispatchForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
   private readonly successModalService = inject(SuccessModalService);
+  private readonly analyticsService = inject(AnalyticsService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -50,6 +52,7 @@ export class DispatchForm {
         metadata: { protocolId: this.protocolId },
       })
       .subscribe((response) => {
+        this.analyticsService.trackFormSubmit(this.source);
         this.successModalService.show(this.source, response.referenceId);
         this.form.reset();
       });

@@ -1,7 +1,14 @@
 <header class="sticky top-0 z-10 bg-ink-950">
   <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
     <a routerLink="/" class="shrink-0">
-      <img src="/images/shared/logo-baobab.png" alt="Baobab" class="h-8 w-auto" />
+      <img
+        ngSrc="/images/shared/logo-baobab.png"
+        alt="Baobab"
+        width="260"
+        height="66"
+        priority
+        class="h-8 w-auto"
+      />
     </a>
     <nav class="hidden md:block">
       <ul class="flex gap-6 text-sm font-medium text-white/80">
@@ -19,7 +26,12 @@
         }
       </ul>
     </nav>
-    <app-button label="Strategic Partnerships" variant="primary" routerLink="/partnerships" />
+    <app-button
+      label="Strategic Partnerships"
+      variant="primary"
+      routerLink="/partnerships"
+      ctaId="header-strategic-partnerships"
+    />
   </div>
 </header>
 
@@ -30,7 +42,14 @@
 <footer class="mt-16 bg-ink-950 px-4 py-12 text-sm text-white/70">
   <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
     <div>
-      <img src="/images/shared/logo-baobab.png" alt="Baobab" class="h-8 w-auto" />
+      <img
+        ngSrc="/images/shared/logo-baobab.png"
+        alt="Baobab"
+        width="260"
+        height="66"
+        loading="lazy"
+        class="h-8 w-auto"
+      />
       <p class="mt-3 max-w-xs text-white/60">
         Dedicated to non-kinetic conflict de-escalation, customary jurisprudence, and restorative
         statecraft across the Sahel and greater West Africa.

@@ -6,6 +6,7 @@ export interface SeoData {
   description: string;
   image?: string;
   url?: string;
+  noIndex?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,6 +28,9 @@ export class SeoService {
     }
     if (data.url) {
       this.meta.updateTag({ property: 'og:url', content: data.url });
+    }
+    if (data.noIndex) {
+      this.meta.updateTag({ name: 'robots', content: 'noindex, nofollow' });
     }
   }
 }

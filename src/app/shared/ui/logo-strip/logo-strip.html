@@ -1,7 +1,10 @@
 <div class="flex w-full flex-wrap items-center justify-between gap-x-8 gap-y-6">
   @for (logo of logos; track logo.name; let idx = $index) {
     @if (idx === dividerIndex) {
-      <div class="hidden h-10 border-l border-dashed border-slate-300 sm:block" aria-hidden="true"></div>
+      <div
+        class="hidden h-10 border-l border-dashed border-slate-300 sm:block"
+        aria-hidden="true"
+      ></div>
     }
     <img
       [src]="logo.imageUrl"

@@ -18,8 +18,10 @@ export class CtaBand {
   @Input() backgroundImage = '';
   @Input({ required: true }) primaryLabel = '';
   @Input() primaryRoute: string | null = null;
+  @Input() primaryCtaId: string | null = null;
   @Input() secondaryLabel = '';
   @Input() secondaryRoute: string | null = null;
+  @Input() secondaryCtaId: string | null = null;
 
   @Output() readonly primaryPressed = new EventEmitter<void>();
   @Output() readonly secondaryPressed = new EventEmitter<void>();

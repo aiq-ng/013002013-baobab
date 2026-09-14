@@ -4,20 +4,24 @@ import { vi } from 'vitest';
 import { PartnershipsDialogueForm } from './dialogue-form';
 import { EngagementService } from '../../../engagement/services/engagement.service';
 import { SuccessModalService } from '../../../engagement/services/success-modal.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
 
 describe('PartnershipsDialogueForm', () => {
   let fixture: ReturnType<typeof TestBed.createComponent<PartnershipsDialogueForm>>;
   let submit: ReturnType<typeof vi.fn>;
   let show: ReturnType<typeof vi.fn>;
+  let trackFormSubmit: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     submit = vi.fn();
     show = vi.fn();
+    trackFormSubmit = vi.fn();
     await TestBed.configureTestingModule({
       imports: [PartnershipsDialogueForm],
       providers: [
         { provide: EngagementService, useValue: { submit } },
         { provide: SuccessModalService, useValue: { show } },
+        { provide: AnalyticsService, useValue: { trackFormSubmit } },
       ],
     }).compileComponents();
 
@@ -52,5 +56,6 @@ describe('PartnershipsDialogueForm', () => {
       email: 'envoy@mfa.gov',
     });
     expect(show).toHaveBeenCalledWith('partnerships-dialogue', 'BG-2026-0847');
+    expect(trackFormSubmit).toHaveBeenCalledWith('partnerships-dialogue');
   });
 });

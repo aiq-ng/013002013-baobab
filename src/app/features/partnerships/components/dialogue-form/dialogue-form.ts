@@ -4,6 +4,7 @@ import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { EngagementService } from '../../../engagement/services/engagement.service';
 import { SuccessModalService } from '../../../engagement/services/success-modal.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
 
 /**
  * "Initiate Sovereign Partnership Dialogue" email-capture panel — the
@@ -20,6 +21,7 @@ export class PartnershipsDialogueForm {
   private readonly fb = inject(FormBuilder);
   private readonly engagementService = inject(EngagementService);
   private readonly successModalService = inject(SuccessModalService);
+  private readonly analyticsService = inject(AnalyticsService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -39,6 +41,7 @@ export class PartnershipsDialogueForm {
     this.engagementService
       .submit({ source: 'partnerships-dialogue', name: email, email })
       .subscribe((response) => {
+        this.analyticsService.trackFormSubmit('partnerships-dialogue');
         this.successModalService.show('partnerships-dialogue', response.referenceId);
         this.form.reset();
       });
