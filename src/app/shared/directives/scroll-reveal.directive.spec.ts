@@ -45,7 +45,8 @@ describe('ScrollRevealDirective', () => {
     originalIntersectionObserver = window.IntersectionObserver;
     originalMatchMedia = window.matchMedia;
     FakeIntersectionObserver.instances = [];
-    window.IntersectionObserver = FakeIntersectionObserver as unknown as typeof IntersectionObserver;
+    window.IntersectionObserver =
+      FakeIntersectionObserver as unknown as typeof IntersectionObserver;
     window.matchMedia = ((query: string) =>
       ({ matches: false, media: query }) as MediaQueryList) as typeof window.matchMedia;
   });
