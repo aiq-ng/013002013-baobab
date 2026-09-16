@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
+import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
 
 /**
  * Partnerships hero: eyebrow, headline, subtext, and a video embed of the
@@ -9,7 +9,7 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
   selector: 'app-partnerships-hero',
   standalone: true,
-  imports: [NgOptimizedImage],
+  imports: [ImageFadeInDirective],
   templateUrl: './hero.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

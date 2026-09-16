@@ -37,6 +37,6 @@ describe('PartnershipsHero', () => {
     fixture.debugElement.query(By.css('button')).nativeElement.click();
     fixture.detectChanges();
     expect(fixture.componentInstance.isPlaying()).toBe(true);
-    expect(fixture.debugElement.query(By.css('video'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('iframe'))).toBeTruthy();
   });
 });

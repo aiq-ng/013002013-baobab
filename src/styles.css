@@ -32,6 +32,7 @@
 
 html {
   font-family: var(--font-sans);
+  scroll-behavior: smooth;
 }
 
 /* Scroll-reveal: applied by the [appScrollReveal] directive. Starts hidden only once JS confirms
@@ -74,6 +75,15 @@ html {
   animation-timing-function: var(--ease-premium);
 }
 
+.img-fade-in {
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-premium);
+}
+
+.img-fade-in--loaded {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
@@ -87,5 +97,10 @@ html {
   .scroll-reveal {
     opacity: 1;
     transform: none;
+  }
+
+  .img-fade-in {
+    opacity: 1;
+    transition: none;
   }
 }

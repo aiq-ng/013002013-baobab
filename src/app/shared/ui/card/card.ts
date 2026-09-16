@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Badge } from '../badge/badge';
+import { ImageFadeInDirective } from '../../directives/image-fade-in.directive';
 
 /**
  * Generic composable content card (image + badge + projected title/body/link).
@@ -9,7 +10,7 @@ import { Badge } from '../badge/badge';
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [Badge, NgOptimizedImage],
+  imports: [Badge, NgOptimizedImage, ImageFadeInDirective],
   templateUrl: './card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

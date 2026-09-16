@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { Badge } from '../badge/badge';
+import { ImageFadeInDirective } from '../../directives/image-fade-in.directive';
 
 export interface ProgramPreview {
   slug: string;
@@ -21,7 +22,7 @@ export interface ProgramPreview {
 @Component({
   selector: 'app-program-grid',
   standalone: true,
-  imports: [Badge, RouterLink, NgOptimizedImage],
+  imports: [Badge, RouterLink, NgOptimizedImage, ImageFadeInDirective],
   templateUrl: './program-grid.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
 
 export interface ProgramsHeroStat {
   value: string;
@@ -26,7 +27,7 @@ const DEFAULT_STATS: ProgramsHeroStat[] = [
 @Component({
   selector: 'app-programs-hero',
   standalone: true,
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, ImageFadeInDirective],
   templateUrl: './hero.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

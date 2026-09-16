@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { StatCard } from '../../../../shared/ui/stat-card/stat-card';
+import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
 
 interface HeroStat {
   value: string;
@@ -12,7 +13,7 @@ interface HeroStat {
 @Component({
   selector: 'app-home-hero',
   standalone: true,
-  imports: [StatCard, NgOptimizedImage],
+  imports: [StatCard, NgOptimizedImage, ImageFadeInDirective],
   templateUrl: './hero.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

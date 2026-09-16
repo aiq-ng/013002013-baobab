@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ImageFadeInDirective } from '../../directives/image-fade-in.directive';
 
 export interface PartnerLogo {
   name: string;
@@ -9,6 +10,7 @@ export interface PartnerLogo {
 @Component({
   selector: 'app-logo-strip',
   standalone: true,
+  imports: [ImageFadeInDirective],
   templateUrl: './logo-strip.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

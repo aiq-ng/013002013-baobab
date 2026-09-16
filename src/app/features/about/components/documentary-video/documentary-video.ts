@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
+import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
 
 /** Documentary archival-reel video embed with a poster frame and play control. */
 @Component({
   selector: 'app-documentary-video',
   standalone: true,
-  imports: [NgOptimizedImage],
+  imports: [ImageFadeInDirective],
   templateUrl: './documentary-video.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

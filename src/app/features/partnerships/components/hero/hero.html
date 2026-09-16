@@ -15,21 +15,28 @@
 
   <div class="relative mx-auto mt-10 overflow-hidden rounded-card shadow-sm">
     @if (isPlaying()) {
-      <video
-        [autoplay]="true"
-        controls
-        class="aspect-video w-full bg-black object-cover"
-        src="/videos/partnerships/plenary-assembly.mp4"
-        [attr.aria-label]="caption"
-      ></video>
+      <iframe
+        class="aspect-video w-full bg-black"
+        src="https://www.youtube.com/embed/_AHagC1smns?autoplay=1"
+        [title]="caption"
+        frameborder="0"
+        allow="
+          accelerometer;
+          autoplay;
+          clipboard-write;
+          encrypted-media;
+          gyroscope;
+          picture-in-picture;
+        "
+        allowfullscreen
+      ></iframe>
     } @else {
-      <div class="relative aspect-video w-full">
+      <div class="relative h-64 w-full sm:h-80 md:h-96">
         <img
-          ngSrc="/images/partnerships/plenary-assembly.jpg"
+          src="/images/partnerships/plenary-assembly.jpg"
           [alt]="caption"
-          fill
-          priority
-          class="object-cover"
+          appImgFadeIn
+          class="absolute inset-0 h-full w-full object-cover"
         />
         <button
           type="button"

@@ -3,11 +3,20 @@ import { NgOptimizedImage } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Button } from '../../shared/ui/button/button';
 import { SuccessModal } from '../../features/engagement/success-modal/success-modal';
+import { ImageFadeInDirective } from '../../shared/directives/image-fade-in.directive';
 
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, Button, SuccessModal, NgOptimizedImage],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    Button,
+    SuccessModal,
+    NgOptimizedImage,
+    ImageFadeInDirective,
+  ],
   templateUrl: './public-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

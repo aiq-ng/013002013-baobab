@@ -7,16 +7,17 @@
         width="260"
         height="66"
         priority
+        appImgFadeIn
         class="h-8 w-auto"
       />
     </a>
     <nav class="hidden md:block">
-      <ul class="flex gap-6 text-sm font-medium text-white/80">
+      <ul class="flex gap-6 text-sm text-white/60">
         @for (link of navLinks; track link.path) {
           <li>
             <a
               [routerLink]="link.path"
-              routerLinkActive="text-brand-400"
+              routerLinkActive="text-white font-semibold"
               [routerLinkActiveOptions]="{ exact: link.path === '/' }"
               class="hover:text-white"
             >
@@ -48,6 +49,7 @@
         width="260"
         height="66"
         loading="lazy"
+        appImgFadeIn
         class="h-8 w-auto"
       />
       <p class="mt-3 max-w-xs text-white/60">
