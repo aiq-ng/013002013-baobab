@@ -6,6 +6,8 @@ import { environment } from '../../../environments/environment';
 export interface ApiRequestOptions {
   headers?: Record<string, string>;
   params?: HttpParams | Record<string, string>;
+  /** Send the console's HttpOnly session cookie. Only the admin API needs this. */
+  withCredentials?: boolean;
 }
 
 /**
@@ -28,6 +30,18 @@ export class ApiClient {
 
   get<TResponse>(path: string, options: ApiRequestOptions = {}): Observable<TResponse> {
     return this.http.get<TResponse>(this.resolve(path), options);
+  }
+
+  patch<TResponse, TBody = unknown>(
+    path: string,
+    body: TBody,
+    options: ApiRequestOptions = {},
+  ): Observable<TResponse> {
+    return this.http.patch<TResponse>(this.resolve(path), body, options);
+  }
+
+  delete<TResponse>(path: string, options: ApiRequestOptions = {}): Observable<TResponse> {
+    return this.http.delete<TResponse>(this.resolve(path), options);
   }
 
   private resolve(path: string): string {

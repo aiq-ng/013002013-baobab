@@ -1,0 +1,30 @@
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h1 class="text-lg font-semibold text-ink-950">Submissions</h1>
+    <span class="text-sm text-slate-500">{{ total() }} total</span>
+  </div>
+
+  <app-filter-bar
+    [options]="statusFilters"
+    [active]="activeStatus()"
+    label="Filter by status"
+    (selected)="onFilterSelected($event)"
+  />
+
+  @if (loading()) {
+    <p class="text-sm text-slate-500">Loading…</p>
+  } @else {
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      emptyMessage="No submissions match this filter."
+      (rowActivated)="open($event)"
+    />
+  }
+
+  <app-detail-drawer
+    [submission]="selected()"
+    (statusChanged)="onStatusChanged($event)"
+    (closed)="selected.set(null)"
+  />
+</div>

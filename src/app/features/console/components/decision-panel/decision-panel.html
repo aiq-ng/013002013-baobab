@@ -1,0 +1,50 @@
+<app-drawer [open]="request() !== null" label="Access request review" (closed)="dismiss()">
+  @if (request(); as r) {
+    <dl class="space-y-4 text-sm">
+      <div>
+        <dt class="font-medium text-slate-500">Reference</dt>
+        <dd class="text-ink-950">{{ r.referenceId }}</dd>
+      </div>
+      <div>
+        <dt class="font-medium text-slate-500">Email</dt>
+        <dd class="text-ink-950">{{ r.email }}</dd>
+      </div>
+      @if (r.institution) {
+        <div>
+          <dt class="font-medium text-slate-500">Institution</dt>
+          <dd class="text-ink-950">{{ r.institution }}</dd>
+        </div>
+      }
+      <div>
+        <dt class="font-medium text-slate-500">
+          Delegation token (unverified, shown as context only)
+        </dt>
+        <dd class="break-all text-ink-950">{{ r.delegationToken ?? '(none supplied)' }}</dd>
+      </div>
+      <div>
+        <dt class="font-medium text-slate-500">Requested</dt>
+        <dd class="text-ink-950">{{ r.createdAt }}</dd>
+      </div>
+    </dl>
+
+    <div class="mt-8">
+      <label
+        for="decision-note"
+        class="text-xs font-semibold uppercase tracking-wide text-slate-500"
+        >Decision note</label
+      >
+      <textarea
+        id="decision-note"
+        rows="3"
+        [ngModel]="note()"
+        (ngModelChange)="note.set($event)"
+        class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600"
+      ></textarea>
+    </div>
+
+    <div class="mt-6 flex gap-3">
+      <app-button label="Approve" (pressed)="decide(true)" />
+      <app-button label="Deny" variant="secondary" (pressed)="decide(false)" />
+    </div>
+  }
+</app-drawer>
