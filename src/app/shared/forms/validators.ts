@@ -30,7 +30,15 @@ export function errorMessageFor(
   control: AbstractControl | null,
   fieldLabel: string,
 ): string | null {
-  if (!control || !control.errors || (!control.touched && !control.dirty)) {
+  if (!control || !control.errors) {
+    return null;
+  }
+  // Server-side (422) errors are shown as soon as they arrive, regardless of
+  // touched/dirty state — the visitor already submitted the form once.
+  if (typeof control.errors['server'] === 'string') {
+    return control.errors['server'];
+  }
+  if (!control.touched && !control.dirty) {
     return null;
   }
   if (control.errors['required']) {

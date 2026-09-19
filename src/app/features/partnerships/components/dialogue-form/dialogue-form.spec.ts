@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { PartnershipsDialogueForm } from './dialogue-form';
 import { EngagementService } from '../../../engagement/services/engagement.service';
@@ -19,7 +20,10 @@ describe('PartnershipsDialogueForm', () => {
     await TestBed.configureTestingModule({
       imports: [PartnershipsDialogueForm],
       providers: [
-        { provide: EngagementService, useValue: { submit } },
+        {
+          provide: EngagementService,
+          useValue: { submit, generateIdempotencyKey: () => 'key-1' },
+        },
         { provide: SuccessModalService, useValue: { show } },
         { provide: AnalyticsService, useValue: { trackFormSubmit } },
       ],
@@ -29,13 +33,17 @@ describe('PartnershipsDialogueForm', () => {
     fixture.detectChanges();
   });
 
+  function submitForm() {
+    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+  }
+
   it('creates', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
   it('shows a validation error and does not submit when the email is invalid', () => {
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    submitForm();
 
     expect(fixture.nativeElement.textContent).toContain('Email is required.');
     expect(submit).not.toHaveBeenCalled();
@@ -47,15 +55,44 @@ describe('PartnershipsDialogueForm', () => {
     );
 
     fixture.componentInstance.form.setValue({ email: 'envoy@mfa.gov' });
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    submitForm();
 
-    expect(submit).toHaveBeenCalledWith({
-      source: 'partnerships-dialogue',
-      name: 'envoy@mfa.gov',
-      email: 'envoy@mfa.gov',
-    });
+    expect(submit).toHaveBeenCalledWith(
+      { source: 'partnerships-dialogue', name: 'envoy@mfa.gov', email: 'envoy@mfa.gov' },
+      'key-1',
+    );
     expect(show).toHaveBeenCalledWith('partnerships-dialogue', 'BG-2026-0847');
     expect(trackFormSubmit).toHaveBeenCalledWith('partnerships-dialogue');
+  });
+
+  it('disables the submit button while pending', () => {
+    const subject = new Subject<{ referenceId: string; submittedAt: string }>();
+    submit.mockReturnValue(subject.asObservable());
+
+    fixture.componentInstance.form.setValue({ email: 'envoy@mfa.gov' });
+    submitForm();
+
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[type="submit"]');
+    expect(button.disabled).toBe(true);
+  });
+
+  it('maps a 422 email error onto the email field', () => {
+    submit.mockReturnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 422,
+            error: {
+              detail: [{ loc: ['body', 'email'], msg: 'value is not a valid email address' }],
+            },
+          }),
+      ),
+    );
+
+    fixture.componentInstance.form.setValue({ email: 'envoy@mfa.gov' });
+    submitForm();
+
+    expect(fixture.nativeElement.textContent).toContain('value is not a valid email address');
+    expect(show).not.toHaveBeenCalled();
   });
 });

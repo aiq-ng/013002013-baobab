@@ -2,9 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
-import { EngagementService } from '../../../engagement/services/engagement.service';
-import { SuccessModalService } from '../../../engagement/services/success-modal.service';
-import { AnalyticsService } from '../../../../core/services/analytics.service';
+import { createEngagementSubmission } from '../../../engagement/services/engagement-submission';
 
 /**
  * "Initiate Sovereign Partnership Dialogue" email-capture panel — the
@@ -19,9 +17,10 @@ import { AnalyticsService } from '../../../../core/services/analytics.service';
 })
 export class PartnershipsDialogueForm {
   private readonly fb = inject(FormBuilder);
-  private readonly engagementService = inject(EngagementService);
-  private readonly successModalService = inject(SuccessModalService);
-  private readonly analyticsService = inject(AnalyticsService);
+  private readonly submission = createEngagementSubmission();
+
+  readonly submitting = this.submission.submitting;
+  readonly errorMessage = this.submission.errorMessage;
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -32,18 +31,7 @@ export class PartnershipsDialogueForm {
   }
 
   submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
     const { email } = this.form.getRawValue();
-    this.engagementService
-      .submit({ source: 'partnerships-dialogue', name: email, email })
-      .subscribe((response) => {
-        this.analyticsService.trackFormSubmit('partnerships-dialogue');
-        this.successModalService.show('partnerships-dialogue', response.referenceId);
-        this.form.reset();
-      });
+    this.submission.submit(this.form, { source: 'partnerships-dialogue', name: email, email });
   }
 }

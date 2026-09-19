@@ -124,7 +124,15 @@
         }
       </div>
 
-      <app-button label="Send Message to us" type="submit" variant="primary" />
+      @if (errorMessage()) {
+        <p role="alert" class="text-sm text-red-600">{{ errorMessage() }}</p>
+      }
+      <app-button
+        [label]="submitting() ? 'Sending…' : 'Send Message to us'"
+        type="submit"
+        variant="primary"
+        [disabled]="submitting()"
+      />
     </form>
   </div>
 </section>

@@ -1,14 +1,24 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { EngagementService } from './engagement.service';
 import { EngagementRequest } from '../../../core/models/engagement-request';
 
 describe('EngagementService', () => {
   let service: EngagementService;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     service = TestBed.inject(EngagementService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   const request: EngagementRequest = {
@@ -22,15 +32,19 @@ describe('EngagementService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('resolves with a reference ID and submission timestamp', async () => {
-    const response = await firstValueFrom(service.submit(request));
-    expect(response.referenceId).toMatch(/^[A-Za-z0-9-]+$/);
-    expect(new Date(response.submittedAt).toString()).not.toBe('Invalid Date');
+  it('delegates to the engagement API and resolves the server-issued reference ID', async () => {
+    const promise = firstValueFrom(service.submit(request, 'key-1'));
+
+    const req = httpMock.expectOne((r) => r.url.endsWith('/engagements'));
+    expect(req.request.headers.get('Idempotency-Key')).toBe('key-1');
+    req.flush({ referenceId: 'BB-SERVER-1', submittedAt: '2026-01-01T00:00:00Z' });
+
+    const response = await promise;
+    expect(response.referenceId).toBe('BB-SERVER-1');
   });
 
-  it('returns a different reference ID for each submission', async () => {
-    const first = await firstValueFrom(service.submit(request));
-    const second = await firstValueFrom(service.submit(request));
-    expect(first.referenceId).not.toBe(second.referenceId);
+  it('generates a UUID-shaped idempotency key', () => {
+    const key = service.generateIdempotencyKey();
+    expect(key).toMatch(/^[0-9a-f-]{36}$/i);
   });
 });

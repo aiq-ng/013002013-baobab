@@ -2,10 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Button } from '../button/button';
 import { baobabValidators, errorMessageFor } from '../../forms/validators';
-import { EngagementService } from '../../../features/engagement/services/engagement.service';
-import { SuccessModalService } from '../../../features/engagement/services/success-modal.service';
+import { createEngagementSubmission } from '../../../features/engagement/services/engagement-submission';
 import { EngagementSource } from '../../../core/models/engagement-request';
-import { AnalyticsService } from '../../../core/services/analytics.service';
 
 /**
  * Shared "Diplomatic Dispatches" email-capture band, used wherever the design
@@ -25,9 +23,10 @@ export class DispatchForm {
   @Input() source: EngagementSource = 'program-confidential-dispatch';
 
   private readonly fb = inject(FormBuilder);
-  private readonly engagementService = inject(EngagementService);
-  private readonly successModalService = inject(SuccessModalService);
-  private readonly analyticsService = inject(AnalyticsService);
+  private readonly submission = createEngagementSubmission();
+
+  readonly submitting = this.submission.submitting;
+  readonly errorMessage = this.submission.errorMessage;
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -38,23 +37,12 @@ export class DispatchForm {
   }
 
   submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
     const { email } = this.form.getRawValue();
-    this.engagementService
-      .submit({
-        source: this.source,
-        name: email,
-        email,
-        metadata: { protocolId: this.protocolId },
-      })
-      .subscribe((response) => {
-        this.analyticsService.trackFormSubmit(this.source);
-        this.successModalService.show(this.source, response.referenceId);
-        this.form.reset();
-      });
+    this.submission.submit(this.form, {
+      source: this.source,
+      name: email,
+      email,
+      metadata: { protocolId: this.protocolId },
+    });
   }
 }

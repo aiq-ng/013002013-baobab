@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { ClassifiedAccessForm } from './classified-access-form';
 import { EngagementService } from '../../../engagement/services/engagement.service';
@@ -19,7 +20,10 @@ describe('ClassifiedAccessForm', () => {
     await TestBed.configureTestingModule({
       imports: [ClassifiedAccessForm],
       providers: [
-        { provide: EngagementService, useValue: { submit } },
+        {
+          provide: EngagementService,
+          useValue: { submit, generateIdempotencyKey: () => 'key-1' },
+        },
         { provide: SuccessModalService, useValue: { show } },
         { provide: AnalyticsService, useValue: { trackFormSubmit } },
       ],
@@ -29,9 +33,13 @@ describe('ClassifiedAccessForm', () => {
     fixture.detectChanges();
   });
 
-  it('shows a validation error on empty submit without calling the service', () => {
+  function submitForm() {
     fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
     fixture.detectChanges();
+  }
+
+  it('shows a validation error on empty submit without calling the service', () => {
+    submitForm();
 
     expect(fixture.nativeElement.textContent).toContain('Email is required.');
     expect(submit).not.toHaveBeenCalled();
@@ -39,8 +47,7 @@ describe('ClassifiedAccessForm', () => {
 
   it('shows an invalid-email message for a malformed address', () => {
     fixture.componentInstance.form.setValue({ email: 'nope', token: '' });
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    submitForm();
 
     expect(fixture.nativeElement.textContent).toContain('Enter a valid email address.');
     expect(submit).not.toHaveBeenCalled();
@@ -52,15 +59,17 @@ describe('ClassifiedAccessForm', () => {
     );
 
     fixture.componentInstance.form.setValue({ email: 'envoy@diplomatie.gouv', token: '' });
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    submitForm();
 
-    expect(submit).toHaveBeenCalledWith({
-      source: 'resources-classified-access',
-      name: 'envoy@diplomatie.gouv',
-      email: 'envoy@diplomatie.gouv',
-      metadata: {},
-    });
+    expect(submit).toHaveBeenCalledWith(
+      {
+        source: 'resources-classified-access',
+        name: 'envoy@diplomatie.gouv',
+        email: 'envoy@diplomatie.gouv',
+        metadata: {},
+      },
+      'key-1',
+    );
     expect(show).toHaveBeenCalledWith('resources-classified-access', 'BB-TEST-4');
     expect(trackFormSubmit).toHaveBeenCalledWith('resources-classified-access');
   });
@@ -74,14 +83,38 @@ describe('ClassifiedAccessForm', () => {
       email: 'envoy@diplomatie.gouv',
       token: 'secret-token',
     });
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    submitForm();
 
-    expect(submit).toHaveBeenCalledWith({
-      source: 'resources-classified-access',
-      name: 'envoy@diplomatie.gouv',
-      email: 'envoy@diplomatie.gouv',
-      metadata: { delegationSecretarialToken: 'secret-token' },
-    });
+    expect(submit).toHaveBeenCalledWith(
+      {
+        source: 'resources-classified-access',
+        name: 'envoy@diplomatie.gouv',
+        email: 'envoy@diplomatie.gouv',
+        metadata: { delegationSecretarialToken: 'secret-token' },
+      },
+      'key-1',
+    );
+  });
+
+  it('disables the submit button while pending', () => {
+    const subject = new Subject<{ referenceId: string; submittedAt: string }>();
+    submit.mockReturnValue(subject.asObservable());
+
+    fixture.componentInstance.form.setValue({ email: 'envoy@diplomatie.gouv', token: '' });
+    submitForm();
+
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[type="submit"]');
+    expect(button.disabled).toBe(true);
+  });
+
+  it('shows a readable message on a 5xx and does not clear the form', () => {
+    submit.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+
+    fixture.componentInstance.form.setValue({ email: 'envoy@diplomatie.gouv', token: '' });
+    submitForm();
+
+    expect(fixture.nativeElement.textContent).toMatch(/went wrong/i);
+    expect(fixture.componentInstance.form.value.email).toBe('envoy@diplomatie.gouv');
+    expect(show).not.toHaveBeenCalled();
   });
 });

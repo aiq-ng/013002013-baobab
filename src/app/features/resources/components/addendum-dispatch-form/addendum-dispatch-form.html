@@ -30,6 +30,14 @@
         <p role="alert" class="mt-2 text-sm text-red-600">{{ errorFor('email') }}</p>
       }
     </div>
-    <app-button label="Submit for Addendums →" type="submit" variant="primary" />
+    @if (errorMessage()) {
+      <p role="alert" class="text-sm text-red-600">{{ errorMessage() }}</p>
+    }
+    <app-button
+      [label]="submitting() ? 'Sending…' : 'Submit for Addendums →'"
+      type="submit"
+      variant="primary"
+      [disabled]="submitting()"
+    />
   </form>
 </div>

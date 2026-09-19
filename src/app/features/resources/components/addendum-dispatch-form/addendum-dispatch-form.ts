@@ -2,13 +2,11 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
-import { EngagementService } from '../../../engagement/services/engagement.service';
-import { SuccessModalService } from '../../../engagement/services/success-modal.service';
-import { AnalyticsService } from '../../../../core/services/analytics.service';
+import { createEngagementSubmission } from '../../../engagement/services/engagement-submission';
 
 /**
  * "Sovereign Addendum Dispatch" email-capture card next to the featured
- * document, one of the site's 5 email-capture CTAs → shared success flow.
+ * document, one of the site's email-capture CTAs → shared success flow.
  */
 @Component({
   selector: 'app-addendum-dispatch-form',
@@ -19,9 +17,10 @@ import { AnalyticsService } from '../../../../core/services/analytics.service';
 })
 export class AddendumDispatchForm {
   private readonly fb = inject(FormBuilder);
-  private readonly engagementService = inject(EngagementService);
-  private readonly successModalService = inject(SuccessModalService);
-  private readonly analyticsService = inject(AnalyticsService);
+  private readonly submission = createEngagementSubmission();
+
+  readonly submitting = this.submission.submitting;
+  readonly errorMessage = this.submission.errorMessage;
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -32,18 +31,7 @@ export class AddendumDispatchForm {
   }
 
   submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
     const { email } = this.form.getRawValue();
-    this.engagementService
-      .submit({ source: 'resources-addendum', name: email, email })
-      .subscribe((response) => {
-        this.analyticsService.trackFormSubmit('resources-addendum');
-        this.successModalService.show('resources-addendum', response.referenceId);
-        this.form.reset();
-      });
+    this.submission.submit(this.form, { source: 'resources-addendum', name: email, email });
   }
 }

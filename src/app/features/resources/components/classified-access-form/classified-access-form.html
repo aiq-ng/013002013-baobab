@@ -53,7 +53,15 @@
       />
     </div>
 
-    <app-button label="Request Classified Dossier Access" type="submit" variant="primary" />
+    @if (errorMessage()) {
+      <p role="alert" class="text-sm text-red-600">{{ errorMessage() }}</p>
+    }
+    <app-button
+      [label]="submitting() ? 'Sending…' : 'Request Classified Dossier Access'"
+      type="submit"
+      variant="primary"
+      [disabled]="submitting()"
+    />
     <p class="text-center text-xs text-ink-950/40">
       Secured by The Baobab Group Trust HSM Architecture
     </p>

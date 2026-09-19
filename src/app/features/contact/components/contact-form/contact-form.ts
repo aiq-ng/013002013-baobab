@@ -2,9 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
-import { EngagementService } from '../../../engagement/services/engagement.service';
-import { SuccessModalService } from '../../../engagement/services/success-modal.service';
-import { AnalyticsService } from '../../../../core/services/analytics.service';
+import { createEngagementSubmission } from '../../../engagement/services/engagement-submission';
 
 type ContactFormControl = 'firstName' | 'lastName' | 'email' | 'phone' | 'subject' | 'message';
 
@@ -18,9 +16,10 @@ type ContactFormControl = 'firstName' | 'lastName' | 'email' | 'phone' | 'subjec
 })
 export class ContactForm {
   private readonly fb = inject(FormBuilder);
-  private readonly engagementService = inject(EngagementService);
-  private readonly successModalService = inject(SuccessModalService);
-  private readonly analyticsService = inject(AnalyticsService);
+  private readonly submission = createEngagementSubmission();
+
+  readonly submitting = this.submission.submitting;
+  readonly errorMessage = this.submission.errorMessage;
 
   readonly form = this.fb.nonNullable.group({
     firstName: ['', [baobabValidators.required]],
@@ -45,24 +44,13 @@ export class ContactForm {
   }
 
   submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
     const { firstName, lastName, email, phone, subject, message } = this.form.getRawValue();
-    this.engagementService
-      .submit({
-        source: 'contact-form',
-        name: `${firstName} ${lastName}`,
-        email,
-        message,
-        metadata: { phone, subject },
-      })
-      .subscribe((response) => {
-        this.analyticsService.trackFormSubmit('contact-form');
-        this.successModalService.show('contact-form', response.referenceId);
-        this.form.reset();
-      });
+    this.submission.submit(this.form, {
+      source: 'contact-form',
+      name: `${firstName} ${lastName}`,
+      email,
+      message,
+      metadata: { phone, subject },
+    });
   }
 }
