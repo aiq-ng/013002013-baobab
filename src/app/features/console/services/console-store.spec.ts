@@ -4,6 +4,24 @@ import { of, throwError } from 'rxjs';
 import { ConsoleStore } from './console-store';
 import { ConsoleApi } from './console-api';
 
+const CODEX_FIELDS = {
+  batchLabel: 'Annual Codex · Vol. IX',
+  releaseTag: 'Permanent Archive Release',
+  documentDateLabel: 'Annual Statecraft Review (2024–2025)',
+  description: 'Desc',
+  chapters: ['Ch. I'],
+  excerptHeading: 'Excerpt',
+  excerptQuote: 'Quote',
+  excerptAttribution: 'Attribution',
+  onlineUrl: '/doc.html',
+  metadata: [
+    { label: 'Label A', value: 'Value A', accent: true },
+    { label: 'Label B', value: 'Value B', accent: false },
+    { label: 'Label C', value: 'Value C', accent: false },
+    { label: 'Label D', value: 'Value D', accent: true },
+  ],
+};
+
 describe('ConsoleStore', () => {
   function setup(apiOverrides: Partial<ConsoleApi> = {}) {
     const apiStub: Partial<ConsoleApi> = {
@@ -14,6 +32,86 @@ describe('ConsoleStore', () => {
       updateEngagementStatus: () => of(undefined),
       listAccessRequests: () => of([]),
       decideAccessRequest: () => of(undefined),
+      listPrograms: () => of([]),
+      updateProgram: () =>
+        of({
+          slug: 'p1',
+          sortOrder: 1,
+          title: 'T',
+          description: 'D',
+          imageUrl: '/img.jpg',
+          updatedAt: '2026-01-01T00:00:00Z',
+        }),
+      listResources: () => of([]),
+      createResource: () =>
+        of({
+          id: 'r1',
+          title: 'T',
+          batchReference: 'Batch 1',
+          languages: 'English',
+          fileSizeBytes: 1000,
+          uploadedAt: '2026-01-01T00:00:00Z',
+          downloadUrl: '/r1.pdf',
+          ...CODEX_FIELDS,
+        }),
+      setResourcePublished: () =>
+        of({
+          id: 'r1',
+          title: 'T',
+          batchReference: 'Batch 1',
+          languages: 'English',
+          fileSizeBytes: 1000,
+          uploadedAt: '2026-01-01T00:00:00Z',
+          downloadUrl: '/r1.pdf',
+          ...CODEX_FIELDS,
+        }),
+      listArchiveEntries: () => of([]),
+      createArchiveEntry: () =>
+        of({
+          id: 'a1',
+          refCode: 'REF: BBG-1',
+          regionTag: 'Region',
+          statusTag: 'Ratified',
+          title: 'T',
+          description: 'D',
+          ratifyingParties: 'Parties',
+          workingLanguages: 'English',
+          category: 'Transhumance',
+          published: true,
+          createdAt: '2026-01-01T00:00:00Z',
+          updatedAt: '2026-01-01T00:00:00Z',
+        }),
+      updateArchiveEntry: () =>
+        of({
+          id: 'a1',
+          refCode: 'REF: BBG-1',
+          regionTag: 'Region',
+          statusTag: 'Ratified',
+          title: 'T2',
+          description: 'D',
+          ratifyingParties: 'Parties',
+          workingLanguages: 'English',
+          category: 'Transhumance',
+          published: true,
+          createdAt: '2026-01-01T00:00:00Z',
+          updatedAt: '2026-01-01T00:00:00Z',
+        }),
+      setArchiveEntryPublished: () =>
+        of({
+          id: 'a1',
+          refCode: 'REF: BBG-1',
+          regionTag: 'Region',
+          statusTag: 'Ratified',
+          title: 'T',
+          description: 'D',
+          ratifyingParties: 'Parties',
+          workingLanguages: 'English',
+          category: 'Transhumance',
+          published: false,
+          createdAt: '2026-01-01T00:00:00Z',
+          updatedAt: '2026-01-01T00:00:00Z',
+        }),
+      deleteArchiveEntry: () => of(undefined),
       ...apiOverrides,
     };
 
@@ -139,5 +237,139 @@ describe('ConsoleStore', () => {
       expectedState: 'pending',
     });
     expect(listAccessRequests).toHaveBeenCalled();
+  });
+
+  it('loadPrograms populates rows, toggling loading', async () => {
+    const store = setup({
+      listPrograms: () =>
+        of([
+          {
+            slug: 'p1',
+            sortOrder: 1,
+            title: 'Program One',
+            description: 'Desc',
+            imageUrl: '/img.jpg',
+            updatedAt: '2026-01-01T00:00:00Z',
+          },
+        ]),
+    });
+
+    await store.loadPrograms();
+
+    expect(store.programs().length).toBe(1);
+    expect(store.programsLoading()).toBe(false);
+  });
+
+  it('saveProgram calls the API then reloads the list', async () => {
+    const listPrograms = vi.fn().mockReturnValue(of([]));
+    const updateProgram = vi.fn().mockReturnValue(
+      of({
+        slug: 'p1',
+        sortOrder: 1,
+        title: 'New Title',
+        description: 'New Desc',
+        imageUrl: '/img.jpg',
+        updatedAt: '2026-01-01T00:00:00Z',
+      }),
+    );
+    const store = setup({ listPrograms, updateProgram });
+
+    await store.saveProgram('p1', { title: 'New Title', description: 'New Desc' });
+
+    expect(updateProgram).toHaveBeenCalledWith('p1', {
+      title: 'New Title',
+      description: 'New Desc',
+    });
+    expect(listPrograms).toHaveBeenCalled();
+  });
+
+  it('loadResources populates rows, toggling loading', async () => {
+    const store = setup({
+      listResources: () =>
+        of([
+          {
+            id: 'r1',
+            title: 'Resource One',
+            batchReference: 'Batch 1',
+            languages: 'English',
+            fileSizeBytes: 1000,
+            uploadedAt: '2026-01-01T00:00:00Z',
+            downloadUrl: '/r1.pdf',
+            ...CODEX_FIELDS,
+          },
+        ]),
+    });
+
+    await store.loadResources();
+
+    expect(store.resources().length).toBe(1);
+    expect(store.resourcesLoading()).toBe(false);
+  });
+
+  it('uploadResource calls the API then reloads the list', async () => {
+    const listResources = vi.fn().mockReturnValue(of([]));
+    const createResource = vi.fn().mockReturnValue(
+      of({
+        id: 'r1',
+        title: 'T',
+        batchReference: 'Batch 1',
+        languages: 'English',
+        fileSizeBytes: 1000,
+        uploadedAt: '2026-01-01T00:00:00Z',
+        downloadUrl: '/r1.pdf',
+        ...CODEX_FIELDS,
+      }),
+    );
+    const store = setup({ listResources, createResource });
+    const file = new File(['x'], 'x.pdf', { type: 'application/pdf' });
+
+    await store.uploadResource(file, 'T', 'Batch 1', 'English');
+
+    expect(createResource).toHaveBeenCalledWith(file, 'T', 'Batch 1', 'English');
+    expect(listResources).toHaveBeenCalled();
+  });
+
+  it('setResourcePublished calls the API then reloads the list', async () => {
+    const listResources = vi.fn().mockReturnValue(of([]));
+    const setResourcePublished = vi.fn().mockReturnValue(
+      of({
+        id: 'r1',
+        title: 'T',
+        batchReference: 'Batch 1',
+        languages: 'English',
+        fileSizeBytes: 1000,
+        uploadedAt: '2026-01-01T00:00:00Z',
+        downloadUrl: null,
+        ...CODEX_FIELDS,
+      }),
+    );
+    const store = setup({ listResources, setResourcePublished });
+
+    await store.setResourcePublished('r1', false);
+
+    expect(setResourcePublished).toHaveBeenCalledWith('r1', false);
+    expect(listResources).toHaveBeenCalled();
+  });
+
+  it('updateResourceCodexDetails calls the API then reloads the list', async () => {
+    const listResources = vi.fn().mockReturnValue(of([]));
+    const updateResourceCodexDetails = vi.fn().mockReturnValue(
+      of({
+        id: 'r1',
+        title: 'T',
+        batchReference: 'Batch 1',
+        languages: 'English',
+        fileSizeBytes: 1000,
+        uploadedAt: '2026-01-01T00:00:00Z',
+        downloadUrl: '/r1.pdf',
+        ...CODEX_FIELDS,
+      }),
+    );
+    const store = setup({ listResources, updateResourceCodexDetails });
+
+    await store.updateResourceCodexDetails('r1', CODEX_FIELDS);
+
+    expect(updateResourceCodexDetails).toHaveBeenCalledWith('r1', CODEX_FIELDS);
+    expect(listResources).toHaveBeenCalled();
   });
 });

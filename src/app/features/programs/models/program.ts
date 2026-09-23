@@ -1,3 +1,18 @@
+/**
+ * The subset of a program that's actually stored in and editable via the
+ * backend (`GET /api/v1/programs` — see console's "content-only editing").
+ * Everything else on `Program` (kpis, pillars, milestones, doctrine copy) is
+ * fixed per-program content that has no backend representation.
+ */
+export interface RemoteProgram {
+  slug: string;
+  sortOrder: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  updatedAt: string;
+}
+
 /** A single named number used in KPI stat rows and inline doctrine stats. */
 export interface ProgramStat {
   value: string;

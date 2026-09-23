@@ -32,6 +32,14 @@ export class ApiClient {
     return this.http.get<TResponse>(this.resolve(path), options);
   }
 
+  put<TResponse, TBody = unknown>(
+    path: string,
+    body: TBody,
+    options: ApiRequestOptions = {},
+  ): Observable<TResponse> {
+    return this.http.put<TResponse>(this.resolve(path), body, options);
+  }
+
   patch<TResponse, TBody = unknown>(
     path: string,
     body: TBody,

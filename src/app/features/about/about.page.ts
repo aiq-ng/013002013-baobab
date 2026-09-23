@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
 import { AboutHero } from './components/hero/hero';
 import { DocumentaryVideo } from './components/documentary-video/documentary-video';
 import { MissionVisionPanel } from './components/mission-vision-panel/mission-vision-panel';
@@ -7,18 +7,9 @@ import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
 import { Eyebrow } from '../../shared/ui/eyebrow/eyebrow';
 import { ProgramGrid, ProgramPreview } from '../../shared/ui/program-grid/program-grid';
 import { SeoService } from '../../core/services/seo.service';
-import { PROGRAMS } from '../programs/data/programs.data';
+import { ProgramsService } from '../programs/services/programs.service';
 import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
-
-const ACTIVE_PROGRAMS: ProgramPreview[] = PROGRAMS.map((program) => ({
-  slug: program.slug,
-  badgeText: program.badgeText,
-  imageUrl: program.imageUrl,
-  imageAlt: program.imageAlt,
-  title: program.title,
-  description: program.description,
-}));
 
 @Component({
   selector: 'app-about-page',
@@ -38,9 +29,19 @@ const ACTIVE_PROGRAMS: ProgramPreview[] = PROGRAMS.map((program) => ({
 })
 export class AboutPage implements OnInit {
   private readonly seo = inject(SeoService);
+  private readonly programsService = inject(ProgramsService);
 
   readonly partnerLogos = PARTNER_LOGOS;
-  readonly activePrograms = ACTIVE_PROGRAMS;
+  readonly activePrograms = computed<ProgramPreview[]>(() =>
+    this.programsService.programs().map((program) => ({
+      slug: program.slug,
+      badgeText: program.badgeText,
+      imageUrl: program.imageUrl,
+      imageAlt: program.imageAlt,
+      title: program.title,
+      description: program.description,
+    })),
+  );
 
   ngOnInit(): void {
     this.seo.update({
@@ -48,5 +49,6 @@ export class AboutPage implements OnInit {
       description:
         'The Baobab Group is an independent Track 1.5 sovereign advisory and peacecraft institute convening confidential dialogue across the Sahel and West Africa.',
     });
+    void this.programsService.load();
   }
 }

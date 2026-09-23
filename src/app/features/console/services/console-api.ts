@@ -1,12 +1,19 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '../../../core/api/api-client';
+import { HttpClient } from '@angular/common/http';
 import {
   AdminAccessRequest,
+  AdminArchiveEntry,
   AdminEngagementList,
+  AdminMetadataItem,
+  AdminProgram,
+  AdminResource,
   AdminSession,
+  ArchiveEntryWrite,
   SubmissionStatus,
 } from '../models/admin';
+import { environment } from '../../../../environments/environment';
 
 const CSRF_COOKIE_NAME = 'baobab_admin_csrf';
 
@@ -29,6 +36,7 @@ function readCsrfCookie(): string {
 @Injectable({ providedIn: 'root' })
 export class ConsoleApi {
   private readonly api = inject(ApiClient);
+  private readonly http = inject(HttpClient);
 
   private csrfHeaders(): Record<string, string> {
     return { 'X-CSRF-Token': readCsrfCookie() };
@@ -95,5 +103,111 @@ export class ConsoleApi {
       },
       { withCredentials: true, headers: this.csrfHeaders() },
     );
+  }
+
+  listPrograms(): Observable<AdminProgram[]> {
+    return this.api.get<AdminProgram[]>('admin/programs', { withCredentials: true });
+  }
+
+  updateProgram(
+    slug: string,
+    patch: { title: string; description: string },
+  ): Observable<AdminProgram> {
+    return this.api.put<AdminProgram>(`admin/programs/${slug}`, patch, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
+  }
+
+  listResources(): Observable<AdminResource[]> {
+    return this.api.get<AdminResource[]>('admin/resources', { withCredentials: true });
+  }
+
+  /**
+   * Multipart upload. `ApiClient` only exposes JSON-body helpers, so this
+   * issues the request directly via `HttpClient` (same base-url resolution,
+   * withCredentials + CSRF header pattern as every other mutating call here).
+   * Content-Type is deliberately left unset so the browser attaches the
+   * multipart boundary itself.
+   */
+  createResource(
+    file: File,
+    title: string,
+    batchReference: string,
+    languages: string,
+  ): Observable<AdminResource> {
+    const form = new FormData();
+    form.append('file', file);
+    form.append('title', title);
+    form.append('batch_reference', batchReference);
+    form.append('languages', languages);
+
+    const trimmedBase = environment.apiBaseUrl.replace(/\/+$/, '');
+    return this.http.post<AdminResource>(`${trimmedBase}/admin/resources`, form, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
+  }
+
+  setResourcePublished(id: string, published: boolean): Observable<AdminResource> {
+    return this.api.patch<AdminResource>(
+      `admin/resources/${id}/publish`,
+      { published },
+      { withCredentials: true, headers: this.csrfHeaders() },
+    );
+  }
+
+  updateResourceCodexDetails(
+    id: string,
+    details: {
+      batchLabel: string;
+      releaseTag: string;
+      documentDateLabel: string;
+      description: string;
+      chapters: string[];
+      excerptHeading: string;
+      excerptQuote: string;
+      excerptAttribution: string;
+      onlineUrl: string;
+      metadata: AdminMetadataItem[];
+    },
+  ): Observable<AdminResource> {
+    return this.api.patch<AdminResource>(`admin/resources/${id}/codex-details`, details, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
+  }
+
+  listArchiveEntries(): Observable<AdminArchiveEntry[]> {
+    return this.api.get<AdminArchiveEntry[]>('admin/archive', { withCredentials: true });
+  }
+
+  createArchiveEntry(entry: ArchiveEntryWrite): Observable<AdminArchiveEntry> {
+    return this.api.post<AdminArchiveEntry>('admin/archive', entry, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
+  }
+
+  updateArchiveEntry(id: string, entry: ArchiveEntryWrite): Observable<AdminArchiveEntry> {
+    return this.api.put<AdminArchiveEntry>(`admin/archive/${id}`, entry, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
+  }
+
+  setArchiveEntryPublished(id: string, published: boolean): Observable<AdminArchiveEntry> {
+    return this.api.patch<AdminArchiveEntry>(
+      `admin/archive/${id}/publish`,
+      { published },
+      { withCredentials: true, headers: this.csrfHeaders() },
+    );
+  }
+
+  deleteArchiveEntry(id: string): Observable<void> {
+    return this.api.delete<void>(`admin/archive/${id}`, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
   }
 }

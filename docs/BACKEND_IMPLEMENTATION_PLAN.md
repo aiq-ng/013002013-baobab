@@ -10,6 +10,7 @@ Phases run in order; later phases depend on earlier ones. Each phase is done onl
 
 ## 0 — Scope and fixed decisions
 
+
 | Decision              | Choice                                                     |
 | --------------------- | ---------------------------------------------------------- |
 | Runtime               | FastAPI, Python 3.12                                       |
@@ -20,6 +21,7 @@ Phases run in order; later phases depend on earlier ones. Each phase is done onl
 | CMS                   | **None this phase** — content stays in typed TS data files |
 | Track 1.5 access gate | Request-and-review, not token verification                 |
 | Admin UI              | Angular, in this repo, at `/console`                       |
+
 
 **In scope:** persisting and notifying all seven engagement submissions; the Track 1.5 access-request workflow; document storage and delivery; the Registry Console.
 
@@ -39,11 +41,15 @@ contact-form
 partnerships-dialogue
 ```
 
+
+
 ### The defect this project closes
 
 `EngagementService.submit()` (`src/app/features/engagement/services/engagement.service.ts`) discards its payload (`void request`), fabricates a reference ID in the browser, and resolves after a 300 ms delay. Every visitor who completes a form sees a success modal quoting a `BB-…` reference for a submission that was never sent, stored, or read. Nothing else in this plan matters more than that.
 
 ---
+
+
 
 ## 1 — Service skeleton and deploy pipeline — ~2 days
 
@@ -69,6 +75,8 @@ partnerships-dialogue
 **SSR caution:** Angular prerenders routes at build time. No form submission happens during render, so the API is never called server-side — but do not add API calls to page components' construction paths, or prerender starts depending on a live service and builds fail when it is down.
 
 ---
+
+
 
 ## 2 — Schema, SQL files and the migration runner — ~1.5 days
 
@@ -122,6 +130,8 @@ admin_users
 
 ---
 
+
+
 ## 3 — `POST /engagements`, the core endpoint — ~3 days
 
 - [ ] Tests written first: one per source asserting a stored row, plus rejections for bad email, oversized message, unknown source, filled honeypot
@@ -154,14 +164,18 @@ Per-source rules: `contact-form` requires a message and carries phone and subjec
 
 ---
 
+
+
 ## 4 — Angular integration — ~2 days
 
 - [ ] `src/app/core/api/api-client.ts` — wraps `HttpClient` with `environment.apiBaseUrl`
 - [ ] `src/app/core/api/engagement.api.ts` — typed request/response
 - [ ] `EngagementService.submit()` delegates to it and stops fabricating reference IDs
 - [ ] The seven form components keep their current interface — no template or spec changes
-- [ ] **Shared submit path gains a `submitting` signal, an error branch, and a success guard** (see below)
+- [ ] **Shared submit path gains a** `submitting` **signal, an error branch, and a success guard** (see below)
 - [ ] Full suite green (`npm test`), then `npm run verify`
+
+
 
 ### Blocking defect this phase must fix
 
@@ -187,6 +201,8 @@ Already in place: `provideHttpClient(withInterceptors([errorInterceptor]))` in `
 
 ---
 
+
+
 ## 5 — Notifications — ~2 days
 
 - [ ] Internal alert email, routed by source
@@ -198,6 +214,8 @@ Without correct DNS the acknowledgements land in spam and the site fails silentl
 
 ---
 
+
+
 ## 6 — Track 1.5 request-and-review gate — ~3 days
 
 - [ ] A `resources-classified-access` submission also creates a `pending` access request (one transaction)
@@ -206,6 +224,8 @@ Without correct DNS the acknowledgements land in spam and the site fails silentl
 - [ ] `GET /api/v1/access/{grant_token}` redeems once, then redirects to a presigned document URL
 - [ ] Denial and expiry recorded, not silent
 - [ ] **Front-end copy change** (below)
+
+
 
 ### Copy change — required
 
@@ -218,9 +238,11 @@ Name the decision, the channel and the window. This is the one string that makes
 
 ---
 
+
+
 ## 7 — Document storage and delivery — ~1 day
 
-- [ ] Private R2 bucket, no public development URL enabled
+- [x] Private R2 bucket, no public development URL enabled
 - [ ] `aioboto3` against `https://<account>.r2.cloudflarestorage.com` with `region_name="auto"` (R2 speaks S3 SigV4)
 - [ ] Presign `get_object` per request — 10 minutes public, 5 minutes restricted; never store a presigned URL
 - [ ] Upload with `ContentDisposition: attachment; filename="…"` and explicit `application/pdf`
@@ -230,6 +252,8 @@ Name the decision, the channel and the window. This is the one string that makes
 **Fixes a live 404.** `src/app/features/home/components/mission-block/mission-block.html:23` links `/documents/baobab-doctrine-summary.pdf`, and `public/` contains only `favicon.ico` and `images/` — the homepage doctrine download is broken in production today. Repoint it at `/api/v1/documents/doctrine-summary` and let the API redirect.
 
 ---
+
+
 
 ## 8 — Registry Console (Angular, in this repo) — ~5 days
 
@@ -252,6 +276,8 @@ export const serverRoutes: ServerRoute[] = [
 - [ ] Build assertion failing if `dist/` contains a `console/` directory
 - [ ] `noindex, nofollow` on every console route via `SeoService`; `/console` disallowed in `robots.txt`
 
+
+
 ### 8b — Route and structure
 
 - [ ] `console` as a **sibling** of `PublicLayout` in `app.routes.ts`, not a child — its own shell, no public header/footer/SEO inheritance
@@ -264,6 +290,8 @@ export const serverRoutes: ServerRoute[] = [
 
 - [ ] `features/console/` with `pages/` (submissions, access-requests, documents, sign-in), `components/` (filter bar, detail drawer, decision panel), `services/`, `models/`
 - [ ] Bundle check confirming a public page load pulls in none of it
+
+
 
 ### 8c — Auth
 
@@ -286,6 +314,7 @@ Reuse `button`, `badge`, `modal`, `form-field` as-is. State is Signals in a `Con
 
 ### 8e — Admin endpoints
 
+
 | Method & path                                    | Purpose                                                        |
 | ------------------------------------------------ | -------------------------------------------------------------- |
 | `GET /api/v1/admin/engagements`                  | Paginated, filterable by source, status, date                  |
@@ -293,11 +322,16 @@ Reuse `button`, `badge`, `modal`, `form-field` as-is. State is Signals in a `Con
 | `GET /api/v1/admin/access-requests`              | The pending review queue                                       |
 | `POST /api/v1/admin/access-requests/{id}/decide` | Approve or deny; approval issues the grant and sends the email |
 
+
+
+
 ### Cost of building the console in Angular
 
 Two days more than a server-rendered admin, and the public site's build now contains an authenticated area — so prerender config, robots rules and bundle boundaries become things that can regress silently. Steps 8a–8c exist to make that regression loud. In exchange: one codebase, the existing design system, and the console covered by the same Husky pre-push gate as everything else.
 
 ---
+
+
 
 ## 9 — Abuse resistance — ~2 days
 
@@ -310,6 +344,8 @@ Public unauthenticated forms on a site that names heads of state will be scraped
 - [ ] Only a salted hash of the IP is stored, never the address
 
 ---
+
+
 
 ## 10 — Writing the SQL safely
 
@@ -336,7 +372,7 @@ async def insert_submission(conn: Connection, s: SubmissionIn) -> Record:
     )
 ```
 
-- [ ] **No f-string, `%`, `.format()` or `+` ever touches a SQL string.** Enforced in CI: Ruff `S608` plus a grep gate over `app/repositories/` failing the build on an f-string containing `SELECT`, `INSERT`, `UPDATE` or `DELETE`
+- [ ] **No f-string,** `%`**,** `.format()` **or** `+` **ever touches a SQL string.** Enforced in CI: Ruff `S608` plus a grep gate over `app/repositories/` failing the build on an f-string containing `SELECT`, `INSERT`, `UPDATE` or `DELETE`
 
 One reviewer having a bad afternoon is exactly how this defect ships. Ban it mechanically, not in a style guide.
 
@@ -348,6 +384,8 @@ Placeholders bind values, not table or column names — so the console's `?sort=
 SORTS = {"newest": "submitted_at DESC", "oldest": "submitted_at ASC"}
 order_by = SORTS[sort]  # KeyError → 422. The value is never user text.
 ```
+
+
 
 ### 3. All SQL lives in the repository layer
 
@@ -368,6 +406,8 @@ If an injection ever lands, it lands in a role that cannot drop a table.
 - [ ] Explicit transactions for the multi-statement paths — submission + access-request creation, approval + grant issue — so a partial write is impossible
 
 ---
+
+
 
 ## 11 — Resilience and defensive design — ~3 days
 
@@ -402,6 +442,8 @@ Recommended: the content-negotiating endpoint. It costs roughly a day and makes 
 - [ ] Offline detection: if `navigator.onLine` is false, say so specifically instead of showing a generic failure
 - [ ] Form values preserved on every failure path — never clear the form except on confirmed success
 
+
+
 ### 11d — Outbound call isolation
 
 The API depends on R2 and an email provider. Neither may be allowed to take the request path down with it.
@@ -412,12 +454,16 @@ The API depends on R2 and an email provider. Neither may be allowed to take the 
 - [ ] R2 unavailability degrades to a readable "document temporarily unavailable" page, not a 500
 - [ ] Circuit breaker on the email provider if failures exceed a threshold, so retries do not pile up behind a dead dependency
 
+
+
 ### 11e — Degraded mode when Postgres is unavailable
 
 - [ ] Decide the behaviour: fail closed with an honest message, or spool to disk and replay
 - [ ] Whichever is chosen, the visitor is told plainly that it did not go through and given the secretariat address
 - [ ] `/healthz` distinguishes "process alive" from "database reachable" so the host restarts the right thing
 - [ ] Rate limiting fails **closed** on backing-store failure for mutating endpoints, and open for reads
+
+
 
 ### 11f — Concurrency and races
 
@@ -426,6 +472,8 @@ Two of these are live bugs in the current design, not hypotheticals.
 - [ ] **Grant redemption must be atomic.** A single-use link redeemed twice concurrently will both succeed under a naive read-then-write. Redeem with a conditional update — `UPDATE access_requests SET state='redeemed' WHERE grant_token=$1 AND state='approved' RETURNING …` — and treat zero rows as already used
 - [ ] **Two reviewers deciding the same request.** The console must send the expected current state and get a 409 on mismatch, rather than the second decision silently overwriting the first
 - [ ] Console lists tolerate stale data: refetch after every mutation rather than patching local state optimistically
+
+
 
 ### 11g — Observability
 
@@ -448,6 +496,8 @@ Not mentioned anywhere in the plan so far, and this database holds named diploma
 - [ ] **A restore rehearsed at least once before launch.** An untested backup is not a backup
 - [ ] Documented recovery-point and recovery-time objectives
 
+
+
 ### 11i — Defensive input handling at the edge
 
 - [ ] Request body size cap (e.g. 64 kB) enforced before parsing, not after
@@ -457,6 +507,8 @@ Not mentioned anywhere in the plan so far, and this database holds named diploma
 - [ ] Strip control characters from stored text; render everything in the console as text, never as HTML
 
 ---
+
+
 
 ## 12 — Test and release gates — ~2 days
 
@@ -473,6 +525,8 @@ TDD rules from `CLAUDE.md` apply throughout: failing spec first, then implementa
 
 ---
 
+
+
 ## 13 — Cutover — ~1 day
 
 - [ ] Ship the API first; let it run against the still-stubbed front end
@@ -485,11 +539,15 @@ Rolling back is a front-end deploy, not a database operation.
 
 ---
 
+
+
 ## Effort
 
 **Roughly 28 working days** for one engineer across the full scope. Phases 1–5 alone — about 10 days — close the defect that matters and make every form on the site real. Section 11 adds roughly 3 days and is the difference between a system that works and one that keeps working.
 
 ---
+
+
 
 ## Open questions — decide before Phase 6
 
@@ -498,6 +556,8 @@ Rolling back is a front-end deploy, not a database operation.
 - [ ] **Is the delegation secretarial token ever issued today?** If credentials already exist, Phase 6 could verify rather than review — a different and stricter build.
 - [ ] **Grant expiry and review SLA.** The console mockup and visitor copy currently say 72 hours and two working days. Both are placeholders; pick real numbers, because they are written into what visitors are promised.
 - [ ] **Do denied requests get an email?** Currently they get none. Accredited institutions may expect an answer either way.
+
+
 
 ## Standing risk — data protection
 

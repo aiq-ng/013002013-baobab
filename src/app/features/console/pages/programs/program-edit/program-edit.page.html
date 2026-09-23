@@ -1,0 +1,93 @@
+<div class="max-w-3xl space-y-4">
+  <a
+    routerLink="/console/programs"
+    class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-ink-950"
+  >
+    &larr; Programs
+  </a>
+
+  @if (program(); as p) {
+    <h1 class="flex items-center gap-3 text-2xl font-bold text-ink-950">
+      Edit: {{ p.title }}
+      <span class="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800"
+        >Active Dossier</span
+      >
+    </h1>
+
+    <div class="rounded-xl border border-slate-200 bg-white pad-card-sm">
+      <p class="mb-2 text-xs font-semibold tracking-wide text-slate-500">IMAGE</p>
+      <div class="flex items-center gap-4 rounded-lg bg-brand-50/60 p-4">
+        <div class="relative">
+          <img [src]="p.imageUrl" alt="" class="h-20 w-20 rounded-md object-cover" />
+          <span
+            class="absolute bottom-1 left-1 rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white"
+            >Current</span
+          >
+        </div>
+        <p class="text-sm text-slate-500">Image is managed by the Secretariat archive.</p>
+      </div>
+
+      <form class="mt-6 space-y-6" (ngSubmit)="onSubmit()" [formGroup]="form">
+        <div>
+          <label for="title" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+            >HEADER</label
+          >
+          <input
+            id="title"
+            type="text"
+            formControlName="title"
+            class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+          />
+          @if (form.controls.title.invalid && form.controls.title.touched) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (form.controls.title.errors?.['required']) {
+                Header is required.
+              } @else if (form.controls.title.errors?.['maxlength']) {
+                Header must be 120 characters or fewer.
+              }
+            </p>
+          }
+        </div>
+
+        <div>
+          <label
+            for="description"
+            class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+            >SUB-HEADER</label
+          >
+          <textarea
+            id="description"
+            rows="4"
+            formControlName="description"
+            class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+          ></textarea>
+          @if (form.controls.description.invalid && form.controls.description.touched) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (form.controls.description.errors?.['required']) {
+                Sub-header is required.
+              } @else if (form.controls.description.errors?.['maxlength']) {
+                Sub-header must be 600 characters or fewer.
+              }
+            </p>
+          }
+        </div>
+
+        <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+          <p class="flex items-center gap-2 text-sm text-slate-500">
+            <span aria-hidden="true">&#9432;</span>
+            Changes reflect on the public Programs page as soon as the site rebuilds (approx. 1
+            min).
+          </p>
+          <app-button
+            label="Publish program"
+            type="submit"
+            variant="primary"
+            [disabled]="submitting"
+          />
+        </div>
+      </form>
+    </div>
+  } @else {
+    <p class="text-sm text-slate-500">Loading…</p>
+  }
+</div>

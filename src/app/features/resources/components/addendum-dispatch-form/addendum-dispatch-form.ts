@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Button } from '../../../../shared/ui/button/button';
+import { FormField } from '../../../../shared/ui/form-field/form-field';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { createEngagementSubmission } from '../../../engagement/services/engagement-submission';
 
@@ -11,7 +12,7 @@ import { createEngagementSubmission } from '../../../engagement/services/engagem
 @Component({
   selector: 'app-addendum-dispatch-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button],
+  imports: [ReactiveFormsModule, Button, FormField],
   templateUrl: './addendum-dispatch-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AddendumDispatchForm } from '../addendum-dispatch-form/addendum-dispatch-form';
+import { Button } from '../../../../shared/ui/button/button';
 
 /**
  * Two-panel band: the "Annual Statecraft Review" featured document card
@@ -9,7 +10,7 @@ import { AddendumDispatchForm } from '../addendum-dispatch-form/addendum-dispatc
 @Component({
   selector: 'app-resource-highlight',
   standalone: true,
-  imports: [AddendumDispatchForm],
+  imports: [AddendumDispatchForm, Button],
   templateUrl: './resource-highlight.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

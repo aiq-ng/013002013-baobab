@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from '../../../../shared/ui/button/button';
 import { SeoService } from '../../../../core/services/seo.service';
 import { ConsoleStore } from '../../services/console-store';
+import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
 
 @Component({
   selector: 'app-console-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule, Button],
+  imports: [ReactiveFormsModule, Button, NgOptimizedImage, ImageFadeInDirective],
   templateUrl: './sign-in.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

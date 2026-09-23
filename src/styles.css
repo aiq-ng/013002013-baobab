@@ -30,6 +30,57 @@
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Shared element recipes — the class strings that would otherwise be copy-pasted across
+   forms, list cards, and secondary actions on every page. Consume these, don't re-spell them. */
+@layer components {
+  .field-input {
+    @apply w-full rounded-full border border-ink-950/15 bg-surface-tint px-4 py-3 text-sm text-ink-950 transition-colors placeholder:text-ink-950/40 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500/40;
+  }
+
+  /* Neutral secondary action that reads as subordinate to the primary brand button. */
+  .ghost-pill {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink-950/15 bg-surface-tint text-sm font-semibold text-ink-950 transition-all duration-200 ease-premium hover:border-brand-600 hover:bg-brand-100 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;
+  }
+
+  /* Standard white content card: list rows, document rows, panel cards. */
+  .surface-card {
+    @apply rounded-card border border-ink-950/10 bg-surface shadow-sm transition-all duration-300 ease-premium;
+  }
+
+  .surface-card--interactive {
+    @apply hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md;
+  }
+
+  /* Container padding scale — mobile-first.
+     Section gutters, tinted panels, cards and inset blocks all nest on the same axis, so a chain
+     of fixed p-6/p-8 containers burns ~80px of gutter per side on a 375px screen and squeezes the
+     text into a column of broken words. Each level starts tight on phones and opens up from sm:.
+     Consume these instead of spelling out a fixed padding on a container. */
+  .pad-panel {
+    @apply p-3 sm:p-6 lg:p-10;
+  }
+
+  /* Outermost panel on sections whose design calls for a deep inset at desktop width. */
+  .pad-panel-lg {
+    @apply p-5 sm:p-8 lg:p-12;
+  }
+
+  /* Standard content card sitting inside a section or panel. */
+  .pad-card {
+    @apply p-4 sm:p-6 md:p-8;
+  }
+
+  /* Compact card: list rows, stat tiles, sidebar panels. */
+  .pad-card-sm {
+    @apply p-4 sm:p-5 md:p-6;
+  }
+
+  /* Innermost block — pull-quotes, figures, definition lists inside a card. */
+  .pad-inset {
+    @apply p-3 sm:p-4;
+  }
+}
+
 html {
   font-family: var(--font-sans);
   scroll-behavior: smooth;

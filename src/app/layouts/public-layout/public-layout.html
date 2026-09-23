@@ -11,7 +11,7 @@
         class="h-8 w-auto"
       />
     </a>
-    <nav class="hidden md:block">
+    <nav data-testid="desktop-nav" class="hidden md:block">
       <ul class="flex gap-6 text-sm text-white/60">
         @for (link of navLinks; track link.path) {
           <li>
@@ -27,13 +27,76 @@
         }
       </ul>
     </nav>
-    <app-button
-      label="Strategic Partnerships"
-      variant="primary"
-      routerLink="/partnerships"
-      ctaId="header-strategic-partnerships"
-    />
+    <div class="flex items-center gap-3">
+      <div class="hidden md:block">
+        <app-button
+          label="Strategic Partnerships"
+          variant="primary"
+          routerLink="/partnerships"
+          ctaId="header-strategic-partnerships"
+        />
+      </div>
+
+      <button
+        type="button"
+        data-testid="mobile-menu-toggle"
+        class="-mr-2 inline-flex h-10 w-10 items-center justify-center rounded text-white/80 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400 md:hidden"
+        [attr.aria-expanded]="menuOpen()"
+        aria-controls="mobile-nav"
+        [attr.aria-label]="menuOpen() ? 'Close menu' : 'Open menu'"
+        (click)="toggleMenu()"
+      >
+        <svg
+          class="h-6 w-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          @if (menuOpen()) {
+            <path d="M6 6l12 12M18 6L6 18" />
+          } @else {
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          }
+        </svg>
+      </button>
+    </div>
   </div>
+
+  @if (menuOpen()) {
+    <nav
+      id="mobile-nav"
+      data-testid="mobile-nav"
+      class="border-t border-white/10 px-4 pb-6 pt-4 md:hidden"
+    >
+      <ul class="flex flex-col gap-1 text-base text-white/70">
+        @for (link of navLinks; track link.path) {
+          <li>
+            <a
+              [routerLink]="link.path"
+              routerLinkActive="text-white font-semibold"
+              [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+              class="block rounded px-2 py-3 hover:bg-white/5 hover:text-white"
+              (click)="closeMenu()"
+            >
+              {{ link.label }}
+            </a>
+          </li>
+        }
+      </ul>
+      <app-button
+        class="mt-4 block"
+        label="Strategic Partnerships"
+        variant="primary"
+        routerLink="/partnerships"
+        ctaId="mobile-nav-strategic-partnerships"
+        [fullWidth]="true"
+        (pressed)="closeMenu()"
+      />
+    </nav>
+  }
 </header>
 
 <main>

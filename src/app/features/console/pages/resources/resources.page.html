@@ -1,0 +1,82 @@
+<div class="space-y-4">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-ink-950">Resources</h1>
+      <p class="text-sm text-slate-500">{{ resources().length }} publications filed</p>
+    </div>
+    <app-button label="+ New Resource" variant="primary" routerLink="/console/resources/new" />
+  </div>
+
+  @if (loading()) {
+    <p class="text-sm text-slate-500">Loading…</p>
+  } @else {
+    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+      <table class="w-full min-w-[720px] text-left text-sm">
+        <thead class="border-b border-slate-200 bg-slate-50">
+          <tr>
+            <th scope="col" class="px-4 py-3 font-medium text-slate-600">Document</th>
+            <th scope="col" class="px-4 py-3 font-medium text-slate-600">Batch Reference</th>
+            <th scope="col" class="px-4 py-3 font-medium text-slate-600">Uploaded</th>
+            <th scope="col" class="px-4 py-3 text-right font-medium text-slate-600">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (resource of resources(); track resource.id) {
+            <tr data-testid="resource-row" class="border-b border-slate-100 last:border-0">
+              <td class="px-4 py-4 align-top">
+                <div class="flex items-start gap-3">
+                  <span
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700"
+                    aria-hidden="true"
+                    >&#128196;</span
+                  >
+                  <div>
+                    <p class="font-medium text-ink-950">{{ resource.title }}</p>
+                    <p class="text-xs text-slate-500">
+                      PDF &bull; {{ formatSize(resource.fileSizeBytes) }} &bull;
+                      {{ resource.languages }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 align-top">
+                <span
+                  class="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800"
+                  >{{ resource.batchReference }}</span
+                >
+              </td>
+              <td class="px-4 py-4 align-top text-slate-600">
+                {{ formatDate(resource.uploadedAt) }}
+              </td>
+              <td class="px-4 py-4 text-right align-top">
+                <span class="inline-flex items-center gap-3">
+                  <a
+                    [routerLink]="['/console/resources']"
+                    class="font-medium text-brand-700 hover:text-brand-800"
+                    >Edit</a
+                  >
+                  <button
+                    type="button"
+                    data-testid="unpublish-btn"
+                    (click)="togglePublished(resource)"
+                    class="font-medium text-slate-600 hover:text-ink-950"
+                  >
+                    {{ resource.downloadUrl === null ? 'Publish' : 'Unpublish' }}
+                  </button>
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="px-4 py-8 text-center text-slate-500">No resources filed.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <p class="text-sm text-slate-500">
+    All records synced directly with Baobab customary treaty archive.
+  </p>
+</div>

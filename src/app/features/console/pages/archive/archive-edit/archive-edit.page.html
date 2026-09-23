@@ -1,0 +1,156 @@
+<div class="max-w-3xl space-y-4">
+  <p class="flex items-center gap-2 text-sm">
+    <a routerLink="/console/archive" class="text-slate-500 hover:text-ink-950"
+      >&larr; Treaties Archive</a
+    >
+    <span class="text-slate-300">/</span>
+    <span class="font-semibold text-ink-950">{{ isNew ? 'New Entry' : 'Edit Entry' }}</span>
+  </p>
+
+  <form
+    class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm"
+    (ngSubmit)="onSubmit()"
+    [formGroup]="form"
+  >
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div>
+        <label for="refCode" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+          >REF CODE</label
+        >
+        <input
+          id="refCode"
+          type="text"
+          formControlName="refCode"
+          placeholder="e.g. REF: BBG-LQ-2023-TRX"
+          class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        />
+        @if (form.controls.refCode.invalid && form.controls.refCode.touched) {
+          <p class="mt-1 text-sm text-red-600">Ref code is required.</p>
+        }
+      </div>
+
+      <div>
+        <label for="category" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+          >CATEGORY</label
+        >
+        <select
+          id="category"
+          formControlName="category"
+          class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        >
+          @for (category of categories; track category) {
+            <option [value]="category">{{ category }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label for="regionTag" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+          >REGION TAG</label
+        >
+        <input
+          id="regionTag"
+          type="text"
+          formControlName="regionTag"
+          placeholder="e.g. Sahel Central Basin"
+          class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        />
+        @if (form.controls.regionTag.invalid && form.controls.regionTag.touched) {
+          <p class="mt-1 text-sm text-red-600">Region tag is required.</p>
+        }
+      </div>
+
+      <div>
+        <label for="statusTag" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+          >STATUS TAG</label
+        >
+        <input
+          id="statusTag"
+          type="text"
+          formControlName="statusTag"
+          placeholder="e.g. Ratified: November 2023 · In Active Force"
+          class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        />
+        @if (form.controls.statusTag.invalid && form.controls.statusTag.touched) {
+          <p class="mt-1 text-sm text-red-600">Status tag is required.</p>
+        }
+      </div>
+    </div>
+
+    <div>
+      <label for="title" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >TITLE</label
+      >
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        placeholder="e.g. Liptako-Gourma Tri-Border Accord & Customary Grazing Charter"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.title.invalid && form.controls.title.touched) {
+        <p class="mt-1 text-sm text-red-600">Title is required.</p>
+      }
+    </div>
+
+    <div>
+      <label for="description" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >DESCRIPTION</label
+      >
+      <textarea
+        id="description"
+        formControlName="description"
+        rows="4"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      ></textarea>
+      @if (form.controls.description.invalid && form.controls.description.touched) {
+        <p class="mt-1 text-sm text-red-600">Description is required.</p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="ratifyingParties"
+        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >RATIFYING PARTIES</label
+      >
+      <input
+        id="ratifyingParties"
+        type="text"
+        formControlName="ratifyingParties"
+        placeholder="e.g. Delegations of Mali, Niger, Burkina Faso"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.ratifyingParties.invalid && form.controls.ratifyingParties.touched) {
+        <p class="mt-1 text-sm text-red-600">Ratifying parties is required.</p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="workingLanguages"
+        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >WORKING LANGUAGES</label
+      >
+      <input
+        id="workingLanguages"
+        type="text"
+        formControlName="workingLanguages"
+        placeholder="e.g. Français, Hausa, Fulfulde, Tamasheq"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.workingLanguages.invalid && form.controls.workingLanguages.touched) {
+        <p class="mt-1 text-sm text-red-600">Working languages is required.</p>
+      }
+    </div>
+
+    <div class="flex justify-end border-t border-slate-100 pt-4">
+      <app-button
+        [label]="isNew ? 'Create entry' : 'Save entry'"
+        type="submit"
+        variant="primary"
+        [disabled]="submitting"
+      />
+    </div>
+  </form>
+</div>

@@ -1,14 +1,30 @@
 @if (routerLink) {
-  <a [routerLink]="routerLink" [class]="baseClass + ' ' + variantClass" (click)="onRoutedClick()">
+  <a
+    [routerLink]="routerLink"
+    [class]="baseClass + ' ' + sizeClass + ' ' + variantClass"
+    (click)="onRoutedClick()"
+  >
+    <ng-content select="[icon]" />
+    {{ label }}
+  </a>
+} @else if (href) {
+  <a
+    [href]="href"
+    [attr.download]="download ? '' : null"
+    [class]="baseClass + ' ' + sizeClass + ' ' + variantClass"
+    (click)="onRoutedClick()"
+  >
+    <ng-content select="[icon]" />
     {{ label }}
   </a>
 } @else {
   <button
     [type]="type"
     [disabled]="disabled"
-    [class]="baseClass + ' ' + variantClass"
+    [class]="baseClass + ' ' + sizeClass + ' ' + variantClass"
     (click)="onClick()"
   >
+    <ng-content select="[icon]" />
     {{ label }}
   </button>
 }

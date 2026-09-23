@@ -1,0 +1,76 @@
+<div class="space-y-4">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-ink-950">Treaties Archive</h1>
+      <p class="text-sm text-slate-500">{{ entries().length }} accords filed</p>
+    </div>
+    <app-button label="+ New Entry" variant="primary" routerLink="/console/archive/new" />
+  </div>
+
+  @if (loading()) {
+    <p class="text-sm text-slate-500">Loading…</p>
+  } @else {
+    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+      <table class="w-full min-w-[720px] text-left text-sm">
+        <thead class="border-b border-slate-200 bg-slate-50">
+          <tr>
+            <th scope="col" class="px-4 py-3 font-medium text-slate-600">Accord</th>
+            <th scope="col" class="px-4 py-3 font-medium text-slate-600">Category</th>
+            <th scope="col" class="px-4 py-3 font-medium text-slate-600">Ref Code</th>
+            <th scope="col" class="px-4 py-3 text-right font-medium text-slate-600">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of entries(); track entry.id) {
+            <tr data-testid="archive-row" class="border-b border-slate-100 last:border-0">
+              <td class="px-4 py-4 align-top">
+                <p class="font-medium text-ink-950">{{ entry.title }}</p>
+                <p class="text-xs text-slate-500">
+                  {{ entry.regionTag }} &bull; {{ entry.statusTag }}
+                </p>
+              </td>
+              <td class="px-4 py-4 align-top">
+                <span
+                  class="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800"
+                  >{{ entry.category }}</span
+                >
+              </td>
+              <td class="px-4 py-4 align-top text-slate-600">{{ entry.refCode }}</td>
+              <td class="px-4 py-4 text-right align-top">
+                <span class="inline-flex items-center gap-3">
+                  <a
+                    [routerLink]="['/console/archive', entry.id]"
+                    class="font-medium text-brand-700 hover:text-brand-800"
+                    >Edit</a
+                  >
+                  <button
+                    type="button"
+                    data-testid="unpublish-btn"
+                    (click)="togglePublished(entry)"
+                    class="font-medium text-slate-600 hover:text-ink-950"
+                  >
+                    {{ entry.published ? 'Unpublish' : 'Publish' }}
+                  </button>
+                  <button
+                    type="button"
+                    data-testid="delete-btn"
+                    (click)="remove(entry)"
+                    class="font-medium text-red-600 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="px-4 py-8 text-center text-slate-500">
+                No archive entries filed.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,37 +1,82 @@
 <div class="min-h-screen bg-slate-50">
   @if (session(); as s) {
-    <header class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-      <nav class="flex items-center gap-6" aria-label="Registry Console">
-        <span class="text-sm font-semibold text-ink-950">Registry Console</span>
-        <a
-          routerLink="/console/submissions"
-          routerLinkActive="text-brand-600 font-medium"
-          class="text-sm text-slate-600 hover:text-ink-950"
-          >Submissions</a
+    <header class="flex items-center justify-between bg-ink-950 px-6 py-4">
+      <div class="flex items-center gap-3">
+        <a routerLink="/console" class="flex shrink-0 items-center">
+          <img
+            ngSrc="/images/shared/logo-baobab.png"
+            alt="Baobab"
+            width="260"
+            height="66"
+            appImgFadeIn
+            class="h-7 w-auto brightness-0 invert"
+          />
+        </a>
+        <span
+          class="rounded-full bg-brand-600 px-3 py-0.5 text-xs font-semibold tracking-wide text-white"
         >
-        <a
-          routerLink="/console/access-requests"
-          routerLinkActive="text-brand-600 font-medium"
-          class="text-sm text-slate-600 hover:text-ink-950"
-          >Access Requests</a
-        >
-      </nav>
+          Admin
+        </span>
+      </div>
       <div class="flex items-center gap-4">
-        <span class="text-sm text-slate-500">{{ s.email }}</span>
+        <a routerLink="/" class="text-sm text-white/60 hover:text-white">Back to website</a>
+        <span class="text-sm text-white/70">{{ s.email }}</span>
         <button
           type="button"
           (click)="signOut()"
-          class="text-sm font-medium text-slate-600 hover:text-ink-950"
+          class="text-sm font-medium text-white/70 hover:text-white"
         >
-          Sign out
+          Log out
         </button>
       </div>
     </header>
-  }
 
-  <main class="p-6">
+    <div class="flex">
+      <aside
+        class="min-h-[calc(100vh-65px)] w-56 shrink-0 border-r border-slate-200 bg-white px-4 py-6"
+      >
+        <p class="px-3 text-xs font-semibold tracking-wide text-slate-400">COLLECTIONS</p>
+        <nav class="mt-3 flex flex-col gap-1" aria-label="Registry Console">
+          <a
+            routerLink="/console/submissions"
+            routerLinkActive="border-brand-600 bg-brand-50 font-medium text-brand-700"
+            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+            >Submissions</a
+          >
+          <a
+            routerLink="/console/access-requests"
+            routerLinkActive="border-brand-600 bg-brand-50 font-medium text-brand-700"
+            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+            >Access Requests</a
+          >
+          <a
+            routerLink="/console/programs"
+            routerLinkActive="border-brand-600 bg-brand-50 font-medium text-brand-700"
+            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+            >Programs</a
+          >
+          <a
+            routerLink="/console/resources"
+            routerLinkActive="border-brand-600 bg-brand-50 font-medium text-brand-700"
+            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+            >Resources</a
+          >
+          <a
+            routerLink="/console/archive"
+            routerLinkActive="border-brand-600 bg-brand-50 font-medium text-brand-700"
+            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+            >Treaties Archive</a
+          >
+        </nav>
+      </aside>
+
+      <main class="flex-1 p-4 sm:p-6">
+        <router-outlet />
+      </main>
+    </div>
+  } @else {
     <router-outlet />
-  </main>
+  }
 
   <app-toast-container />
 </div>

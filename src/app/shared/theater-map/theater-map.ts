@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Card } from '../ui/card/card';
+import { FilterPills } from '../ui/filter-pills/filter-pills';
 
 export interface TheaterEntry {
   name: string;
@@ -20,12 +21,18 @@ const ALL = 'All';
 @Component({
   selector: 'app-theater-map',
   standalone: true,
-  imports: [Card, RouterLink],
+  imports: [Card, RouterLink, FilterPills],
   templateUrl: './theater-map.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TheaterMap {
-  @Input() allLabel = 'All';
+  @Input() set allLabel(value: string) {
+    this._allLabel.set(value);
+  }
+  get allLabel(): string {
+    return this._allLabel();
+  }
+  private readonly _allLabel = signal('All');
   @Input() dataUnavailable = false;
 
   @Input() set theaters(value: TheaterEntry[]) {
@@ -43,6 +50,19 @@ export class TheaterMap {
     ALL,
     ...Array.from(new Set(this._theaters().map((t) => t.theater))),
   ]);
+
+  /** Pill labels as shown, with the sentinel "All" rendered as `allLabel`. */
+  readonly displayPills = computed(() =>
+    this.filterPills().map((pill) => (pill === ALL ? this._allLabel() : pill)),
+  );
+
+  readonly activeDisplayPill = computed(() =>
+    this.activeFilter() === ALL ? this._allLabel() : this.activeFilter(),
+  );
+
+  selectDisplayPill(label: string): void {
+    this.setFilter(label === this._allLabel() ? ALL : label);
+  }
 
   readonly filteredTheaters = computed(() => {
     const filter = this.activeFilter();

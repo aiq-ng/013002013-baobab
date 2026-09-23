@@ -1,14 +1,23 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AboutPage } from './about.page';
 
 describe('AboutPage', () => {
+  let httpMock: HttpTestingController;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [AboutPage],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('creates', () => {
@@ -21,6 +30,7 @@ describe('AboutPage', () => {
     fixture.detectChanges();
     const title = TestBed.inject(Title).getTitle();
     expect(title).toContain('About Us');
+    httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
   });
 
   it('renders the hero, mission/vision panel, program grid, and theater section', () => {
@@ -32,5 +42,6 @@ describe('AboutPage', () => {
     expect(text).toContain('Active Programs & Theaters');
     expect(text).toContain('Liptako-Gourma Peace Corridor');
     expect(text).toContain('All Theaters');
+    httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
   });
 });

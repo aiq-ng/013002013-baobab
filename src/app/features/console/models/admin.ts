@@ -36,3 +36,67 @@ export interface AdminAccessRequest {
   state: AccessRequestState;
   createdAt: string;
 }
+
+export interface AdminProgram {
+  slug: string;
+  sortOrder: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  updatedAt: string;
+}
+
+export interface AdminMetadataItem {
+  label: string;
+  value: string;
+  accent: boolean;
+}
+
+export interface AdminResource {
+  id: string;
+  title: string;
+  batchReference: string;
+  languages: string;
+  fileSizeBytes: number;
+  uploadedAt: string;
+  downloadUrl: string | null;
+  /** Codex details (migration 0006): drives the public Resource Highlight card. */
+  batchLabel: string;
+  releaseTag: string;
+  documentDateLabel: string;
+  description: string;
+  chapters: string[];
+  excerptHeading: string;
+  excerptQuote: string;
+  excerptAttribution: string;
+  onlineUrl: string;
+  metadata: AdminMetadataItem[];
+}
+
+export type ArchiveCategory = 'Transhumance' | 'Riparian & Water';
+
+export interface AdminArchiveEntry {
+  id: string;
+  refCode: string;
+  regionTag: string;
+  statusTag: string;
+  title: string;
+  description: string;
+  ratifyingParties: string;
+  workingLanguages: string;
+  category: ArchiveCategory;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ArchiveEntryWrite {
+  refCode: string;
+  regionTag: string;
+  statusTag: string;
+  title: string;
+  description: string;
+  ratifyingParties: string;
+  workingLanguages: string;
+  category: ArchiveCategory;
+}
