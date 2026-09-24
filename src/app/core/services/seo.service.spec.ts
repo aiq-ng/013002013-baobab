@@ -51,4 +51,20 @@ describe('SeoService', () => {
     service.update({ title: 'Not Found', description: 'Missing page.', noIndex: true });
     expect(meta.getTag('name="robots"')?.content).toBe('noindex, nofollow');
   });
+
+  it("clears a previous page's noindex, og:image and og:url on the next update", () => {
+    service.update({
+      title: 'Console',
+      description: 'Admin.',
+      noIndex: true,
+      image: '/og.png',
+      url: 'https://example.org/console',
+    });
+
+    service.update({ title: 'Programs', description: 'Public page.' });
+
+    expect(meta.getTag('name="robots"')).toBeNull();
+    expect(meta.getTag('property="og:image"')).toBeNull();
+    expect(meta.getTag('property="og:url"')).toBeNull();
+  });
 });

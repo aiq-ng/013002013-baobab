@@ -23,14 +23,22 @@ export class SeoService {
     this.meta.updateTag({ property: 'og:description', content: data.description });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
 
+    // Optional tags are removed when absent: Meta persists across client-side
+    // navigations, so a previous page's noindex or image would otherwise stick.
     if (data.image) {
       this.meta.updateTag({ property: 'og:image', content: data.image });
+    } else {
+      this.meta.removeTag('property="og:image"');
     }
     if (data.url) {
       this.meta.updateTag({ property: 'og:url', content: data.url });
+    } else {
+      this.meta.removeTag('property="og:url"');
     }
     if (data.noIndex) {
       this.meta.updateTag({ name: 'robots', content: 'noindex, nofollow' });
+    } else {
+      this.meta.removeTag('name="robots"');
     }
   }
 }
