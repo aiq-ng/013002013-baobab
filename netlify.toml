@@ -6,15 +6,6 @@
 [[plugins]]
   package = "@netlify/angular-runtime"
 
-# Proxy API calls to the backend so requests are same-origin in production —
-# the Registry Console session/CSRF cookies are SameSite=Strict and would be
-# silently dropped by the browser on a genuinely cross-site request.
-[[redirects]]
-  from = "/api/*"
-  to = "https://baobab-backend.fastapicloud.dev/api/:splat"
-  status = 200
-  force = true
-
 # Registry Console hardening — mirrors src/app/core/security/console-security-headers.ts, which
 # applies the same set to responses rendered by the Angular server handler.
 [[headers]]
