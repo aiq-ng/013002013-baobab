@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ProgramsListPage } from './programs-list.page';
+import { makeProgram } from './testing/program-fixture';
 
 describe('ProgramsListPage', () => {
   let httpMock: HttpTestingController;
@@ -32,38 +33,43 @@ describe('ProgramsListPage', () => {
     httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
   });
 
-  it('renders the hero, pillars, program grid, theater map, and dialogue form from the static fallback before the registry responds', () => {
+  it('renders the hero, pillars, theater map, and dialogue form while the registry loads', () => {
     const fixture = TestBed.createComponent(ProgramsListPage);
     fixture.detectChanges();
     const text = fixture.nativeElement.textContent;
     expect(text).toContain("We're building an enduring peace");
     expect(text).toContain('The Four Strategic Pillars');
     expect(text).toContain('Active Programs & Theaters');
-    expect(text).toContain('Liptako-Gourma Peace Corridor');
     expect(text).toContain('All Theaters');
     expect(text).toContain('Receive Verified Field Dispatches');
     httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
   });
 
-  it('renders the registry title once GET /programs responds', async () => {
+  it('renders exactly the programs GET /programs returns', async () => {
     const fixture = TestBed.createComponent(ProgramsListPage);
     fixture.detectChanges();
 
     httpMock
       .expectOne((r) => r.url.endsWith('/programs'))
-      .flush([
-        {
-          slug: 'liptako-gourma-peace-corridor',
-          sortOrder: 0,
-          title: 'Registry-Updated Corridor Title',
-          description: 'Updated from the registry.',
-          imageUrl: '/images/updated.jpg',
-          updatedAt: '2026-01-01T00:00:00Z',
-        },
-      ]);
+      .flush([makeProgram({ slug: 'new-one', title: 'A Program Created In The Console' })]);
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Registry-Updated Corridor Title');
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toContain('A Program Created In The Console');
+    expect(el.querySelector('a[href="/programs/new-one"]')).toBeTruthy();
+  });
+
+  it('says programs are unavailable when the registry cannot be reached', async () => {
+    const fixture = TestBed.createComponent(ProgramsListPage);
+    fixture.detectChanges();
+
+    httpMock
+      .expectOne((r) => r.url.endsWith('/programs'))
+      .flush('down', { status: 503, statusText: 'Service Unavailable' });
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('temporarily unavailable');
   });
 });

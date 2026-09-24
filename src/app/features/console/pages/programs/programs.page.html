@@ -4,17 +4,15 @@
       <p class="text-xs font-semibold tracking-wide text-brand-600">SECRETARIAT REPOSITORIES</p>
       <h1 class="text-3xl font-bold text-ink-950">Programs</h1>
     </div>
-    <span
-      class="whitespace-nowrap rounded-full bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-800"
-    >
-      {{ programs().length }} of 6 Mandatory Strategic Portfolios
-    </span>
+    <div class="flex flex-wrap items-center justify-end gap-3">
+      <span
+        class="whitespace-nowrap rounded-full bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-800"
+      >
+        {{ programs().length }} Strategic Portfolios
+      </span>
+      <app-button label="+ New Program" variant="primary" routerLink="/console/programs/new" />
+    </div>
   </div>
-
-  <p class="flex items-center gap-2 text-sm text-slate-500">
-    <span aria-hidden="true">&#9432;</span>
-    Programs is a fixed set of 6 (edit content only)
-  </p>
 
   @if (loading()) {
     <p class="text-sm text-slate-500">Loading…</p>
@@ -51,12 +49,22 @@
                 {{ truncate(program.description) }}
               </td>
               <td class="px-4 py-4 text-right align-top">
-                <a
-                  data-testid="program-edit-link"
-                  [routerLink]="['/console/programs', program.slug]"
-                  class="font-medium text-brand-700 hover:text-brand-800"
-                  >Edit &rarr;</a
-                >
+                <span class="inline-flex items-center gap-3">
+                  <a
+                    data-testid="program-edit-link"
+                    [routerLink]="['/console/programs', program.slug]"
+                    class="font-medium text-brand-700 hover:text-brand-800"
+                    >Edit &rarr;</a
+                  >
+                  <button
+                    type="button"
+                    data-testid="program-delete-btn"
+                    (click)="askDelete(program)"
+                    class="font-medium text-red-600 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </span>
               </td>
             </tr>
           } @empty {
@@ -69,8 +77,33 @@
     </div>
   }
 
-  <p class="text-sm text-slate-500">
-    Fixed institutional registry — additions, deletions, and structural reordering are permanently
-    disabled.
-  </p>
+  <app-modal [open]="pendingDelete() !== null" label="Delete program" (closed)="cancelDelete()">
+    @if (pendingDelete(); as program) {
+      <h2 class="text-lg font-semibold text-ink-950">Delete {{ program.title }}?</h2>
+      <p class="mt-2 text-sm text-slate-600">
+        Its public page at /programs/{{ program.slug }} will stop working immediately. This cannot
+        be undone.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <button
+          type="button"
+          data-testid="cancel-delete-btn"
+          (click)="cancelDelete()"
+          [disabled]="deleting()"
+          class="ghost-pill px-6 py-3"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          data-testid="confirm-delete-btn"
+          (click)="confirmDelete()"
+          [disabled]="deleting()"
+          class="rounded-full bg-red-600 px-6 py-3 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+        >
+          {{ deleting() ? 'Deleting…' : 'Delete program' }}
+        </button>
+      </div>
+    }
+  </app-modal>
 </div>

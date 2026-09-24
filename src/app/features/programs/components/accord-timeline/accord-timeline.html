@@ -5,7 +5,7 @@
     <p class="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">{{ description }}</p>
 
     <div class="mt-10 max-w-2xl">
-      @for (milestone of milestones; track milestone.title; let last = $last) {
+      @for (milestone of milestones; track $index; let last = $last) {
         <app-timeline-item
           [date]="milestone.date"
           [kicker]="milestone.kicker"

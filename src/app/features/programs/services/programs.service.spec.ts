@@ -2,8 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { ProgramsService } from './programs.service';
 import { ProgramsApi } from './programs.api';
-import { PROGRAMS } from '../data/programs.data';
-import { RemoteProgram } from '../models/program';
+import { makeProgram } from '../testing/program-fixture';
 
 describe('ProgramsService', () => {
   function setup(list: () => ReturnType<ProgramsApi['list']>) {
@@ -13,40 +12,54 @@ describe('ProgramsService', () => {
     return TestBed.inject(ProgramsService);
   }
 
-  it('starts with the static fixture so the page never renders empty', () => {
+  it('starts empty and idle', () => {
     const service = setup(() => of([]));
-    expect(service.programs()).toEqual(PROGRAMS);
+    expect(service.programs()).toEqual([]);
+    expect(service.status()).toBe('idle');
   });
 
-  it('merges the console-editable fields onto the matching static program by slug', async () => {
-    const remote: RemoteProgram[] = [
-      {
-        slug: PROGRAMS[0].slug,
-        sortOrder: 0,
-        title: 'Updated Title',
-        description: 'Updated description.',
-        imageUrl: '/images/updated.jpg',
-        updatedAt: '2026-01-01T00:00:00Z',
-      },
-    ];
+  it('holds exactly what the registry returns — no local fixture merged in', async () => {
+    const remote = [makeProgram({ slug: 'a' }), makeProgram({ slug: 'b' })];
     const service = setup(() => of(remote));
 
     await service.load();
 
-    const [first, ...rest] = service.programs();
-    expect(first.title).toBe('Updated Title');
-    expect(first.description).toBe('Updated description.');
-    expect(first.imageUrl).toBe('/images/updated.jpg');
-    // Unrelated fixed content untouched.
-    expect(first.kpis).toEqual(PROGRAMS[0].kpis);
-    expect(rest).toEqual(PROGRAMS.slice(1));
+    expect(service.programs()).toEqual(remote);
+    expect(service.status()).toBe('loaded');
   });
 
-  it('keeps the static fallback on a failed fetch', async () => {
-    const service = setup(() => throwError(() => new Error('network down')));
+  it('is loading while the request is in flight', () => {
+    const service = setup(() => of([]));
+    let seen: string | undefined;
+    TestBed.inject(ProgramsApi).list = () => {
+      seen = service.status();
+      return of([]);
+    };
 
+    void service.load();
+
+    expect(seen).toBe('loading');
+  });
+
+  it('reports an error on a failed fetch and keeps any previously loaded list', async () => {
+    let fail = false;
+    const service = setup(() =>
+      fail ? throwError(() => new Error('network down')) : of([makeProgram()]),
+    );
     await service.load();
 
-    expect(service.programs()).toEqual(PROGRAMS);
+    fail = true;
+    await service.load();
+
+    expect(service.status()).toBe('error');
+    expect(service.programs()).toHaveLength(1);
+  });
+
+  it('findLoaded returns a cached program by slug, or undefined', async () => {
+    const service = setup(() => of([makeProgram({ slug: 'a' })]));
+    await service.load();
+
+    expect(service.findLoaded('a')?.slug).toBe('a');
+    expect(service.findLoaded('missing')).toBeUndefined();
   });
 });

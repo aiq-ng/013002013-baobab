@@ -1,28 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ProgramPillar } from '../../models/program';
+import { PILLAR_ICONS, PillarIconKey } from '../../models/pillar-icons';
 
-type PillarIconKey =
-  | 'clock'
-  | 'handshake'
-  | 'shield'
-  | 'speech'
-  | 'clipboard'
-  | 'signal'
-  | 'building'
-  | 'calendar'
-  | 'leaf';
-
-const ICON_KEY_BY_EMOJI: Record<string, PillarIconKey> = {
-  '🕒': 'clock',
-  '🤝': 'handshake',
-  '🛡️': 'shield',
-  '🗣️': 'speech',
-  '📋': 'clipboard',
-  '📡': 'signal',
-  '🏗️': 'building',
-  '🗓️': 'calendar',
-  '🌿': 'leaf',
-};
+const ICON_KEY_BY_EMOJI: Record<string, PillarIconKey> = Object.fromEntries(
+  PILLAR_ICONS.map((icon) => [icon.emoji, icon.key]),
+);
 
 /** "Codified Operational Pillars" — 3-column governance architecture section. */
 @Component({

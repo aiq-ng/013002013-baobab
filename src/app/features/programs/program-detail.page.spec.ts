@@ -1,25 +1,27 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { vi } from 'vitest';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ProgramDetailPage } from './program-detail.page';
+import { Program } from './models/program';
+import { makeProgram } from './testing/program-fixture';
 
-function configureWithSlug(slug: string | null) {
+function configureWithResolved(program: Program | null) {
   TestBed.configureTestingModule({
     imports: [ProgramDetailPage],
     providers: [
       provideRouter([]),
-      {
-        provide: ActivatedRoute,
-        useValue: { snapshot: { paramMap: convertToParamMap(slug ? { slug } : {}) } },
-      },
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      { provide: ActivatedRoute, useValue: { snapshot: { data: { program } } } },
     ],
   });
 }
 
 describe('ProgramDetailPage', () => {
-  it('renders the matched program (hero, KPIs, doctrine, pillars, timeline, dispatch form)', () => {
-    configureWithSlug('gourma-pastoral-wells-demarcation');
+  it('renders the resolved program (hero, KPIs, doctrine, pillars, timeline, dispatch form)', () => {
+    configureWithResolved(makeProgram());
     const fixture = TestBed.createComponent(ProgramDetailPage);
     fixture.detectChanges();
 
@@ -33,7 +35,7 @@ describe('ProgramDetailPage', () => {
   });
 
   it('sets the page title via SeoService on init', () => {
-    configureWithSlug('gourma-pastoral-wells-demarcation');
+    configureWithResolved(makeProgram());
     const fixture = TestBed.createComponent(ProgramDetailPage);
     fixture.detectChanges();
     expect(TestBed.inject(Title).getTitle()).toContain(
@@ -41,15 +43,14 @@ describe('ProgramDetailPage', () => {
     );
   });
 
-  it('redirects to not-found for an unknown slug', () => {
-    configureWithSlug('not-a-real-program');
+  it('shows an unavailable state with a way back when the registry could not be reached', () => {
+    configureWithResolved(null);
     const fixture = TestBed.createComponent(ProgramDetailPage);
-    const router = TestBed.inject(Router);
-    const navigateSpy = vi.spyOn(router, 'navigate');
-
     fixture.detectChanges();
 
-    expect(navigateSpy).toHaveBeenCalledWith(['/not-found']);
-    expect(fixture.nativeElement.querySelector('article')).toBeFalsy();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('article')).toBeFalsy();
+    expect(el.textContent).toContain('temporarily unavailable');
+    expect(el.querySelector('a[href="/programs"]')).toBeTruthy();
   });
 });

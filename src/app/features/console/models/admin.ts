@@ -1,3 +1,5 @@
+import { Program, ProgramContent } from '../../programs/models/program';
+
 export interface AdminSession {
   email: string;
   role: string;
@@ -37,14 +39,14 @@ export interface AdminAccessRequest {
   createdAt: string;
 }
 
-export interface AdminProgram {
-  slug: string;
-  sortOrder: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  updatedAt: string;
-}
+/** Console and public site share one program shape — the console edits every field. */
+export type AdminProgram = Program;
+
+/** Body for `PUT /admin/programs/:slug` — the slug is the public URL and never changes. */
+export type ProgramWrite = ProgramContent;
+
+/** Body for `POST /admin/programs`. */
+export type ProgramCreate = ProgramContent & { slug: string };
 
 export interface AdminMetadataItem {
   label: string;

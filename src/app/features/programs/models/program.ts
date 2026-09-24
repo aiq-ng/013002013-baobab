@@ -1,26 +1,11 @@
-/**
- * The subset of a program that's actually stored in and editable via the
- * backend (`GET /api/v1/programs` — see console's "content-only editing").
- * Everything else on `Program` (kpis, pillars, milestones, doctrine copy) is
- * fixed per-program content that has no backend representation.
- */
-export interface RemoteProgram {
-  slug: string;
-  sortOrder: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  updatedAt: string;
-}
-
 /** A single named number used in KPI stat rows and inline doctrine stats. */
 export interface ProgramStat {
   value: string;
-  unit?: string;
+  unit?: string | null;
   label: string;
 }
 
-/** One of a program's three codified operational pillars. */
+/** One of a program's codified operational pillars (up to three). */
 export interface ProgramPillar {
   icon: string;
   eyebrow: string;
@@ -39,17 +24,17 @@ export interface ProgramMilestone {
 }
 
 /**
- * Full data-driven record for one program. `program/:slug` renders a single
- * detail template against whichever record matches the route slug.
+ * Every editable field of a program — the body the Registry Console sends to
+ * `PUT /admin/programs/:slug`. List bounds are enforced server-side to fit the
+ * detail layout: 1–4 KPIs, 1–3 doctrine stats, 1–3 pillars.
  */
-export interface Program {
-  slug: string;
-  theater: string;
-  badgeText: string;
-  imageUrl: string;
-  imageAlt: string;
+export interface ProgramContent {
   title: string;
   description: string;
+  imageUrl: string;
+  imageAlt: string;
+  theater: string;
+  badgeText: string;
 
   referenceCode: string;
   clearanceLevel: string;
@@ -76,4 +61,15 @@ export interface Program {
 
   dispatchHeading: string;
   dispatchSubtext: string;
+}
+
+/**
+ * Full program record as served by `GET /api/v1/programs[/:slug]`.
+ * `program/:slug` renders a single detail template against whichever record
+ * matches the route slug.
+ */
+export interface Program extends ProgramContent {
+  slug: string;
+  sortOrder: number;
+  updatedAt: string;
 }

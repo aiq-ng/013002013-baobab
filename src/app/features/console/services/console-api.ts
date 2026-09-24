@@ -11,6 +11,8 @@ import {
   AdminResource,
   AdminSession,
   ArchiveEntryWrite,
+  ProgramCreate,
+  ProgramWrite,
   SubmissionStatus,
 } from '../models/admin';
 import { environment } from '../../../../environments/environment';
@@ -109,11 +111,22 @@ export class ConsoleApi {
     return this.api.get<AdminProgram[]>('admin/programs', { withCredentials: true });
   }
 
-  updateProgram(
-    slug: string,
-    patch: { title: string; description: string },
-  ): Observable<AdminProgram> {
-    return this.api.put<AdminProgram>(`admin/programs/${slug}`, patch, {
+  createProgram(program: ProgramCreate): Observable<AdminProgram> {
+    return this.api.post<AdminProgram>('admin/programs', program, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
+  }
+
+  updateProgram(slug: string, content: ProgramWrite): Observable<AdminProgram> {
+    return this.api.put<AdminProgram>(`admin/programs/${encodeURIComponent(slug)}`, content, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
+  }
+
+  deleteProgram(slug: string): Observable<void> {
+    return this.api.delete<void>(`admin/programs/${encodeURIComponent(slug)}`, {
       withCredentials: true,
       headers: this.csrfHeaders(),
     });

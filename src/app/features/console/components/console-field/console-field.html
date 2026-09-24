@@ -1,0 +1,25 @@
+<div>
+  <label [for]="fieldId" class="console-label">{{ label }}</label>
+  @if (rows > 0) {
+    <textarea
+      [id]="fieldId"
+      [rows]="rows"
+      [formControl]="control"
+      [placeholder]="placeholder"
+      [attr.aria-invalid]="error ? 'true' : null"
+      class="console-input"
+    ></textarea>
+  } @else {
+    <input
+      [id]="fieldId"
+      type="text"
+      [formControl]="control"
+      [placeholder]="placeholder"
+      [attr.aria-invalid]="error ? 'true' : null"
+      class="console-input"
+    />
+  }
+  @if (error; as message) {
+    <p role="alert" class="mt-1 text-sm text-red-600">{{ message }}</p>
+  }
+</div>

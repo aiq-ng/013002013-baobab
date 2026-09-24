@@ -10,6 +10,8 @@ import {
   AdminResource,
   AdminSession,
   ArchiveEntryWrite,
+  ProgramCreate,
+  ProgramWrite,
   SubmissionStatus,
 } from '../models/admin';
 
@@ -144,8 +146,18 @@ export class ConsoleStore {
     }
   }
 
-  async saveProgram(slug: string, patch: { title: string; description: string }): Promise<void> {
-    await firstValueFrom(this.api.updateProgram(slug, patch));
+  async createProgram(program: ProgramCreate): Promise<void> {
+    await firstValueFrom(this.api.createProgram(program));
+    await this.loadPrograms();
+  }
+
+  async saveProgram(slug: string, content: ProgramWrite): Promise<void> {
+    await firstValueFrom(this.api.updateProgram(slug, content));
+    await this.loadPrograms();
+  }
+
+  async deleteProgram(slug: string): Promise<void> {
+    await firstValueFrom(this.api.deleteProgram(slug));
     await this.loadPrograms();
   }
 
