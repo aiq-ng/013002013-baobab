@@ -9,7 +9,7 @@ import {
 import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Button } from '../../../../shared/ui/button/button';
 import { SeoService } from '../../../../core/services/seo.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -20,7 +20,7 @@ import { describeApiError } from '../../utils/api-error';
 @Component({
   selector: 'app-console-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, NgOptimizedImage],
+  imports: [ReactiveFormsModule, Button, NgOptimizedImage, RouterLink],
   templateUrl: './sign-in.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
