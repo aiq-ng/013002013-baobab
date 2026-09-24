@@ -1,58 +1,58 @@
 <div data-testid="list-frame" class="console-table-frame overflow-hidden">
   <ng-content select="[toolbar]" />
   <div role="region" tabindex="0" [attr.aria-label]="caption()" class="console-scroll-region">
-  <table class="console-table md:min-w-[640px]" [attr.aria-busy]="loading() ? 'true' : null">
-    <caption class="sr-only">
-      {{
-        caption()
-      }}
-    </caption>
-    <thead>
-      <tr>
-        @for (column of columns(); track column.key) {
-          <th scope="col" [class.max-md:hidden]="column.hideOnMobile">{{ column.header }}</th>
-        }
-      </tr>
-    </thead>
-    <tbody>
-      @if (loading()) {
+    <table class="console-table md:min-w-[640px]" [attr.aria-busy]="loading() ? 'true' : null">
+      <caption class="sr-only">
+        {{
+          caption()
+        }}
+      </caption>
+      <thead>
         <tr>
-          <td [attr.colspan]="columns().length" class="!p-0">
-            <app-table-skeleton [rows]="5" [label]="'Loading ' + caption().toLowerCase()" />
-          </td>
+          @for (column of columns(); track column.key) {
+            <th scope="col" [class.max-md:hidden]="column.hideOnMobile">{{ column.header }}</th>
+          }
         </tr>
-      } @else {
-        @for (row of rows(); track rowKey()(row)) {
-          <tr class="console-table__row--interactive" (click)="activate(row)">
-            @for (column of columns(); track column.key; let first = $first) {
-              <td [class.max-md:hidden]="column.hideOnMobile">
-                @if (first) {
-                  <button
-                    type="button"
-                    class="console-link text-left font-medium"
-                    [attr.aria-label]="rowLabel()(row)"
-                    (click)="onButtonClick($event, row)"
-                  >
-                    {{ column.cell(row) }}
-                  </button>
-                } @else if (column.tone && column.tone(row); as tone) {
-                  <span class="tone-badge" [attr.data-tone]="tone">{{ column.cell(row) }}</span>
-                } @else {
-                  {{ column.cell(row) }}
-                }
-              </td>
-            }
-          </tr>
-        } @empty {
+      </thead>
+      <tbody>
+        @if (loading()) {
           <tr>
-            <td [attr.colspan]="columns().length" class="!py-12 text-center text-console-muted">
-              {{ emptyMessage() }}
+            <td [attr.colspan]="columns().length" class="!p-0">
+              <app-table-skeleton [rows]="5" [label]="'Loading ' + caption().toLowerCase()" />
             </td>
           </tr>
+        } @else {
+          @for (row of rows(); track rowKey()(row)) {
+            <tr class="console-table__row--interactive" (click)="activate(row)">
+              @for (column of columns(); track column.key; let first = $first) {
+                <td [class.max-md:hidden]="column.hideOnMobile">
+                  @if (first) {
+                    <button
+                      type="button"
+                      class="console-link text-left font-medium"
+                      [attr.aria-label]="rowLabel()(row)"
+                      (click)="onButtonClick($event, row)"
+                    >
+                      {{ column.cell(row) }}
+                    </button>
+                  } @else if (column.tone && column.tone(row); as tone) {
+                    <span class="tone-badge" [attr.data-tone]="tone">{{ column.cell(row) }}</span>
+                  } @else {
+                    {{ column.cell(row) }}
+                  }
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="columns().length" class="!py-12 text-center text-console-muted">
+                {{ emptyMessage() }}
+              </td>
+            </tr>
+          }
         }
-      }
-    </tbody>
-  </table>
+      </tbody>
+    </table>
   </div>
   <ng-content select="[footer]" />
 </div>
