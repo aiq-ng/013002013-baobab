@@ -24,15 +24,15 @@
       <p class="mb-3 text-xs font-semibold tracking-wide text-slate-500">RESOURCE DOCUMENT</p>
       <label
         for="file-input"
-        class="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-slate-200 px-6 py-10 text-center hover:border-brand-400"
+        class="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-slate-200 px-6 py-10 text-center hover:border-console-accent"
       >
-        <span aria-hidden="true" class="text-2xl text-brand-600">&#8593;</span>
+        <span aria-hidden="true" class="text-2xl text-console-accent">&#8593;</span>
         <span class="font-medium text-ink-950">Drop PDF here or click to browse</span>
         <span class="text-sm text-slate-500"
           >Accepts single treaty dossier or publication (PDF only)</span
         >
         @if (file(); as f) {
-          <span class="text-sm font-medium text-brand-700">{{ f.name }}</span>
+          <span class="text-sm font-medium text-console-accent">{{ f.name }}</span>
         }
       </label>
       <input
@@ -56,7 +56,7 @@
         type="text"
         formControlName="title"
         placeholder="e.g. 2025 Sovereign Partnership Protocol"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       <p class="mt-1 text-sm text-slate-500">What displays on the public Resources page</p>
       @if (form.controls.title.invalid && form.controls.title.touched) {
@@ -75,7 +75,7 @@
         type="text"
         formControlName="batchReference"
         placeholder="e.g. Batch 12"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       <p class="mt-1 text-sm text-slate-500">Free-typed reference batch number</p>
       @if (form.controls.batchReference.invalid && form.controls.batchReference.touched) {
@@ -92,7 +92,7 @@
         type="text"
         formControlName="batchLabel"
         placeholder="e.g. Annual Codex · Vol. IX"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.batchLabel.invalid && form.controls.batchLabel.touched) {
         <p class="mt-1 text-sm text-red-600">Batch label is required.</p>
@@ -108,7 +108,7 @@
         type="text"
         formControlName="releaseTag"
         placeholder="e.g. Permanent Archive Release"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.releaseTag.invalid && form.controls.releaseTag.touched) {
         <p class="mt-1 text-sm text-red-600">Release tag is required.</p>
@@ -126,7 +126,7 @@
         type="text"
         formControlName="documentDateLabel"
         placeholder="e.g. Annual Statecraft Review (2024-2025)"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.documentDateLabel.invalid && form.controls.documentDateLabel.touched) {
         <p class="mt-1 text-sm text-red-600">Document date label is required.</p>
@@ -142,7 +142,7 @@
         formControlName="description"
         rows="4"
         placeholder="A definitive strategic audit synthesis…"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       ></textarea>
       @if (form.controls.description.invalid && form.controls.description.touched) {
         <p class="mt-1 text-sm text-red-600">Description is required.</p>
@@ -158,7 +158,7 @@
         formControlName="chapters"
         rows="4"
         placeholder="One chapter per line, e.g.&#10;Ch. I: Sultanate Water Rights"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       ></textarea>
       <p class="mt-1 text-sm text-slate-500">One chapter per line</p>
       @if (form.controls.chapters.invalid && form.controls.chapters.touched) {
@@ -177,7 +177,7 @@
         type="text"
         formControlName="excerptHeading"
         placeholder="e.g. Excerpt: Article 14.3"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.excerptHeading.invalid && form.controls.excerptHeading.touched) {
         <p class="mt-1 text-sm text-red-600">Excerpt heading is required.</p>
@@ -195,7 +195,7 @@
         formControlName="excerptQuote"
         rows="3"
         placeholder="Where state cadastral maps diverge…"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       ></textarea>
       @if (form.controls.excerptQuote.invalid && form.controls.excerptQuote.touched) {
         <p class="mt-1 text-sm text-red-600">Excerpt quote is required.</p>
@@ -213,7 +213,7 @@
         type="text"
         formControlName="excerptAttribution"
         placeholder="e.g. — Dakar Secretariat Depositary"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.excerptAttribution.invalid && form.controls.excerptAttribution.touched) {
         <p class="mt-1 text-sm text-red-600">Excerpt attribution is required.</p>
@@ -229,7 +229,7 @@
         type="text"
         formControlName="onlineUrl"
         placeholder="e.g. /documents/annual-statecraft-review-2024-25.html"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.onlineUrl.invalid && form.controls.onlineUrl.touched) {
         <p class="mt-1 text-sm text-red-600">Online URL is required.</p>
@@ -246,7 +246,7 @@
                 type="text"
                 formControlName="label"
                 placeholder="Label"
-                class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+                class="console-input"
               />
               @if (row.get('label')?.invalid && row.get('label')?.touched) {
                 <p class="mt-1 text-sm text-red-600">Label is required.</p>
@@ -257,7 +257,7 @@
                 type="text"
                 formControlName="value"
                 placeholder="Value"
-                class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+                class="console-input"
               />
               @if (row.get('value')?.invalid && row.get('value')?.touched) {
                 <p class="mt-1 text-sm text-red-600">Value is required.</p>
@@ -276,7 +276,7 @@
       <app-button
         label="Publish resource"
         type="submit"
-        variant="primary"
+        variant="console"
         [disabled]="submitting"
       />
     </div>

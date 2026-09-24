@@ -24,6 +24,14 @@
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
+  /* Registry Console palette — sampled from design/admin/*.png, which use a lighter accent green and
+     a warm grey for secondary text than the public site's brand scale. */
+  --color-console-accent: #239e66;
+  --color-console-accent-hover: #1c8656;
+  --color-console-muted: #585f68;
+  --color-console-glow: #effff8;
+  --shadow-console-card: 0 24px 64px -16px rgb(2 6 23 / 0.1), 0 0 32px rgb(2 6 23 / 0.04);
+
   --radius-card: 0.75rem;
 
   /* Motion system — used by shared UI hover states, the scroll-reveal directive, and route transitions */
@@ -58,12 +66,21 @@
   }
 
   .console-input {
-    @apply w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none;
+    @apply w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-console-accent focus:outline-none;
+  }
+
+  /* Sign-in variants (design/admin/LOGIN.png): taller, rounder fields with muted placeholders. */
+  .console-input--auth {
+    @apply rounded-xl py-3.5 text-base placeholder:text-slate-300 focus:border-console-accent focus:ring-1 focus:ring-console-accent aria-invalid:border-red-500;
+  }
+
+  .console-field-error {
+    @apply mt-1.5 text-sm text-red-600;
   }
 
   /* Add / remove buttons for repeatable rows in console forms (KPIs, pillars, milestones…). */
   .console-row-add {
-    @apply text-sm font-medium text-brand-700 hover:text-brand-800;
+    @apply text-sm font-medium text-console-accent hover:text-console-accent-hover;
   }
 
   .console-row-remove {

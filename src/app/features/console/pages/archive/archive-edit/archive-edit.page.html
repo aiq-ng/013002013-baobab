@@ -22,7 +22,7 @@
           type="text"
           formControlName="refCode"
           placeholder="e.g. REF: BBG-LQ-2023-TRX"
-          class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+          class="console-input"
         />
         @if (form.controls.refCode.invalid && form.controls.refCode.touched) {
           <p class="mt-1 text-sm text-red-600">Ref code is required.</p>
@@ -33,11 +33,7 @@
         <label for="category" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
           >CATEGORY</label
         >
-        <select
-          id="category"
-          formControlName="category"
-          class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
-        >
+        <select id="category" formControlName="category" class="console-input">
           @for (category of categories; track category) {
             <option [value]="category">{{ category }}</option>
           }
@@ -53,7 +49,7 @@
           type="text"
           formControlName="regionTag"
           placeholder="e.g. Sahel Central Basin"
-          class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+          class="console-input"
         />
         @if (form.controls.regionTag.invalid && form.controls.regionTag.touched) {
           <p class="mt-1 text-sm text-red-600">Region tag is required.</p>
@@ -69,7 +65,7 @@
           type="text"
           formControlName="statusTag"
           placeholder="e.g. Ratified: November 2023 · In Active Force"
-          class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+          class="console-input"
         />
         @if (form.controls.statusTag.invalid && form.controls.statusTag.touched) {
           <p class="mt-1 text-sm text-red-600">Status tag is required.</p>
@@ -86,7 +82,7 @@
         type="text"
         formControlName="title"
         placeholder="e.g. Liptako-Gourma Tri-Border Accord & Customary Grazing Charter"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.title.invalid && form.controls.title.touched) {
         <p class="mt-1 text-sm text-red-600">Title is required.</p>
@@ -101,7 +97,7 @@
         id="description"
         formControlName="description"
         rows="4"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       ></textarea>
       @if (form.controls.description.invalid && form.controls.description.touched) {
         <p class="mt-1 text-sm text-red-600">Description is required.</p>
@@ -119,7 +115,7 @@
         type="text"
         formControlName="ratifyingParties"
         placeholder="e.g. Delegations of Mali, Niger, Burkina Faso"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.ratifyingParties.invalid && form.controls.ratifyingParties.touched) {
         <p class="mt-1 text-sm text-red-600">Ratifying parties is required.</p>
@@ -137,7 +133,7 @@
         type="text"
         formControlName="workingLanguages"
         placeholder="e.g. Français, Hausa, Fulfulde, Tamasheq"
-        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        class="console-input"
       />
       @if (form.controls.workingLanguages.invalid && form.controls.workingLanguages.touched) {
         <p class="mt-1 text-sm text-red-600">Working languages is required.</p>
@@ -148,7 +144,7 @@
       <app-button
         [label]="isNew ? 'Create entry' : 'Save entry'"
         type="submit"
-        variant="primary"
+        variant="console"
         [disabled]="submitting"
       />
     </div>

@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-bold text-ink-950">Resources</h1>
       <p class="text-sm text-slate-500">{{ resources().length }} publications filed</p>
     </div>
-    <app-button label="+ New Resource" variant="primary" routerLink="/console/resources/new" />
+    <app-button label="+ New Resource" variant="console" routerLink="/console/resources/new" />
   </div>
 
   @if (loading()) {
@@ -26,7 +26,7 @@
               <td class="px-4 py-4 align-top">
                 <div class="flex items-start gap-3">
                   <span
-                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700"
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-console-accent"
                     aria-hidden="true"
                     >&#128196;</span
                   >
@@ -52,7 +52,7 @@
                 <span class="inline-flex items-center gap-3">
                   <a
                     [routerLink]="['/console/resources']"
-                    class="font-medium text-brand-700 hover:text-brand-800"
+                    class="font-medium text-console-accent hover:text-console-accent-hover"
                     >Edit</a
                   >
                   <button

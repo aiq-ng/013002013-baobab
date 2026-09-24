@@ -89,6 +89,16 @@ describe('Button', () => {
     expect(el.className).toContain('bg-white');
   });
 
+  it('applies the console accent variant class when requested', () => {
+    const fixture = TestBed.createComponent(Button);
+    fixture.componentInstance.label = 'Sign in';
+    fixture.componentInstance.variant = 'console';
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('button, a');
+    expect(el.className).toContain('bg-console-accent');
+    expect(el.className).not.toContain('bg-brand-600');
+  });
+
   it('tracks a CTA click via AnalyticsService when ctaId is set and routerLink is used', () => {
     const fixture = TestBed.createComponent(Button);
     fixture.componentInstance.label = 'Strategic Partnerships';

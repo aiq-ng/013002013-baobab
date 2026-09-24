@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
 import { AnalyticsService } from '../../../core/services/analytics.service';
 
 export type ButtonVariant =
-  'primary' | 'secondary' | 'light' | 'light-accent' | 'mint' | 'outline-light';
+  'primary' | 'secondary' | 'light' | 'light-accent' | 'mint' | 'outline-light' | 'console';
 export type ButtonSize = 'md' | 'lg';
 
 /**
@@ -58,6 +58,9 @@ export class Button {
   get variantClass(): string {
     if (this.variant === 'primary') {
       return 'bg-brand-600 text-white hover:bg-brand-700';
+    }
+    if (this.variant === 'console') {
+      return 'bg-console-accent text-white hover:bg-console-accent-hover';
     }
     if (this.variant === 'light') {
       return 'bg-white text-ink-950 shadow-sm hover:bg-slate-50';

@@ -1,7 +1,9 @@
 <div class="space-y-4">
   <div class="flex items-start justify-between gap-4">
     <div>
-      <p class="text-xs font-semibold tracking-wide text-brand-600">SECRETARIAT REPOSITORIES</p>
+      <p class="text-xs font-semibold tracking-wide text-console-accent">
+        SECRETARIAT REPOSITORIES
+      </p>
       <h1 class="text-3xl font-bold text-ink-950">Programs</h1>
     </div>
     <div class="flex flex-wrap items-center justify-end gap-3">
@@ -10,7 +12,7 @@
       >
         {{ programs().length }} Strategic Portfolios
       </span>
-      <app-button label="+ New Program" variant="primary" routerLink="/console/programs/new" />
+      <app-button label="+ New Program" variant="console" routerLink="/console/programs/new" />
     </div>
   </div>
 
@@ -53,7 +55,7 @@
                   <a
                     data-testid="program-edit-link"
                     [routerLink]="['/console/programs', program.slug]"
-                    class="font-medium text-brand-700 hover:text-brand-800"
+                    class="font-medium text-console-accent hover:text-console-accent-hover"
                     >Edit &rarr;</a
                   >
                   <button

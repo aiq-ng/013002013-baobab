@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-bold text-ink-950">Treaties Archive</h1>
       <p class="text-sm text-slate-500">{{ entries().length }} accords filed</p>
     </div>
-    <app-button label="+ New Entry" variant="primary" routerLink="/console/archive/new" />
+    <app-button label="+ New Entry" variant="console" routerLink="/console/archive/new" />
   </div>
 
   @if (loading()) {
@@ -40,7 +40,7 @@
                 <span class="inline-flex items-center gap-3">
                   <a
                     [routerLink]="['/console/archive', entry.id]"
-                    class="font-medium text-brand-700 hover:text-brand-800"
+                    class="font-medium text-console-accent hover:text-console-accent-hover"
                     >Edit</a
                   >
                   <button

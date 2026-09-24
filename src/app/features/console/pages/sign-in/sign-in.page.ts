@@ -1,16 +1,23 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from '../../../../shared/ui/button/button';
 import { SeoService } from '../../../../core/services/seo.service';
 import { ConsoleStore } from '../../services/console-store';
-import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
 
 @Component({
   selector: 'app-console-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule, Button, NgOptimizedImage, ImageFadeInDirective],
+  imports: [ReactiveFormsModule, Button, NgOptimizedImage],
   templateUrl: './sign-in.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -23,10 +30,33 @@ export class SignInPage implements OnInit {
 
   readonly submitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly passwordVisible = signal(false);
+  readonly forgotPasswordOpen = signal(false);
+  /** Field errors stay hidden until the first submit attempt, then track edits live. */
+  private readonly submitAttempted = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
+  });
+
+  private readonly formStatus = toSignal(this.form.statusChanges, {
+    initialValue: this.form.status,
+  });
+
+  readonly emailError = computed(() => {
+    this.formStatus();
+    const control = this.form.controls.email;
+    if (!this.submitAttempted() || control.valid) return null;
+    return control.hasError('required')
+      ? 'Enter your email address.'
+      : 'Enter a valid email address.';
+  });
+
+  readonly passwordError = computed(() => {
+    this.formStatus();
+    if (!this.submitAttempted() || this.form.controls.password.valid) return null;
+    return 'Enter your password.';
   });
 
   ngOnInit(): void {
@@ -37,7 +67,16 @@ export class SignInPage implements OnInit {
     });
   }
 
+  togglePasswordVisibility(): void {
+    this.passwordVisible.update((visible) => !visible);
+  }
+
+  toggleForgotPassword(): void {
+    this.forgotPasswordOpen.update((open) => !open);
+  }
+
   async submit(): Promise<void> {
+    this.submitAttempted.set(true);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

@@ -46,4 +46,12 @@ describe('ConsoleLayout', () => {
     expect(harness.routeNativeElement?.textContent).toContain('admin@baobab.org');
     expect(harness.routeNativeElement?.textContent).toContain('stub content');
   });
+
+  it('uses the console accent green (design/admin) rather than the public brand green', async () => {
+    const harness = await setup({ email: 'admin@baobab.org', role: 'admin' });
+    const html = harness.routeNativeElement!.innerHTML;
+
+    expect(html).toContain('bg-console-accent');
+    expect(html).not.toMatch(/brand-[67]00/);
+  });
 });
