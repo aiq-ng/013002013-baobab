@@ -52,11 +52,15 @@
       </div>
       <app-button
         class="[&_button]:shadow-lg [&_button]:shadow-brand-900/40"
-        label="Request Dispatches"
+        [label]="submitting() ? 'Sending…' : 'Request Dispatches'"
         type="submit"
         variant="primary"
+        [disabled]="submitting()"
       />
     </form>
+    @if (errorMessage()) {
+      <p role="alert" class="relative mt-3 text-sm text-red-300">{{ errorMessage() }}</p>
+    }
 
     <ul
       class="relative mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-6 text-xs text-white/50"

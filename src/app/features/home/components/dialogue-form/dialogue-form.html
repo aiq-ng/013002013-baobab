@@ -1,7 +1,7 @@
 <form
   [formGroup]="form"
   (ngSubmit)="submit()"
-  class="mx-auto mt-6 flex w-full max-w-md flex-col gap-4 rounded-card bg-white/10 p-6 text-left backdrop-blur"
+  class="mx-auto mt-6 flex w-full max-w-md flex-col gap-4 rounded-card bg-white/10 pad-card-sm text-left backdrop-blur"
 >
   <app-form-field label="Name" inputId="home-dialogue-name" [errorMessage]="errorFor('name')">
     <input
@@ -21,5 +21,13 @@
     />
   </app-form-field>
 
-  <app-button label="Send Request" type="submit" variant="primary" />
+  @if (errorMessage()) {
+    <p role="alert" class="text-sm text-red-200">{{ errorMessage() }}</p>
+  }
+  <app-button
+    [label]="submitting() ? 'Sending…' : 'Send Request'"
+    type="submit"
+    variant="primary"
+    [disabled]="submitting()"
+  />
 </form>

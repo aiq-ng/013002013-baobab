@@ -33,8 +33,9 @@ const CONFIRMATION_COPY: Record<EngagementSource, ConfirmationCopy> = {
     retryLabel: 'Request another addendum',
   },
   'resources-classified-access': {
-    headline: 'Access request received',
-    subtext: 'Your classified access request is under review. We will be in touch.',
+    headline: 'Access request lodged',
+    subtext:
+      'Your accreditation is under review by the secretariat. If approved, a single-use access link will be sent to this address within two working days.',
     retryRoute: '/resources',
     retryLabel: 'Submit another request',
   },

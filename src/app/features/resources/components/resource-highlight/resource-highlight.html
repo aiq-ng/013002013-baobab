@@ -1,8 +1,8 @@
 <section class="mx-auto max-w-7xl px-4 pb-16">
   <div
-    class="grid grid-cols-1 gap-6 rounded-card bg-surface-tint p-6 lg:grid-cols-[1.6fr_1fr] lg:p-10"
+    class="grid grid-cols-1 gap-6 rounded-card bg-surface-tint pad-panel lg:grid-cols-[1.6fr_1fr]"
   >
-    <article class="rounded-card bg-white p-6 shadow-sm ring-1 ring-ink-950/5 sm:p-8">
+    <article class="surface-card pad-card">
       <div
         class="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide text-brand-700"
       >
@@ -14,11 +14,11 @@
       <p class="mt-6 text-xs font-semibold uppercase tracking-wide text-ink-950/50">
         Annual Statecraft Review (2024–2025)
       </p>
-      <h2 class="mt-2 text-xl font-bold text-ink-950 sm:text-2xl">
+      <h2 class="mt-2 text-xl font-bold tracking-tight text-ink-950 sm:text-2xl">
         De-escalating Structural Friction: Customary Jurisprudence &amp; Pastoral Corridors in the
         Sahel
       </h2>
-      <p class="mt-3 text-sm text-ink-950/60">
+      <p class="mt-3 text-sm leading-relaxed text-ink-950/60">
         A definitive strategic audit synthesis of 1,400+ elder-led grazing accords, transhumance
         deconfliction mechanisms, and Track 1.5 sovereign pacts mediated across Mali, Niger, Burkina
         Faso, and the Lake Chad Basin.
@@ -33,28 +33,31 @@
         }
       </ul>
 
-      <div class="mt-6 rounded-card bg-surface-tint p-4">
-        <p class="text-xs font-semibold uppercase tracking-wide text-ink-950/50">
-          Excerpt: Article 14.3 (Customary Corridor Demarcation)
-        </p>
-        <blockquote class="mt-2 text-sm italic text-ink-950/70">
+      <figure class="mt-6 rounded-card bg-surface-tint pad-inset">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <figcaption class="text-xs font-semibold uppercase tracking-wide text-ink-950/50">
+            Excerpt: Article 14.3 (Customary Corridor Demarcation)
+          </figcaption>
+          <span class="text-xs font-semibold text-brand-700">Dakar Secretariat Depository</span>
+        </div>
+        <blockquote class="mt-2 text-sm italic leading-relaxed text-ink-950/70">
           "Where state cadastral maps diverge from the traditional nomadic transhumance seasonal
-          lines, customary pastoral arbitration councils presided over by recognized tribal rulers
-          shall hold binding primacy for 180-day transit windows…"
+          lines, customary pastoral arbitration councils presided over by recognized traditional
+          rulers shall hold binding primacy for 180-day transit windows…"
         </blockquote>
-        <p class="mt-2 text-xs text-ink-950/40">— Dakar Secretariat Depositary</p>
-      </div>
+      </figure>
 
-      <div class="mt-6 flex flex-wrap items-center gap-6">
+      <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <a
           href="/documents/annual-statecraft-review-2024-25.html"
-          class="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
+          class="inline-flex items-center gap-2 rounded-full text-sm font-semibold text-brand-700 transition-colors hover:text-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"
         >
           <svg
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             stroke-width="1.75"
+            aria-hidden="true"
             class="h-4 w-4"
           >
             <path
@@ -66,16 +69,21 @@
           </svg>
           View Document Online
         </a>
-        <a
+
+        <app-button
+          label="Download Dossier PDF (18.4 MB)"
           href="/documents/annual-statecraft-review-2024-25.pdf"
-          download
-          class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-700"
+          [download]="true"
+          variant="primary"
+          ctaId="resources-download-statecraft-review"
         >
           <svg
+            icon
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             stroke-width="1.75"
+            aria-hidden="true"
             class="h-4 w-4"
           >
             <path
@@ -84,16 +92,15 @@
               d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"
             />
           </svg>
-          Download Dossier PDF (18.4 MB)
-        </a>
+        </app-button>
       </div>
     </article>
 
-    <div class="flex flex-col gap-6">
+    <div class="surface-card flex flex-col gap-6 pad-card-sm">
       <app-addendum-dispatch-form />
 
       <dl
-        class="flex flex-col divide-y divide-ink-950/5 rounded-card bg-white p-6 text-sm shadow-sm ring-1 ring-ink-950/5"
+        class="flex flex-col divide-y divide-ink-950/5 rounded-card bg-surface-tint pad-inset text-sm"
       >
         @for (item of metadata; track item.label) {
           <div class="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">

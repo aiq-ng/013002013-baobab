@@ -16,7 +16,10 @@ describe('HomePage', () => {
       imports: [HomePage],
       providers: [
         provideRouter([]),
-        { provide: EngagementService, useValue: { submit: vi.fn() } },
+        {
+          provide: EngagementService,
+          useValue: { submit: vi.fn(), generateIdempotencyKey: () => 'key-1' },
+        },
         { provide: SeoService, useValue: { update: seoUpdate } },
       ],
     }).compileComponents();

@@ -1,0 +1,44 @@
+@if (open) {
+  <div class="fixed inset-0 z-50 flex justify-end">
+    <div
+      data-testid="drawer-backdrop"
+      aria-hidden="true"
+      class="absolute inset-0 bg-ink-950/50"
+      (click)="dismiss()"
+    ></div>
+
+    <div
+      #panel
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="label"
+      tabindex="-1"
+      class="relative z-10 flex h-full w-full max-w-md flex-col overflow-y-auto bg-white shadow-xl outline-none"
+    >
+      <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <h2 class="text-sm font-semibold text-ink-950">{{ label }}</h2>
+        <button
+          type="button"
+          aria-label="Close"
+          (click)="dismiss()"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-ink-950/50 hover:bg-ink-950/5 hover:text-ink-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="h-4 w-4"
+          >
+            <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex-1 pad-card-sm">
+        <ng-content />
+      </div>
+      <ng-content select="[drawer-footer]" />
+    </div>
+  </div>
+}

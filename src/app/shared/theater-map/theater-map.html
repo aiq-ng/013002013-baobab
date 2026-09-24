@@ -1,20 +1,9 @@
-<div role="group" aria-label="Filter operational theaters" class="flex flex-wrap gap-2">
-  @for (pill of filterPills(); track pill) {
-    <button
-      type="button"
-      [attr.aria-pressed]="activeFilter() === pill"
-      (click)="setFilter(pill)"
-      class="rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors"
-      [class.bg-brand-600]="activeFilter() === pill"
-      [class.text-white]="activeFilter() === pill"
-      [class.border-brand-600]="activeFilter() === pill"
-      [class.border-ink-950/15]="activeFilter() !== pill"
-      [class.text-ink-950]="activeFilter() !== pill"
-    >
-      {{ pill === 'All' ? allLabel : pill }}
-    </button>
-  }
-</div>
+<app-filter-pills
+  [pills]="displayPills()"
+  [active]="activeDisplayPill()"
+  ariaLabel="Filter operational theaters"
+  (activeChange)="selectDisplayPill($event)"
+/>
 
 @if (dataUnavailable) {
   <div

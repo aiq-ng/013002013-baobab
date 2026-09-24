@@ -11,10 +11,11 @@ import { AnalyticsService } from '../../../core/services/analytics.service';
 
 export type ButtonVariant =
   'primary' | 'secondary' | 'light' | 'light-accent' | 'mint' | 'outline-light';
+export type ButtonSize = 'md' | 'lg';
 
 /**
  * Shared CTA button. Renders as a real routed anchor when `routerLink` is set,
- * otherwise as a native <button> that emits `pressed` on click — never a dead link.
+ * otherwise as a native <button>. Either form emits `pressed` on click — never a dead link.
  */
 @Component({
   selector: 'app-button',
@@ -22,11 +23,21 @@ export type ButtonVariant =
   imports: [RouterLink],
   templateUrl: './button.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.block]': 'fullWidth',
+    '[class.w-full]': 'fullWidth',
+  },
 })
 export class Button {
   @Input({ required: true }) label = '';
   @Input() variant: ButtonVariant = 'primary';
+  @Input() size: ButtonSize = 'md';
+  @Input() fullWidth = false;
   @Input() routerLink: string | null = null;
+  /** Plain (non-routed) destination — a document URL or external link. */
+  @Input() href: string | null = null;
+  /** Adds the `download` attribute to an `href` anchor. */
+  @Input() download = false;
   @Input() type: 'button' | 'submit' = 'button';
   @Input() disabled = false;
   /** When set, every click (routed or plain) is reported via AnalyticsService.trackCtaClick. */
@@ -37,7 +48,12 @@ export class Button {
   private readonly analyticsService = inject(AnalyticsService);
 
   readonly baseClass =
-    'inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 ease-premium hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0';
+    'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 ease-premium hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0';
+
+  get sizeClass(): string {
+    const padding = this.size === 'lg' ? 'px-8 py-4 text-base font-semibold' : 'px-6 py-3 text-sm';
+    return this.fullWidth ? `${padding} w-full` : padding;
+  }
 
   get variantClass(): string {
     if (this.variant === 'primary') {
@@ -67,6 +83,7 @@ export class Button {
 
   onRoutedClick(): void {
     this.trackClick();
+    this.pressed.emit();
   }
 
   private trackClick(): void {

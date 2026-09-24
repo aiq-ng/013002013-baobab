@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: '/api',
+  apiBaseUrl: 'https://baobab-backend.fastapicloud.dev/api/v1',
   siteUrl: 'https://thebaobabgroup.org',
 };

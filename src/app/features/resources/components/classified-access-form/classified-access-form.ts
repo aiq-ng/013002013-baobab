@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Button } from '../../../../shared/ui/button/button';
+import { FormField } from '../../../../shared/ui/form-field/form-field';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
-import { EngagementService } from '../../../engagement/services/engagement.service';
-import { SuccessModalService } from '../../../engagement/services/success-modal.service';
-import { AnalyticsService } from '../../../../core/services/analytics.service';
+import { createEngagementSubmission } from '../../../engagement/services/engagement-submission';
 
 /**
  * "Track 1.5 Access Gate" classified-access form: institutional enclave
@@ -14,15 +13,16 @@ import { AnalyticsService } from '../../../../core/services/analytics.service';
 @Component({
   selector: 'app-classified-access-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button],
+  imports: [ReactiveFormsModule, Button, FormField],
   templateUrl: './classified-access-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClassifiedAccessForm {
   private readonly fb = inject(FormBuilder);
-  private readonly engagementService = inject(EngagementService);
-  private readonly successModalService = inject(SuccessModalService);
-  private readonly analyticsService = inject(AnalyticsService);
+  private readonly submission = createEngagementSubmission();
+
+  readonly submitting = this.submission.submitting;
+  readonly errorMessage = this.submission.errorMessage;
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [baobabValidators.required, baobabValidators.email]],
@@ -34,23 +34,12 @@ export class ClassifiedAccessForm {
   }
 
   submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
     const { email, token } = this.form.getRawValue();
-    this.engagementService
-      .submit({
-        source: 'resources-classified-access',
-        name: email,
-        email,
-        metadata: token ? { delegationSecretarialToken: token } : {},
-      })
-      .subscribe((response) => {
-        this.analyticsService.trackFormSubmit('resources-classified-access');
-        this.successModalService.show('resources-classified-access', response.referenceId);
-        this.form.reset();
-      });
+    this.submission.submit(this.form, {
+      source: 'resources-classified-access',
+      name: email,
+      email,
+      metadata: token ? { delegationSecretarialToken: token } : {},
+    });
   }
 }

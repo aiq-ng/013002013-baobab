@@ -1,6 +1,6 @@
 <section class="mx-auto -mt-10 max-w-7xl px-4 pb-16">
   <div class="grid grid-cols-1 overflow-hidden rounded-card shadow-lg lg:grid-cols-2">
-    <div class="flex flex-col gap-6 bg-ink-950 p-8 text-white sm:p-12">
+    <div class="flex flex-col gap-6 bg-ink-950 pad-panel-lg text-white">
       <h2 class="text-2xl font-bold sm:text-3xl">Mediate,<br />Stabilize, Resolve.</h2>
       <p class="text-sm text-white/70 sm:text-base">
         Facilitating confidential Track 1.5 dialogues, pastoralist conflict resolution, and
@@ -25,7 +25,11 @@
       </ul>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5 bg-white p-8 sm:p-12">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="flex flex-col gap-5 bg-white pad-panel-lg"
+    >
       <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label for="contact-first-name" class="text-xs font-semibold uppercase text-ink-950/60"
@@ -124,7 +128,15 @@
         }
       </div>
 
-      <app-button label="Send Message to us" type="submit" variant="primary" />
+      @if (errorMessage()) {
+        <p role="alert" class="text-sm text-red-600">{{ errorMessage() }}</p>
+      }
+      <app-button
+        [label]="submitting() ? 'Sending…' : 'Send Message to us'"
+        type="submit"
+        variant="primary"
+        [disabled]="submitting()"
+      />
     </form>
   </div>
 </section>

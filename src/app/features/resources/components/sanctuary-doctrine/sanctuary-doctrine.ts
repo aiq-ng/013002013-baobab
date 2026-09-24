@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { SectionHeading } from '../../../../shared/ui/section-heading/section-heading';
 import { ClassifiedAccessForm } from '../classified-access-form/classified-access-form';
 
 /**
@@ -8,7 +9,7 @@ import { ClassifiedAccessForm } from '../classified-access-form/classified-acces
 @Component({
   selector: 'app-sanctuary-doctrine',
   standalone: true,
-  imports: [ClassifiedAccessForm],
+  imports: [ClassifiedAccessForm, SectionHeading],
   templateUrl: './sanctuary-doctrine.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

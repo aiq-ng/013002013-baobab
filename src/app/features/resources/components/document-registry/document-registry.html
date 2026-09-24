@@ -1,0 +1,59 @@
+@if (documents.length > 0) {
+  <section class="mx-auto max-w-7xl px-4 py-16">
+    <app-section-heading
+      eyebrow="Document Registry"
+      heading="Published Registry Documents"
+      lead="Files currently on record with the Secretariat, available for direct download."
+    />
+
+    <ul class="mt-8 flex flex-col gap-4">
+      @for (document of documents; track document.id) {
+        <li
+          class="surface-card surface-card--interactive flex flex-col gap-4 pad-card lg:flex-row lg:items-center lg:justify-between"
+        >
+          <div>
+            <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
+              <span
+                class="rounded-full bg-brand-100 px-3 py-1 uppercase tracking-wide text-brand-700"
+              >
+                {{ document.batchReference }}
+              </span>
+              <span class="text-ink-950/40">{{ formatSize(document.fileSizeBytes) }}</span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold tracking-tight text-ink-950">{{ document.title }}</h3>
+            <p class="mt-2 text-xs text-ink-950/50">
+              <span class="font-semibold text-ink-950/70">Working Languages:</span>
+              {{ document.languages }}
+            </p>
+          </div>
+
+          @if (document.downloadUrl) {
+            <div class="flex flex-shrink-0 items-center gap-3">
+              <a
+                [href]="document.downloadUrl"
+                [attr.aria-label]="'Download ' + document.title"
+                class="ghost-pill px-4 py-2"
+              >
+                Download
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  aria-hidden="true"
+                  class="h-4 w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"
+                  />
+                </svg>
+              </a>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+}

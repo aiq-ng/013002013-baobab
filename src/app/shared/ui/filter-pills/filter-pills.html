@@ -1,0 +1,14 @@
+@if (pills.length > 0) {
+  <div role="group" [attr.aria-label]="ariaLabel" class="flex flex-wrap gap-2">
+    @for (pill of pills; track pill) {
+      <button
+        type="button"
+        [class]="pillClass(pill)"
+        [attr.aria-pressed]="pill === active"
+        (click)="select(pill)"
+      >
+        {{ pill }}
+      </button>
+    }
+  </div>
+}

@@ -1,108 +1,103 @@
 <section class="mx-auto max-w-7xl px-4 py-16">
-  <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-    <div>
-      <p class="text-xs font-semibold uppercase tracking-wide text-ink-950/50">
-        Public &amp; Customary Treaties Depository
-      </p>
-      <h2 class="mt-2 text-2xl font-bold text-ink-950 sm:text-3xl">
-        Treaties &amp; Conciliation Archive
-      </h2>
-      <p class="mt-3 max-w-2xl text-sm text-ink-950/60">
-        Bilateral instruments, inter-community grazing compacts, and riparian water pacts enacted
-        under dual civil-customary authority.
-      </p>
-    </div>
+  <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+    <app-section-heading
+      eyebrow="Public & Customary Treaties Depository"
+      heading="Treaties & Conciliation Archive"
+      lead="Bilateral instruments, inter-community grazing compacts, and riparian water pacts enacted under dual civil-customary authority."
+    />
 
-    <div
-      role="group"
-      aria-label="Filter treaties archive"
-      class="flex flex-shrink-0 flex-wrap gap-2 lg:pt-1"
-    >
-      @for (pill of filterPills(); track pill) {
-        <button
-          type="button"
-          [attr.aria-pressed]="activeFilter() === pill"
-          (click)="setFilter(pill)"
-          class="rounded-full border px-4 py-2 text-sm font-semibold transition-colors"
-          [class.bg-brand-600]="activeFilter() === pill"
-          [class.text-white]="activeFilter() === pill"
-          [class.border-brand-600]="activeFilter() === pill"
-          [class.bg-white]="activeFilter() !== pill"
-          [class.border-ink-950/15]="activeFilter() !== pill"
-          [class.text-ink-950/70]="activeFilter() !== pill"
-        >
-          {{ pill }}
-        </button>
-      }
+    <div class="flex-shrink-0">
+      <app-filter-pills
+        [pills]="filterPills()"
+        [active]="activeFilter()"
+        ariaLabel="Filter treaties archive"
+        (activeChange)="setFilter($event)"
+      />
     </div>
   </div>
 
-  <ul class="mt-8 flex flex-col gap-4">
-    @for (entry of filteredEntries(); track entry.refCode) {
-      <li
-        class="flex flex-col gap-4 rounded-card p-6 ring-1 ring-ink-950/10 lg:flex-row lg:items-center lg:justify-between"
-      >
-        <div>
-          <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
-            <span
-              class="rounded-full bg-brand-100 px-3 py-1 uppercase tracking-wide text-brand-700"
-              >{{ entry.refCode }}</span
-            >
-            <span class="rounded-full bg-surface-tint px-3 py-1 text-ink-950/70">{{
-              entry.regionTag
-            }}</span>
-            <span class="text-ink-950/40">{{ entry.statusTag }}</span>
+  @if (filteredEntries().length === 0) {
+    <p
+      class="mt-8 rounded-card border border-dashed border-ink-950/15 bg-surface-tint px-4 py-12 sm:px-6 text-center text-sm text-ink-950/60"
+    >
+      No accords are published under this filter yet — new instruments are added as they clear
+      declassification.
+    </p>
+  } @else {
+    <ul class="mt-8 flex flex-col gap-4">
+      @for (entry of filteredEntries(); track entry.id) {
+        <li
+          class="surface-card surface-card--interactive flex flex-col gap-6 pad-card lg:flex-row lg:items-center lg:justify-between"
+        >
+          <div>
+            <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
+              <span
+                class="rounded-full bg-brand-100 px-3 py-1 uppercase tracking-wide text-brand-700"
+              >
+                {{ entry.refCode }}
+              </span>
+              <span class="rounded-full bg-surface-tint px-3 py-1 text-ink-950/70">
+                {{ entry.regionTag }}
+              </span>
+              <span class="text-ink-950/40">{{ entry.statusTag }}</span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold tracking-tight text-ink-950">{{ entry.title }}</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink-950/60">
+              {{ entry.description }}
+            </p>
+            <dl class="mt-4 flex flex-col gap-1 text-xs text-ink-950/50">
+              <div class="flex flex-wrap gap-x-1.5">
+                <dt class="font-semibold text-ink-950/70">Ratifying Sovereign Parties:</dt>
+                <dd>{{ entry.ratifyingParties }}</dd>
+              </div>
+              <div class="flex flex-wrap gap-x-1.5">
+                <dt class="font-semibold text-ink-950/70">Working Languages:</dt>
+                <dd>{{ entry.workingLanguages }}</dd>
+              </div>
+            </dl>
           </div>
-          <h3 class="mt-2 text-lg font-bold text-ink-950">{{ entry.title }}</h3>
-          <p class="mt-1 max-w-2xl text-sm text-ink-950/60">{{ entry.description }}</p>
-          <p class="mt-2 text-xs text-ink-950/50">
-            <span class="font-semibold text-ink-950/70">Ratifying Sovereign Parties:</span>
-            {{ entry.ratifyingParties }}
-          </p>
-          <p class="text-xs text-ink-950/50">
-            <span class="font-semibold text-ink-950/70">Working Languages:</span>
-            {{ entry.workingLanguages }}
-          </p>
-        </div>
 
-        <div class="flex flex-shrink-0 items-center gap-3">
-          <a
-            [href]="'/documents/' + entry.refCode + '-summary.html'"
-            class="inline-flex items-center gap-2 rounded-full border border-ink-950/15 px-4 py-2 text-sm font-semibold text-ink-950 hover:border-brand-600 hover:text-brand-700"
-          >
-            Inspect Accord Summary
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              class="h-4 w-4"
+          <div class="flex flex-shrink-0 items-center gap-3">
+            <a
+              [href]="'/documents/' + entry.refCode + '-summary.html'"
+              class="ghost-pill px-4 py-2"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
-            </svg>
-          </a>
-          <a
-            [href]="'/documents/' + entry.refCode + '.pdf'"
-            download
-            aria-label="Download accord PDF"
-            class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink-950/15 text-ink-950 hover:border-brand-600 hover:text-brand-700"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              class="h-4 w-4"
+              Inspect Accord Summary
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                aria-hidden="true"
+                class="h-4 w-4"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+              </svg>
+            </a>
+            <a
+              [href]="'/documents/' + entry.refCode + '.pdf'"
+              download
+              [attr.aria-label]="'Download the ' + entry.title + ' PDF'"
+              class="ghost-pill h-10 w-10"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"
-              />
-            </svg>
-          </a>
-        </div>
-      </li>
-    }
-  </ul>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                aria-hidden="true"
+                class="h-4 w-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"
+                />
+              </svg>
+            </a>
+          </div>
+        </li>
+      }
+    </ul>
+  }
 </section>

@@ -1,0 +1,284 @@
+<div class="max-w-3xl space-y-4">
+  <p class="flex items-center gap-2 text-sm">
+    <a routerLink="/console/resources" class="text-slate-500 hover:text-ink-950"
+      >&larr; Resources</a
+    >
+    <span class="text-slate-300">/</span>
+    <span class="font-semibold text-ink-950">New Resource</span>
+  </p>
+
+  <div class="flex items-start gap-2 rounded-lg bg-brand-50 px-4 py-3 text-sm text-ink-950">
+    <span aria-hidden="true">&#9432;</span>
+    <span
+      >On the public site, this PDF powers both the <strong>Preview</strong> and
+      <strong>Download</strong> actions automatically.</span
+    >
+  </div>
+
+  <form
+    class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm"
+    (ngSubmit)="onSubmit()"
+    [formGroup]="form"
+  >
+    <div>
+      <p class="mb-3 text-xs font-semibold tracking-wide text-slate-500">RESOURCE DOCUMENT</p>
+      <label
+        for="file-input"
+        class="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-slate-200 px-6 py-10 text-center hover:border-brand-400"
+      >
+        <span aria-hidden="true" class="text-2xl text-brand-600">&#8593;</span>
+        <span class="font-medium text-ink-950">Drop PDF here or click to browse</span>
+        <span class="text-sm text-slate-500"
+          >Accepts single treaty dossier or publication (PDF only)</span
+        >
+        @if (file(); as f) {
+          <span class="text-sm font-medium text-brand-700">{{ f.name }}</span>
+        }
+      </label>
+      <input
+        id="file-input"
+        type="file"
+        accept="application/pdf"
+        class="sr-only"
+        (change)="onFileSelected($event)"
+      />
+      @if (fileError()) {
+        <p class="mt-2 text-sm text-red-600">{{ fileError() }}</p>
+      }
+    </div>
+
+    <div>
+      <label for="title" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >NAME</label
+      >
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        placeholder="e.g. 2025 Sovereign Partnership Protocol"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      <p class="mt-1 text-sm text-slate-500">What displays on the public Resources page</p>
+      @if (form.controls.title.invalid && form.controls.title.touched) {
+        <p class="mt-1 text-sm text-red-600">Name is required.</p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="batchReference"
+        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >BATCH NUMBER</label
+      >
+      <input
+        id="batchReference"
+        type="text"
+        formControlName="batchReference"
+        placeholder="e.g. Batch 12"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      <p class="mt-1 text-sm text-slate-500">Free-typed reference batch number</p>
+      @if (form.controls.batchReference.invalid && form.controls.batchReference.touched) {
+        <p class="mt-1 text-sm text-red-600">Batch number is required.</p>
+      }
+    </div>
+
+    <div>
+      <label for="batchLabel" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >BATCH LABEL</label
+      >
+      <input
+        id="batchLabel"
+        type="text"
+        formControlName="batchLabel"
+        placeholder="e.g. Annual Codex · Vol. IX"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.batchLabel.invalid && form.controls.batchLabel.touched) {
+        <p class="mt-1 text-sm text-red-600">Batch label is required.</p>
+      }
+    </div>
+
+    <div>
+      <label for="releaseTag" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >RELEASE TAG</label
+      >
+      <input
+        id="releaseTag"
+        type="text"
+        formControlName="releaseTag"
+        placeholder="e.g. Permanent Archive Release"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.releaseTag.invalid && form.controls.releaseTag.touched) {
+        <p class="mt-1 text-sm text-red-600">Release tag is required.</p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="documentDateLabel"
+        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >DOCUMENT DATE LABEL</label
+      >
+      <input
+        id="documentDateLabel"
+        type="text"
+        formControlName="documentDateLabel"
+        placeholder="e.g. Annual Statecraft Review (2024-2025)"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.documentDateLabel.invalid && form.controls.documentDateLabel.touched) {
+        <p class="mt-1 text-sm text-red-600">Document date label is required.</p>
+      }
+    </div>
+
+    <div>
+      <label for="description" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >DESCRIPTION</label
+      >
+      <textarea
+        id="description"
+        formControlName="description"
+        rows="4"
+        placeholder="A definitive strategic audit synthesis…"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      ></textarea>
+      @if (form.controls.description.invalid && form.controls.description.touched) {
+        <p class="mt-1 text-sm text-red-600">Description is required.</p>
+      }
+    </div>
+
+    <div>
+      <label for="chapters" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >CHAPTERS</label
+      >
+      <textarea
+        id="chapters"
+        formControlName="chapters"
+        rows="4"
+        placeholder="One chapter per line, e.g.&#10;Ch. I: Sultanate Water Rights"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      ></textarea>
+      <p class="mt-1 text-sm text-slate-500">One chapter per line</p>
+      @if (form.controls.chapters.invalid && form.controls.chapters.touched) {
+        <p class="mt-1 text-sm text-red-600">At least one chapter is required.</p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="excerptHeading"
+        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >EXCERPT HEADING</label
+      >
+      <input
+        id="excerptHeading"
+        type="text"
+        formControlName="excerptHeading"
+        placeholder="e.g. Excerpt: Article 14.3"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.excerptHeading.invalid && form.controls.excerptHeading.touched) {
+        <p class="mt-1 text-sm text-red-600">Excerpt heading is required.</p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="excerptQuote"
+        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >EXCERPT QUOTE</label
+      >
+      <textarea
+        id="excerptQuote"
+        formControlName="excerptQuote"
+        rows="3"
+        placeholder="Where state cadastral maps diverge…"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      ></textarea>
+      @if (form.controls.excerptQuote.invalid && form.controls.excerptQuote.touched) {
+        <p class="mt-1 text-sm text-red-600">Excerpt quote is required.</p>
+      }
+    </div>
+
+    <div>
+      <label
+        for="excerptAttribution"
+        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >EXCERPT ATTRIBUTION</label
+      >
+      <input
+        id="excerptAttribution"
+        type="text"
+        formControlName="excerptAttribution"
+        placeholder="e.g. — Dakar Secretariat Depositary"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.excerptAttribution.invalid && form.controls.excerptAttribution.touched) {
+        <p class="mt-1 text-sm text-red-600">Excerpt attribution is required.</p>
+      }
+    </div>
+
+    <div>
+      <label for="onlineUrl" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
+        >ONLINE URL</label
+      >
+      <input
+        id="onlineUrl"
+        type="text"
+        formControlName="onlineUrl"
+        placeholder="e.g. /documents/annual-statecraft-review-2024-25.html"
+        class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+      />
+      @if (form.controls.onlineUrl.invalid && form.controls.onlineUrl.touched) {
+        <p class="mt-1 text-sm text-red-600">Online URL is required.</p>
+      }
+    </div>
+
+    <div formArrayName="metadataRows">
+      <p class="mb-3 text-xs font-semibold tracking-wide text-slate-500">METADATA (4 ROWS)</p>
+      <div class="space-y-4">
+        @for (row of metadataRows.controls; track $index) {
+          <div [formGroupName]="$index" class="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto]">
+            <div>
+              <input
+                type="text"
+                formControlName="label"
+                placeholder="Label"
+                class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+              />
+              @if (row.get('label')?.invalid && row.get('label')?.touched) {
+                <p class="mt-1 text-sm text-red-600">Label is required.</p>
+              }
+            </div>
+            <div>
+              <input
+                type="text"
+                formControlName="value"
+                placeholder="Value"
+                class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+              />
+              @if (row.get('value')?.invalid && row.get('value')?.touched) {
+                <p class="mt-1 text-sm text-red-600">Value is required.</p>
+              }
+            </div>
+            <label class="flex items-center gap-2 text-sm text-ink-950">
+              <input type="checkbox" formControlName="accent" />
+              Accent
+            </label>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="flex justify-end border-t border-slate-100 pt-4">
+      <app-button
+        label="Publish resource"
+        type="submit"
+        variant="primary"
+        [disabled]="submitting"
+      />
+    </div>
+  </form>
+</div>

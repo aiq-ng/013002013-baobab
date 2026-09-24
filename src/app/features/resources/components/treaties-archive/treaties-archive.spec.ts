@@ -4,6 +4,7 @@ import { ArchiveEntry } from '../../models/resource';
 
 const ENTRIES: ArchiveEntry[] = [
   {
+    id: 'e1',
     refCode: 'REF-1',
     regionTag: 'Region A',
     statusTag: 'Ratified: 2023',
@@ -14,6 +15,7 @@ const ENTRIES: ArchiveEntry[] = [
     category: 'Transhumance',
   },
   {
+    id: 'e2',
     refCode: 'REF-2',
     regionTag: 'Region B',
     statusTag: 'Ratified: 2024',
@@ -66,5 +68,15 @@ describe('TreatiesArchive', () => {
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('Transhumance Accord One');
     expect(text).toContain('Riparian Protocol Two');
+  });
+
+  it('shows an empty-state message instead of an empty list when nothing matches', () => {
+    fixture.componentInstance.entries = [];
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('ul')).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain(
+      'No accords are published under this filter',
+    );
   });
 });

@@ -47,6 +47,22 @@ describe('Button', () => {
     expect(pressed).toBe(true);
   });
 
+  it('emits pressed when the routed anchor form is clicked', () => {
+    const fixture = TestBed.createComponent(Button);
+    fixture.componentInstance.label = 'Strategic Partnerships';
+    fixture.componentInstance.routerLink = '/partnerships';
+    fixture.detectChanges();
+
+    let pressed = false;
+    fixture.componentInstance.pressed.subscribe(() => (pressed = true));
+    // Invoke the anchor's own handler directly: clicking the RouterLink would kick off a
+    // real navigation that outlives the fixture.
+    expect(fixture.debugElement.query(By.css('a'))).toBeTruthy();
+    fixture.componentInstance.onRoutedClick();
+
+    expect(pressed).toBe(true);
+  });
+
   it('applies the primary variant class by default', () => {
     const fixture = TestBed.createComponent(Button);
     fixture.componentInstance.label = 'Go';
@@ -100,6 +116,32 @@ describe('Button', () => {
     fixture.detectChanges();
     fixture.debugElement.query(By.css('button')).nativeElement.click();
     expect(trackCtaClick).not.toHaveBeenCalled();
+  });
+
+  it('renders a plain anchor with the download attribute when given an href to download', () => {
+    const fixture = TestBed.createComponent(Button);
+    fixture.componentInstance.label = 'Download Dossier PDF';
+    fixture.componentInstance.href = '/documents/review.pdf';
+    fixture.componentInstance.download = true;
+    fixture.detectChanges();
+
+    const anchor: HTMLAnchorElement = fixture.nativeElement.querySelector('a');
+    expect(anchor.getAttribute('href')).toBe('/documents/review.pdf');
+    expect(anchor.hasAttribute('download')).toBe(true);
+    expect(fixture.debugElement.query(By.css('button'))).toBeFalsy();
+  });
+
+  it('omits the download attribute for a plain href link and tracks its CTA id', () => {
+    const fixture = TestBed.createComponent(Button);
+    fixture.componentInstance.label = 'View Document Online';
+    fixture.componentInstance.href = '/documents/review.html';
+    fixture.componentInstance.ctaId = 'resources-view-review';
+    fixture.detectChanges();
+
+    const anchor: HTMLAnchorElement = fixture.nativeElement.querySelector('a');
+    expect(anchor.hasAttribute('download')).toBe(false);
+    anchor.click();
+    expect(trackCtaClick).toHaveBeenCalledWith('resources-view-review');
   });
 
   it('disables the button element when disabled is true', () => {

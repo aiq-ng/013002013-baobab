@@ -3,6 +3,10 @@ import { PublicLayout } from './layouts/public-layout/public-layout';
 
 export const routes: Routes = [
   {
+    path: 'console',
+    loadChildren: () => import('./features/console/console.routes').then((m) => m.CONSOLE_ROUTES),
+  },
+  {
     path: '',
     component: PublicLayout,
     children: [

@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, computed, signal } from '@angular/core';
 import { ArchiveEntry } from '../../models/resource';
+import { SectionHeading } from '../../../../shared/ui/section-heading/section-heading';
+import { FilterPills } from '../../../../shared/ui/filter-pills/filter-pills';
 
 const ALL = 'All Accords';
 
@@ -11,6 +13,7 @@ const ALL = 'All Accords';
 @Component({
   selector: 'app-treaties-archive',
   standalone: true,
+  imports: [SectionHeading, FilterPills],
   templateUrl: './treaties-archive.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

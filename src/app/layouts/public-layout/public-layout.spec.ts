@@ -26,7 +26,7 @@ describe('PublicLayout', () => {
     const fixture = TestBed.createComponent(PublicLayout);
     fixture.detectChanges();
 
-    const links = fixture.nativeElement.querySelectorAll('nav a');
+    const links = fixture.nativeElement.querySelectorAll('[data-testid="desktop-nav"] a');
     expect(links.length).toBe(5);
   });
 
@@ -80,6 +80,81 @@ describe('PublicLayout', () => {
     legalLinks.forEach((link) => {
       expect(link.getAttribute('href')).toBeTruthy();
       expect(link.getAttribute('href')).not.toBe('#');
+    });
+  });
+
+  describe('mobile navigation', () => {
+    it('renders a menu toggle button that is hidden on desktop', () => {
+      const fixture = TestBed.createComponent(PublicLayout);
+      fixture.detectChanges();
+
+      const toggle: HTMLButtonElement = fixture.nativeElement.querySelector(
+        '[data-testid="mobile-menu-toggle"]',
+      );
+      expect(toggle).toBeTruthy();
+      expect(toggle.className).toContain('md:hidden');
+      expect(toggle.getAttribute('aria-label')).toBeTruthy();
+    });
+
+    it('keeps the mobile panel closed by default', () => {
+      const fixture = TestBed.createComponent(PublicLayout);
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.menuOpen()).toBe(false);
+      expect(fixture.nativeElement.querySelector('[data-testid="mobile-nav"]')).toBeNull();
+    });
+
+    it('opens the panel with every nav link plus the partnerships CTA when toggled', () => {
+      const fixture = TestBed.createComponent(PublicLayout);
+      fixture.detectChanges();
+
+      const toggle: HTMLButtonElement = fixture.nativeElement.querySelector(
+        '[data-testid="mobile-menu-toggle"]',
+      );
+      toggle.click();
+      fixture.detectChanges();
+
+      const panel: HTMLElement = fixture.nativeElement.querySelector('[data-testid="mobile-nav"]');
+      expect(panel).toBeTruthy();
+
+      const links = Array.from(panel.querySelectorAll('a')) as HTMLAnchorElement[];
+      expect(links.length).toBe(6);
+      expect(links.map((a) => a.textContent!.trim())).toContain('Strategic Partnerships');
+    });
+
+    it('reflects open state on the toggle for assistive technology', () => {
+      const fixture = TestBed.createComponent(PublicLayout);
+      fixture.detectChanges();
+
+      const toggle: HTMLButtonElement = fixture.nativeElement.querySelector(
+        '[data-testid="mobile-menu-toggle"]',
+      );
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+
+      toggle.click();
+      fixture.detectChanges();
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+
+      toggle.click();
+      fixture.detectChanges();
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('closes the panel when a nav link inside it is followed', () => {
+      const fixture = TestBed.createComponent(PublicLayout);
+      fixture.detectChanges();
+
+      fixture.componentInstance.toggleMenu();
+      fixture.detectChanges();
+
+      const link: HTMLAnchorElement = fixture.nativeElement.querySelector(
+        '[data-testid="mobile-nav"] a',
+      );
+      link.click();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.menuOpen()).toBe(false);
+      expect(fixture.nativeElement.querySelector('[data-testid="mobile-nav"]')).toBeNull();
     });
   });
 });

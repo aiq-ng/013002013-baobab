@@ -9,6 +9,12 @@ export const serverRoutes: ServerRoute[] = [
       return PROGRAMS.map((program) => ({ slug: program.slug }));
     },
   },
+  // Never prerendered: an authenticated area has no business in a static
+  // build, and prerendering it would mean writing its HTML to disk (plan §8a).
+  {
+    path: 'console/**',
+    renderMode: RenderMode.Client,
+  },
   {
     path: '**',
     renderMode: RenderMode.Prerender,

@@ -1,5 +1,5 @@
 <section class="mx-auto max-w-7xl px-4 pb-16">
-  <div class="rounded-card bg-surface-tint px-6 py-12 text-center sm:px-12">
+  <div class="rounded-card bg-surface-tint px-4 py-12 text-center sm:px-8 lg:px-12">
     <p class="text-xs font-semibold uppercase tracking-wide text-brand-700">
       Diplomatic Inquiries &amp; State Access
     </p>
@@ -31,8 +31,16 @@
           <p role="alert" class="mt-2 text-sm text-red-600">{{ errorFor('email') }}</p>
         }
       </div>
-      <app-button label="Initiate Dialogue →" type="submit" variant="primary" />
+      <app-button
+        [label]="submitting() ? 'Sending…' : 'Initiate Dialogue →'"
+        type="submit"
+        variant="primary"
+        [disabled]="submitting()"
+      />
     </form>
+    @if (errorMessage()) {
+      <p role="alert" class="mt-4 text-sm text-red-600">{{ errorMessage() }}</p>
+    }
 
     <a
       href="/documents/sovereign-partnership-protocol-2025.pdf"

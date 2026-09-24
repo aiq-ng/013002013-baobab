@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { DispatchForm } from './dispatch-form';
 import { EngagementService } from '../../../features/engagement/services/engagement.service';
@@ -19,7 +20,10 @@ describe('DispatchForm', () => {
     await TestBed.configureTestingModule({
       imports: [DispatchForm],
       providers: [
-        { provide: EngagementService, useValue: { submit } },
+        {
+          provide: EngagementService,
+          useValue: { submit, generateIdempotencyKey: () => 'key-1' },
+        },
         { provide: SuccessModalService, useValue: { show } },
         { provide: AnalyticsService, useValue: { trackFormSubmit } },
       ],
@@ -32,6 +36,11 @@ describe('DispatchForm', () => {
     fixture.detectChanges();
   });
 
+  function submitForm() {
+    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+  }
+
   it('renders the per-program heading, subtext, and protocol id', () => {
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('Request Confidential Addenda');
@@ -40,8 +49,7 @@ describe('DispatchForm', () => {
   });
 
   it('shows a validation error on empty submit without calling the service', () => {
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    submitForm();
 
     expect(fixture.nativeElement.textContent).toContain('Email is required.');
     expect(submit).not.toHaveBeenCalled();
@@ -53,15 +61,17 @@ describe('DispatchForm', () => {
     );
 
     fixture.componentInstance.form.setValue({ email: 'delegate@example.org' });
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    submitForm();
 
-    expect(submit).toHaveBeenCalledWith({
-      source: 'program-confidential-dispatch',
-      name: 'delegate@example.org',
-      email: 'delegate@example.org',
-      metadata: { protocolId: 'BB-LCB-702-D' },
-    });
+    expect(submit).toHaveBeenCalledWith(
+      {
+        source: 'program-confidential-dispatch',
+        name: 'delegate@example.org',
+        email: 'delegate@example.org',
+        metadata: { protocolId: 'BB-LCB-702-D' },
+      },
+      'key-1',
+    );
     expect(show).toHaveBeenCalledWith('program-confidential-dispatch', 'BB-TEST-3');
     expect(trackFormSubmit).toHaveBeenCalledWith('program-confidential-dispatch');
   });
@@ -73,12 +83,53 @@ describe('DispatchForm', () => {
     );
 
     fixture.componentInstance.form.setValue({ email: 'delegate@example.org' });
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    submitForm();
 
     expect(submit).toHaveBeenCalledWith(
       expect.objectContaining({ source: 'programs-sovereign-dialogue' }),
+      'key-1',
     );
     expect(show).toHaveBeenCalledWith('programs-sovereign-dialogue', 'BB-TEST-4');
+  });
+
+  it('disables the submit button while pending', () => {
+    const subject = new Subject<{ referenceId: string; submittedAt: string }>();
+    submit.mockReturnValue(subject.asObservable());
+
+    fixture.componentInstance.form.setValue({ email: 'delegate@example.org' });
+    submitForm();
+
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[type="submit"]');
+    expect(button.disabled).toBe(true);
+  });
+
+  it('shows a readable message on a 5xx and does not open the success modal', () => {
+    submit.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+
+    fixture.componentInstance.form.setValue({ email: 'delegate@example.org' });
+    submitForm();
+
+    expect(fixture.nativeElement.textContent).toMatch(/went wrong/i);
+    expect(show).not.toHaveBeenCalled();
+  });
+
+  it('maps a 422 email error onto the email field', () => {
+    submit.mockReturnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 422,
+            error: {
+              detail: [{ loc: ['body', 'email'], msg: 'value is not a valid email address' }],
+            },
+          }),
+      ),
+    );
+
+    fixture.componentInstance.form.setValue({ email: 'delegate@example.org' });
+    submitForm();
+
+    expect(fixture.nativeElement.textContent).toContain('value is not a valid email address');
+    expect(show).not.toHaveBeenCalled();
   });
 });

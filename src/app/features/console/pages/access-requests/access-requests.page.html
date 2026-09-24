@@ -1,0 +1,21 @@
+<div class="space-y-4">
+  <h1 class="text-lg font-semibold text-ink-950">Access requests</h1>
+  <p class="text-sm text-slate-500">Pending Track 1.5 accreditation review.</p>
+
+  @if (loading()) {
+    <p class="text-sm text-slate-500">Loading…</p>
+  } @else {
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      emptyMessage="No pending access requests."
+      (rowActivated)="open($event)"
+    />
+  }
+
+  <app-decision-panel
+    [request]="selected()"
+    (decided)="onDecided($event)"
+    (closed)="selected.set(null)"
+  />
+</div>
