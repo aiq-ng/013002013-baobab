@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AboutPage } from './about.page';
+import { makeProgram } from '../programs/testing/program-fixture';
 
 describe('AboutPage', () => {
   let httpMock: HttpTestingController;
@@ -40,8 +41,18 @@ describe('AboutPage', () => {
     expect(text).toContain('Track 1.5 sovereign advisory');
     expect(text).toContain('OUR MISSION');
     expect(text).toContain('Active Programs & Theaters');
-    expect(text).toContain('Liptako-Gourma Peace Corridor');
     expect(text).toContain('All Theaters');
     httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
+  });
+
+  it('fills the program grid from GET /programs', async () => {
+    const fixture = TestBed.createComponent(AboutPage);
+    fixture.detectChanges();
+    httpMock
+      .expectOne((r) => r.url.endsWith('/programs'))
+      .flush([makeProgram({ title: 'Registry Program Title' })]);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Registry Program Title');
   });
 });

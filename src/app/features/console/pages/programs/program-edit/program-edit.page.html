@@ -1,4 +1,4 @@
-<div class="max-w-3xl space-y-4">
+<div class="max-w-4xl space-y-4">
   <a
     routerLink="/console/programs"
     class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-ink-950"
@@ -6,87 +6,453 @@
     &larr; Programs
   </a>
 
-  @if (program(); as p) {
-    <h1 class="flex items-center gap-3 text-2xl font-bold text-ink-950">
-      Edit: {{ p.title }}
-      <span class="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800"
-        >Active Dossier</span
-      >
+  @if (notFound()) {
+    <p class="text-sm text-slate-500">This program no longer exists.</p>
+  } @else if (isNew || program()) {
+    <h1 class="flex flex-wrap items-center gap-3 text-2xl font-bold text-ink-950">
+      {{ isNew ? 'New program' : 'Edit: ' + program()?.title }}
+      <span class="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800">{{
+        isNew ? 'Draft Dossier' : 'Active Dossier'
+      }}</span>
     </h1>
 
-    <div class="rounded-xl border border-slate-200 bg-white pad-card-sm">
-      <p class="mb-2 text-xs font-semibold tracking-wide text-slate-500">IMAGE</p>
-      <div class="flex items-center gap-4 rounded-lg bg-brand-50/60 p-4">
-        <div class="relative">
-          <img [src]="p.imageUrl" alt="" class="h-20 w-20 rounded-md object-cover" />
-          <span
-            class="absolute bottom-1 left-1 rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white"
-            >Current</span
-          >
-        </div>
-        <p class="text-sm text-slate-500">Image is managed by the Secretariat archive.</p>
-      </div>
+    <form class="space-y-6" (ngSubmit)="onSubmit()" [formGroup]="form" novalidate>
+      <!-- Program card (Programs & About grids) -->
+      <section class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm">
+        <h2 class="text-lg font-semibold text-ink-950">Program card</h2>
 
-      <form class="mt-6 space-y-6" (ngSubmit)="onSubmit()" [formGroup]="form">
-        <div>
-          <label for="title" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-            >HEADER</label
-          >
-          <input
-            id="title"
-            type="text"
-            formControlName="title"
-            class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
+        @if (isNew) {
+          <app-console-field
+            fieldId="slug"
+            label="URL slug"
+            [control]="slugControl"
+            placeholder="e.g. sahel-water-accords"
+            patternMessage="Use lowercase letters, numbers and single hyphens only."
           />
-          @if (form.controls.title.invalid && form.controls.title.touched) {
-            <p class="mt-1 text-sm text-red-600">
-              @if (form.controls.title.errors?.['required']) {
-                Header is required.
-              } @else if (form.controls.title.errors?.['maxlength']) {
-                Header must be 120 characters or fewer.
-              }
-            </p>
-          }
-        </div>
-
-        <div>
-          <label
-            for="description"
-            class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-            >SUB-HEADER</label
-          >
-          <textarea
-            id="description"
-            rows="4"
-            formControlName="description"
-            class="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none"
-          ></textarea>
-          @if (form.controls.description.invalid && form.controls.description.touched) {
-            <p class="mt-1 text-sm text-red-600">
-              @if (form.controls.description.errors?.['required']) {
-                Sub-header is required.
-              } @else if (form.controls.description.errors?.['maxlength']) {
-                Sub-header must be 600 characters or fewer.
-              }
-            </p>
-          }
-        </div>
-
-        <div class="flex items-center justify-between border-t border-slate-100 pt-4">
-          <p class="flex items-center gap-2 text-sm text-slate-500">
-            <span aria-hidden="true">&#9432;</span>
-            Changes reflect on the public Programs page as soon as the site rebuilds (approx. 1
-            min).
+          <p class="-mt-4 text-xs text-slate-500">
+            Public address: /programs/{{ slugControl.value || '…' }} — this can't be changed later.
           </p>
-          <app-button
-            label="Publish program"
-            type="submit"
-            variant="primary"
-            [disabled]="submitting"
+        }
+
+        <app-console-field fieldId="title" label="Header" [control]="form.controls.title" />
+        <app-console-field
+          fieldId="description"
+          label="Sub-header"
+          [rows]="3"
+          [control]="form.controls.description"
+        />
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <app-console-field
+            fieldId="badgeText"
+            label="Badge"
+            placeholder="e.g. SAHEL CENTRAL"
+            [control]="form.controls.badgeText"
+          />
+          <app-console-field
+            fieldId="theater"
+            label="Theater"
+            placeholder="e.g. Sahel Central"
+            [control]="form.controls.theater"
           />
         </div>
-      </form>
-    </div>
+
+        <div class="flex flex-col gap-4 rounded-lg bg-brand-50/60 p-4 sm:flex-row sm:items-start">
+          @if (form.controls.imageUrl.valid) {
+            <img
+              [src]="form.controls.imageUrl.value"
+              alt=""
+              class="h-20 w-20 shrink-0 rounded-md object-cover"
+            />
+          }
+          <div class="grid flex-1 grid-cols-1 gap-4">
+            <app-console-field
+              fieldId="imageUrl"
+              label="Image URL"
+              placeholder="/images/shared/theaters/… or https://…"
+              patternMessage="Use a site path starting with / or an https:// URL."
+              [control]="form.controls.imageUrl"
+            />
+            <app-console-field
+              fieldId="imageAlt"
+              label="Image description (alt text)"
+              [control]="form.controls.imageAlt"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Detail page header + KPI row -->
+      <section class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm">
+        <h2 class="text-lg font-semibold text-ink-950">Detail page header</h2>
+
+        <app-console-field
+          fieldId="subtitle"
+          label="Subtitle"
+          [rows]="2"
+          [control]="form.controls.subtitle"
+        />
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <app-console-field
+            fieldId="referenceCode"
+            label="Reference code"
+            placeholder="e.g. REF: BO-LGP-2024-T1"
+            [control]="form.controls.referenceCode"
+          />
+          <app-console-field
+            fieldId="clearanceLevel"
+            label="Clearance level"
+            placeholder="e.g. DIPLOMATIC CLEARANCE L1"
+            [control]="form.controls.clearanceLevel"
+          />
+          <app-console-field
+            fieldId="statusTag"
+            label="Status tag"
+            placeholder="e.g. ACTIVE TRANSIT PROTOCOL"
+            [control]="form.controls.statusTag"
+          />
+        </div>
+
+        <fieldset class="space-y-3">
+          <legend class="console-label">KPIs ({{ limits.kpis.max }} max)</legend>
+          @for (kpi of form.controls.kpis.controls; track kpi; let i = $index) {
+            <div class="grid grid-cols-1 items-start gap-3 sm:grid-cols-[1fr_1fr_2fr_auto]">
+              <app-console-field
+                [fieldId]="'kpi-value-' + i"
+                label="Value"
+                [control]="kpi.controls.value"
+              />
+              <app-console-field
+                [fieldId]="'kpi-unit-' + i"
+                label="Unit (optional)"
+                [control]="kpi.controls.unit"
+              />
+              <app-console-field
+                [fieldId]="'kpi-label-' + i"
+                label="Label"
+                [control]="kpi.controls.label"
+              />
+              <button
+                type="button"
+                class="console-row-remove"
+                [disabled]="!canRemove('kpis')"
+                (click)="removeAt('kpis', i)"
+                [attr.aria-label]="'Remove KPI ' + (i + 1)"
+              >
+                Remove
+              </button>
+            </div>
+          }
+          @if (canAdd('kpis')) {
+            <button type="button" class="console-row-add" (click)="addKpi()">+ Add KPI</button>
+          }
+        </fieldset>
+      </section>
+
+      <!-- Doctrine -->
+      <section class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm">
+        <h2 class="text-lg font-semibold text-ink-950">Operational doctrine</h2>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <app-console-field
+            fieldId="doctrineEyebrow"
+            label="Eyebrow"
+            [control]="form.controls.doctrineEyebrow"
+          />
+          <app-console-field
+            fieldId="doctrineHeading"
+            label="Heading"
+            [control]="form.controls.doctrineHeading"
+          />
+        </div>
+
+        <fieldset class="space-y-3">
+          <legend class="console-label">Paragraphs</legend>
+          @for (
+            paragraph of form.controls.doctrineParagraphs.controls;
+            track paragraph;
+            let i = $index
+          ) {
+            <div class="grid grid-cols-1 items-start gap-3 sm:grid-cols-[1fr_auto]">
+              <app-console-field
+                [fieldId]="'doctrine-paragraph-' + i"
+                [label]="'Paragraph ' + (i + 1)"
+                [rows]="4"
+                [control]="paragraph"
+              />
+              <button
+                type="button"
+                class="console-row-remove"
+                [disabled]="!canRemove('doctrineParagraphs')"
+                (click)="removeAt('doctrineParagraphs', i)"
+                [attr.aria-label]="'Remove paragraph ' + (i + 1)"
+              >
+                Remove
+              </button>
+            </div>
+          }
+          @if (canAdd('doctrineParagraphs')) {
+            <button type="button" class="console-row-add" (click)="addParagraph()">
+              + Add paragraph
+            </button>
+          }
+        </fieldset>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <app-console-field
+            fieldId="doctrineImageUrl"
+            label="Image URL"
+            placeholder="/images/… or https://…"
+            patternMessage="Use a site path starting with / or an https:// URL."
+            [control]="form.controls.doctrineImageUrl"
+          />
+          <app-console-field
+            fieldId="doctrineImageCaption"
+            label="Image caption"
+            [control]="form.controls.doctrineImageCaption"
+          />
+        </div>
+
+        <fieldset class="space-y-3">
+          <legend class="console-label">Stats ({{ limits.doctrineStats.max }} max)</legend>
+          @for (stat of form.controls.doctrineStats.controls; track stat; let i = $index) {
+            <div class="grid grid-cols-1 items-start gap-3 sm:grid-cols-[1fr_1fr_2fr_auto]">
+              <app-console-field
+                [fieldId]="'doctrine-stat-value-' + i"
+                label="Value"
+                [control]="stat.controls.value"
+              />
+              <app-console-field
+                [fieldId]="'doctrine-stat-unit-' + i"
+                label="Unit (optional)"
+                [control]="stat.controls.unit"
+              />
+              <app-console-field
+                [fieldId]="'doctrine-stat-label-' + i"
+                label="Label"
+                [control]="stat.controls.label"
+              />
+              <button
+                type="button"
+                class="console-row-remove"
+                [disabled]="!canRemove('doctrineStats')"
+                (click)="removeAt('doctrineStats', i)"
+                [attr.aria-label]="'Remove stat ' + (i + 1)"
+              >
+                Remove
+              </button>
+            </div>
+          }
+          @if (canAdd('doctrineStats')) {
+            <button type="button" class="console-row-add" (click)="addDoctrineStat()">
+              + Add stat
+            </button>
+          }
+        </fieldset>
+      </section>
+
+      <!-- Pillars -->
+      <section class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm">
+        <h2 class="text-lg font-semibold text-ink-950">Operational pillars</h2>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <app-console-field
+            fieldId="pillarsEyebrow"
+            label="Eyebrow"
+            [control]="form.controls.pillarsEyebrow"
+          />
+          <app-console-field
+            fieldId="pillarsHeading"
+            label="Heading"
+            [control]="form.controls.pillarsHeading"
+          />
+        </div>
+        <app-console-field
+          fieldId="pillarsDescription"
+          label="Description"
+          [rows]="2"
+          [control]="form.controls.pillarsDescription"
+        />
+
+        @for (pillar of form.controls.pillars.controls; track pillar; let i = $index) {
+          <div
+            role="group"
+            [attr.aria-labelledby]="'pillar-heading-' + i"
+            class="space-y-4 rounded-lg border border-slate-100 p-4"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <h3 [id]="'pillar-heading-' + i" class="console-label mb-0">Pillar {{ i + 1 }}</h3>
+              <button
+                type="button"
+                class="console-row-remove"
+                [disabled]="!canRemove('pillars')"
+                (click)="removeAt('pillars', i)"
+                [attr.aria-label]="'Remove pillar ' + (i + 1)"
+              >
+                Remove
+              </button>
+            </div>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div>
+                <label [for]="'pillar-icon-' + i" class="console-label">Icon</label>
+                <select
+                  [id]="'pillar-icon-' + i"
+                  [formControl]="pillar.controls.icon"
+                  class="console-input"
+                >
+                  @for (icon of pillarIcons; track icon.key) {
+                    <option [value]="icon.emoji">{{ icon.emoji }} {{ icon.label }}</option>
+                  }
+                </select>
+              </div>
+              <app-console-field
+                [fieldId]="'pillar-eyebrow-' + i"
+                label="Eyebrow"
+                [control]="pillar.controls.eyebrow"
+              />
+              <app-console-field
+                [fieldId]="'pillar-title-' + i"
+                label="Title"
+                [control]="pillar.controls.title"
+              />
+            </div>
+            <app-console-field
+              [fieldId]="'pillar-description-' + i"
+              label="Description"
+              [rows]="3"
+              [control]="pillar.controls.description"
+            />
+            <app-console-field
+              [fieldId]="'pillar-footnote-' + i"
+              label="Footnote"
+              [control]="pillar.controls.footnote"
+            />
+          </div>
+        }
+        @if (canAdd('pillars')) {
+          <button type="button" class="console-row-add" (click)="addPillar()">+ Add pillar</button>
+        }
+      </section>
+
+      <!-- Timeline -->
+      <section class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm">
+        <h2 class="text-lg font-semibold text-ink-950">Accord timeline</h2>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <app-console-field
+            fieldId="timelineEyebrow"
+            label="Eyebrow"
+            [control]="form.controls.timelineEyebrow"
+          />
+          <app-console-field
+            fieldId="timelineHeading"
+            label="Heading"
+            [control]="form.controls.timelineHeading"
+          />
+        </div>
+        <app-console-field
+          fieldId="timelineDescription"
+          label="Description"
+          [rows]="2"
+          [control]="form.controls.timelineDescription"
+        />
+
+        @for (milestone of form.controls.milestones.controls; track milestone; let i = $index) {
+          <div
+            role="group"
+            [attr.aria-labelledby]="'milestone-heading-' + i"
+            class="space-y-4 rounded-lg border border-slate-100 p-4"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <h3 [id]="'milestone-heading-' + i" class="console-label mb-0">
+                Milestone {{ i + 1 }}
+              </h3>
+              <button
+                type="button"
+                class="console-row-remove"
+                [disabled]="!canRemove('milestones')"
+                (click)="removeAt('milestones', i)"
+                [attr.aria-label]="'Remove milestone ' + (i + 1)"
+              >
+                Remove
+              </button>
+            </div>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <app-console-field
+                [fieldId]="'milestone-date-' + i"
+                label="Date"
+                placeholder="e.g. October 2024"
+                [control]="milestone.controls.date"
+              />
+              <app-console-field
+                [fieldId]="'milestone-kicker-' + i"
+                label="Kicker"
+                placeholder="e.g. Diplomatic Decree"
+                [control]="milestone.controls.kicker"
+              />
+              <app-console-field
+                [fieldId]="'milestone-title-' + i"
+                label="Title"
+                [control]="milestone.controls.title"
+              />
+            </div>
+            <app-console-field
+              [fieldId]="'milestone-description-' + i"
+              label="Description"
+              [rows]="3"
+              [control]="milestone.controls.description"
+            />
+            <app-console-field
+              [fieldId]="'milestone-tags-' + i"
+              label="Tags"
+              placeholder="Comma-separated, up to 4 — e.g. 12 Border Posts, Tri-State Ratification"
+              [control]="milestone.controls.tags"
+            />
+            @if (milestone.controls.tags.hasError('tags')) {
+              <p role="alert" class="-mt-3 text-sm text-red-600">
+                Use at most 4 tags of up to 100 characters each.
+              </p>
+            }
+          </div>
+        }
+        @if (canAdd('milestones')) {
+          <button type="button" class="console-row-add" (click)="addMilestone()">
+            + Add milestone
+          </button>
+        }
+      </section>
+
+      <!-- Dispatch -->
+      <section class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm">
+        <h2 class="text-lg font-semibold text-ink-950">Confidential dispatch form</h2>
+        <app-console-field
+          fieldId="dispatchHeading"
+          label="Heading"
+          [control]="form.controls.dispatchHeading"
+        />
+        <app-console-field
+          fieldId="dispatchSubtext"
+          label="Subtext"
+          [rows]="3"
+          [control]="form.controls.dispatchSubtext"
+        />
+      </section>
+
+      <div
+        class="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white pad-card-sm sm:flex-row sm:items-center sm:justify-between"
+      >
+        <p class="flex items-center gap-2 text-sm text-slate-500">
+          <span aria-hidden="true">&#9432;</span>
+          Changes appear on the public site as soon as you publish.
+        </p>
+        <app-button
+          [label]="isNew ? 'Create program' : 'Publish program'"
+          type="submit"
+          variant="primary"
+          [disabled]="submitting"
+        />
+      </div>
+    </form>
   } @else {
     <p class="text-sm text-slate-500">Loading…</p>
   }

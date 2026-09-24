@@ -28,6 +28,10 @@ export class ProgramsListPage implements OnInit {
   private readonly seo = inject(SeoService);
   private readonly programsService = inject(ProgramsService);
 
+  readonly programsUnavailable = computed(
+    () => this.programsService.status() === 'error' && this.programsService.programs().length === 0,
+  );
+
   readonly activePrograms = computed<ProgramPreview[]>(() =>
     this.programsService.programs().map((program) => ({
       slug: program.slug,

@@ -14,7 +14,7 @@
     <p class="mt-1 text-sm text-ink-950/70">{{ description }}</p>
     @if (tags.length) {
       <ul class="mt-2 flex flex-wrap gap-2">
-        @for (tag of tags; track tag) {
+        @for (tag of tags; track $index) {
           <li class="rounded-full bg-surface-tint px-2.5 py-1 text-xs font-medium text-ink-950/70">
             {{ tag }}
           </li>

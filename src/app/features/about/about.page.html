@@ -26,6 +26,11 @@
 
     <div class="mt-10">
       <app-program-grid [programs]="activePrograms()" />
+      @if (programsUnavailable()) {
+        <p class="text-sm text-slate-600">
+          Programs are temporarily unavailable. Please try again in a moment.
+        </p>
+      }
     </div>
   </section>
 

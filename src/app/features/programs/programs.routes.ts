@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { programResolver } from './resolvers/program.resolver';
 
 export const PROGRAMS_ROUTES: Routes = [
   {
@@ -7,6 +8,7 @@ export const PROGRAMS_ROUTES: Routes = [
   },
   {
     path: ':slug',
+    resolve: { program: programResolver },
     loadComponent: () => import('./program-detail.page').then((m) => m.ProgramDetailPage),
   },
 ];

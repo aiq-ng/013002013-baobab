@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 import { of, throwError } from 'rxjs';
 import { ConsoleStore } from './console-store';
 import { ConsoleApi } from './console-api';
+import { contentOf, createBodyOf, makeProgram } from '../../programs/testing/program-fixture';
 
 const CODEX_FIELDS = {
   batchLabel: 'Annual Codex · Vol. IX',
@@ -33,15 +34,9 @@ describe('ConsoleStore', () => {
       listAccessRequests: () => of([]),
       decideAccessRequest: () => of(undefined),
       listPrograms: () => of([]),
-      updateProgram: () =>
-        of({
-          slug: 'p1',
-          sortOrder: 1,
-          title: 'T',
-          description: 'D',
-          imageUrl: '/img.jpg',
-          updatedAt: '2026-01-01T00:00:00Z',
-        }),
+      updateProgram: () => of(makeProgram({ slug: 'p1' })),
+      createProgram: () => of(makeProgram({ slug: 'p1' })),
+      deleteProgram: () => of(undefined),
       listResources: () => of([]),
       createResource: () =>
         of({
@@ -240,19 +235,7 @@ describe('ConsoleStore', () => {
   });
 
   it('loadPrograms populates rows, toggling loading', async () => {
-    const store = setup({
-      listPrograms: () =>
-        of([
-          {
-            slug: 'p1',
-            sortOrder: 1,
-            title: 'Program One',
-            description: 'Desc',
-            imageUrl: '/img.jpg',
-            updatedAt: '2026-01-01T00:00:00Z',
-          },
-        ]),
-    });
+    const store = setup({ listPrograms: () => of([makeProgram({ slug: 'p1' })]) });
 
     await store.loadPrograms();
 
@@ -260,27 +243,50 @@ describe('ConsoleStore', () => {
     expect(store.programsLoading()).toBe(false);
   });
 
-  it('saveProgram calls the API then reloads the list', async () => {
+  it('saveProgram PUTs the full content then reloads the list', async () => {
     const listPrograms = vi.fn().mockReturnValue(of([]));
-    const updateProgram = vi.fn().mockReturnValue(
-      of({
-        slug: 'p1',
-        sortOrder: 1,
-        title: 'New Title',
-        description: 'New Desc',
-        imageUrl: '/img.jpg',
-        updatedAt: '2026-01-01T00:00:00Z',
-      }),
-    );
+    const updateProgram = vi.fn().mockReturnValue(of(makeProgram({ slug: 'p1' })));
     const store = setup({ listPrograms, updateProgram });
+    const content = contentOf(makeProgram());
 
-    await store.saveProgram('p1', { title: 'New Title', description: 'New Desc' });
+    await store.saveProgram('p1', content);
 
-    expect(updateProgram).toHaveBeenCalledWith('p1', {
-      title: 'New Title',
-      description: 'New Desc',
-    });
+    expect(updateProgram).toHaveBeenCalledWith('p1', content);
     expect(listPrograms).toHaveBeenCalled();
+  });
+
+  it('createProgram POSTs then reloads the list', async () => {
+    const listPrograms = vi.fn().mockReturnValue(of([]));
+    const createProgram = vi.fn().mockReturnValue(of(makeProgram({ slug: 'new-one' })));
+    const store = setup({ listPrograms, createProgram });
+    const body = createBodyOf(makeProgram({ slug: 'new-one' }));
+
+    await store.createProgram(body);
+
+    expect(createProgram).toHaveBeenCalledWith(body);
+    expect(listPrograms).toHaveBeenCalled();
+  });
+
+  it('deleteProgram DELETEs then reloads the list', async () => {
+    const listPrograms = vi.fn().mockReturnValue(of([]));
+    const deleteProgram = vi.fn().mockReturnValue(of(undefined));
+    const store = setup({ listPrograms, deleteProgram });
+
+    await store.deleteProgram('p1');
+
+    expect(deleteProgram).toHaveBeenCalledWith('p1');
+    expect(listPrograms).toHaveBeenCalled();
+  });
+
+  it('deleteProgram propagates a failure without reloading', async () => {
+    const listPrograms = vi.fn().mockReturnValue(of([]));
+    const store = setup({
+      listPrograms,
+      deleteProgram: () => throwError(() => new Error('nope')),
+    });
+
+    await expect(store.deleteProgram('p1')).rejects.toThrow('nope');
+    expect(listPrograms).not.toHaveBeenCalled();
   });
 
   it('loadResources populates rows, toggling loading', async () => {

@@ -29,6 +29,12 @@ export const CONSOLE_ROUTES: Routes = [
         loadComponent: () => import('./pages/programs/programs.page').then((m) => m.ProgramsPage),
       },
       {
+        path: 'programs/new',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./pages/programs/program-edit/program-edit.page').then((m) => m.ProgramEditPage),
+      },
+      {
         path: 'programs/:slug',
         canActivate: [authGuard],
         loadComponent: () =>

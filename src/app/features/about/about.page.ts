@@ -32,6 +32,10 @@ export class AboutPage implements OnInit {
   private readonly programsService = inject(ProgramsService);
 
   readonly partnerLogos = PARTNER_LOGOS;
+  readonly programsUnavailable = computed(
+    () => this.programsService.status() === 'error' && this.programsService.programs().length === 0,
+  );
+
   readonly activePrograms = computed<ProgramPreview[]>(() =>
     this.programsService.programs().map((program) => ({
       slug: program.slug,

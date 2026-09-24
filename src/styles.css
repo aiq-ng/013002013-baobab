@@ -51,6 +51,25 @@
     @apply hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md;
   }
 
+  /* Registry Console form controls — the admin screens use square-cornered inputs with small
+     uppercase labels (design/admin/*EDIT.png), distinct from the public site's pill inputs. */
+  .console-label {
+    @apply mb-2 block text-xs font-semibold tracking-wide text-slate-500 uppercase;
+  }
+
+  .console-input {
+    @apply w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-brand-600 focus:outline-none;
+  }
+
+  /* Add / remove buttons for repeatable rows in console forms (KPIs, pillars, milestones…). */
+  .console-row-add {
+    @apply text-sm font-medium text-brand-700 hover:text-brand-800;
+  }
+
+  .console-row-remove {
+    @apply text-sm font-medium text-red-600 hover:text-red-700 disabled:cursor-not-allowed disabled:text-slate-300 sm:mt-7;
+  }
+
   /* Container padding scale — mobile-first.
      Section gutters, tinted panels, cards and inset blocks all nest on the same axis, so a chain
      of fixed p-6/p-8 containers burns ~80px of gutter per side on a 375px screen and squeezes the
