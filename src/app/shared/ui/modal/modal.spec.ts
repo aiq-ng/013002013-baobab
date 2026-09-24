@@ -68,4 +68,62 @@ describe('Modal', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     expect(fixture.componentInstance.closedCalls).toBe(1);
   });
+
+  describe('focus management', () => {
+    @Component({
+      standalone: true,
+      imports: [Modal],
+      template: `<button id="opener">Open</button>
+        <app-modal [open]="open" label="Focus dialog" (closed)="open = false">
+          <button id="first">First</button>
+          <button id="preferred" data-autofocus>Preferred</button>
+        </app-modal>`,
+    })
+    class FocusHost {
+      open = false;
+    }
+
+    const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+    it('moves focus to the [data-autofocus] element when it opens', async () => {
+      TestBed.configureTestingModule({ imports: [FocusHost] });
+      const fixture = TestBed.createComponent(FocusHost);
+      fixture.componentInstance.open = true;
+      fixture.detectChanges();
+      await tick();
+
+      expect(document.activeElement?.id).toBe('preferred');
+    });
+
+    it('traps Tab inside the dialog', async () => {
+      TestBed.configureTestingModule({ imports: [FocusHost] });
+      const fixture = TestBed.createComponent(FocusHost);
+      fixture.componentInstance.open = true;
+      fixture.detectChanges();
+      await tick();
+
+      const close = fixture.debugElement.query(By.css('button[aria-label="Close"]'))
+        .nativeElement as HTMLElement;
+      (fixture.debugElement.query(By.css('#preferred')).nativeElement as HTMLElement).focus();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab' }));
+
+      expect(document.activeElement).toBe(close);
+    });
+
+    it('returns focus to whatever opened it when it closes', async () => {
+      TestBed.configureTestingModule({ imports: [FocusHost] });
+      const fixture = TestBed.createComponent(FocusHost);
+      fixture.detectChanges();
+      const opener = fixture.debugElement.query(By.css('#opener')).nativeElement as HTMLElement;
+      opener.focus();
+
+      fixture.componentInstance.open = true;
+      fixture.detectChanges();
+      await tick();
+      fixture.componentInstance.open = false;
+      fixture.detectChanges();
+
+      expect(document.activeElement).toBe(opener);
+    });
+  });
 });

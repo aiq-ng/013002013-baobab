@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   OnInit,
   computed,
   inject,
@@ -10,6 +11,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
@@ -18,12 +20,20 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SeoService } from '../../../../../core/services/seo.service';
 import { ToastService } from '../../../../../shared/ui/toast/toast.service';
 import { Button } from '../../../../../shared/ui/button/button';
 import { ConsoleStore } from '../../../services/console-store';
 import { ConsoleField } from '../../../components/console-field/console-field';
+import { PageHeader } from '../../../components/page-header/page-header';
+import { ImageField } from '../../../components/image-field/image-field';
+import { RepeatItem } from '../../../components/repeat-item/repeat-item';
+import { SuccessPanel } from '../../../components/success-panel/success-panel';
+import { StatusPanel } from '../../../../../shared/ui/status-panel/status-panel';
+import { consoleValidators } from '../../../validators/console-validators';
+import { ConsoleFormPage, trimStrings } from '../../../utils/console-form-page';
+import { describeApiError } from '../../../utils/api-error';
 import {
   ProgramContent,
   ProgramMilestone,
@@ -33,14 +43,13 @@ import {
 import { PILLAR_ICONS } from '../../../../programs/models/pillar-icons';
 
 // Mirrors the backend's ProgramContent limits (app/schemas/content.py).
-const SHORT = [Validators.required, Validators.maxLength(200)];
-const LONG = [Validators.required, Validators.maxLength(2000)];
+const SHORT = [consoleValidators.notBlank, Validators.maxLength(200)];
+const LONG = [consoleValidators.notBlank, Validators.maxLength(2000)];
 const IMAGE_URL = [
-  Validators.required,
+  consoleValidators.notBlank,
   Validators.maxLength(500),
-  Validators.pattern(/^(\/[^/]|https:\/\/).*/),
+  consoleValidators.safeLink,
 ];
-const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /** Row bounds per repeatable list — the detail page lays out at most these many. */
 const LIST_LIMITS = {
@@ -98,6 +107,86 @@ type MilestoneGroup = FormGroup<{
 
 const PILLAR_NUMERALS = ['I', 'II', 'III'];
 
+export type SectionId = 'card' | 'header' | 'doctrine' | 'pillars' | 'timeline' | 'dispatch';
+
+interface SectionDef {
+  id: SectionId;
+  /** Short name in the section list. */
+  label: string;
+  /** Panel heading. */
+  heading: string;
+  /** Where this content appears on the public site — orients the editor. */
+  description: string;
+  controls: string[];
+}
+
+/**
+ * The detail page's ~40 fields, grouped by where they appear publicly so the
+ * editor only faces one topic at a time (progressive disclosure).
+ */
+const SECTIONS: SectionDef[] = [
+  {
+    id: 'card',
+    label: 'Program card',
+    heading: 'Program card',
+    description: 'Shown on program cards on the Programs and About pages.',
+    controls: ['title', 'description', 'badgeText', 'theater', 'imageUrl', 'imageAlt'],
+  },
+  {
+    id: 'header',
+    label: 'Page header & KPIs',
+    heading: 'Page header & KPIs',
+    description:
+      "The top of this program's detail page: its subtitle, reference metadata and headline figures.",
+    controls: ['subtitle', 'referenceCode', 'clearanceLevel', 'statusTag', 'kpis'],
+  },
+  {
+    id: 'doctrine',
+    label: 'Doctrine',
+    heading: 'Operational doctrine',
+    description: 'The narrative section of the detail page, with its image and supporting figures.',
+    controls: [
+      'doctrineEyebrow',
+      'doctrineHeading',
+      'doctrineParagraphs',
+      'doctrineImageUrl',
+      'doctrineImageCaption',
+      'doctrineStats',
+    ],
+  },
+  {
+    id: 'pillars',
+    label: 'Pillars',
+    heading: 'Operational pillars',
+    description: 'Up to three pillar cards on the detail page.',
+    controls: ['pillarsEyebrow', 'pillarsHeading', 'pillarsDescription', 'pillars'],
+  },
+  {
+    id: 'timeline',
+    label: 'Timeline',
+    heading: 'Accord timeline',
+    description: 'Dated milestones in the accord timeline on the detail page.',
+    controls: ['timelineEyebrow', 'timelineHeading', 'timelineDescription', 'milestones'],
+  },
+  {
+    id: 'dispatch',
+    label: 'Dispatch form',
+    heading: 'Confidential dispatch form',
+    description: 'The confidential dispatch sign-up at the foot of the detail page.',
+    controls: ['dispatchHeading', 'dispatchSubtext'],
+  },
+];
+
+function countInvalid(control: AbstractControl): number {
+  if (control instanceof FormGroup || control instanceof FormArray) {
+    return Object.values(control.controls).reduce<number>(
+      (sum, child: AbstractControl) => sum + countInvalid(child),
+      0,
+    );
+  }
+  return control.invalid ? 1 : 0;
+}
+
 /**
  * Create or edit a program — every field its public `programs/:slug` page
  * renders (PROGRAMS EDIT.png covers the card fields; the detail sections
@@ -107,18 +196,28 @@ const PILLAR_NUMERALS = ['I', 'II', 'III'];
 @Component({
   selector: 'app-console-program-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, Button, ConsoleField],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    Button,
+    ConsoleField,
+    ImageField,
+    RepeatItem,
+    PageHeader,
+    SuccessPanel,
+    StatusPanel,
+  ],
   templateUrl: './program-edit.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProgramEditPage implements OnInit {
+export class ProgramEditPage extends ConsoleFormPage implements OnInit {
   private readonly store = inject(ConsoleStore);
   private readonly seo = inject(SeoService);
   private readonly toast = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder).nonNullable;
   private readonly destroyRef = inject(DestroyRef);
+  private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly pillarIcons = PILLAR_ICONS;
   readonly limits = LIST_LIMITS;
@@ -129,16 +228,19 @@ export class ProgramEditPage implements OnInit {
   readonly programs = this.store.programs;
   readonly program = computed(() => this.programs().find((p) => p.slug === this.slug) ?? null);
   readonly notFound = signal(false);
+  readonly loadError = signal<string | null>(null);
+  /** Set after a successful publish — the page then shows the confirmation panel. */
+  readonly published = signal<{ title: string; slug: string; created: boolean } | null>(null);
 
   readonly slugControl = this.fb.control('', [
-    Validators.required,
+    consoleValidators.notBlank,
     Validators.maxLength(100),
-    Validators.pattern(SLUG_PATTERN),
+    consoleValidators.slug,
   ]);
 
   readonly form = this.fb.group({
-    title: ['', [Validators.required, Validators.maxLength(120)]],
-    description: ['', [Validators.required, Validators.maxLength(600)]],
+    title: ['', [consoleValidators.notBlank, Validators.maxLength(120)]],
+    description: ['', [consoleValidators.notBlank, Validators.maxLength(600)]],
     imageUrl: ['', IMAGE_URL],
     imageAlt: ['', SHORT],
     theater: ['', SHORT],
@@ -171,9 +273,106 @@ export class ProgramEditPage implements OnInit {
     dispatchSubtext: ['', LONG],
   });
 
-  submitting = false;
+  protected get trackedForm() {
+    return this.form;
+  }
+
+  // --- sections -----------------------------------------------------------
+
+  readonly sections = SECTIONS;
+  readonly activeSection = signal<SectionId>('card');
+  /** Error counts only appear once a publish has been attempted. */
+  readonly submitAttempted = signal(false);
+  /** Bumped on every form event so the counts below stay live. */
+  private readonly formVersion = signal(0);
+
+  readonly errorCounts = computed<Record<SectionId, number>>(() => {
+    this.formVersion();
+    const counts = {} as Record<SectionId, number>;
+    for (const section of SECTIONS) {
+      let count = section.controls.reduce(
+        (sum, name) => sum + countInvalid(this.form.get(name) as AbstractControl),
+        0,
+      );
+      if (section.id === 'card' && this.isNew) count += countInvalid(this.slugControl);
+      counts[section.id] = count;
+    }
+    return counts;
+  });
+
+  selectSection(id: SectionId): void {
+    this.activeSection.set(id);
+  }
+
+  nextSection(id: SectionId): SectionDef | null {
+    const index = SECTIONS.findIndex((s) => s.id === id);
+    return SECTIONS[index + 1] ?? null;
+  }
+
+  goToNextSection(id: SectionId): void {
+    const next = this.nextSection(id);
+    if (next) {
+      this.activeSection.set(next.id);
+      this.focusTab(next.id);
+    }
+  }
+
+  /** WAI-ARIA tabs keyboard model: arrows move (and select), Home/End jump. */
+  onTabKeydown(event: KeyboardEvent, index: number): void {
+    const last = SECTIONS.length - 1;
+    const target =
+      event.key === 'ArrowDown' || event.key === 'ArrowRight'
+        ? index === last
+          ? 0
+          : index + 1
+        : event.key === 'ArrowUp' || event.key === 'ArrowLeft'
+          ? index === 0
+            ? last
+            : index - 1
+          : event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? last
+              : null;
+    if (target === null) return;
+    event.preventDefault();
+    this.activeSection.set(SECTIONS[target].id);
+    this.focusTab(SECTIONS[target].id);
+  }
+
+  private focusTab(id: SectionId): void {
+    this.hostEl.nativeElement.querySelector<HTMLElement>(`#section-tab-${id}`)?.focus();
+  }
+
+  pillarSummary(index: number): string {
+    return this.form.controls.pillars.at(index).controls.title.value;
+  }
+
+  milestoneSummary(index: number): string {
+    const { date, title } = this.form.controls.milestones.at(index).controls;
+    return [date.value, title.value].filter(Boolean).join(' · ');
+  }
+
+  statSummary(list: 'kpis' | 'doctrineStats', index: number): string {
+    const { value, unit, label } = this.form.controls[list].at(index).controls;
+    return [value.value, unit.value, label.value].filter(Boolean).join(' ');
+  }
+
+  paragraphSummary(index: number): string {
+    const text = this.form.controls.doctrineParagraphs.at(index).value;
+    return text.length > 60 ? `${text.slice(0, 60).trimEnd()}…` : text;
+  }
+
+  override hasUnsavedChanges(): boolean {
+    return this.form.dirty || (this.isNew && this.slugControl.dirty);
+  }
 
   ngOnInit(): void {
+    for (const control of [this.form, this.slugControl]) {
+      control.events
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this.formVersion.update((v) => v + 1));
+    }
     this.seo.update({
       title: this.isNew ? 'New program' : 'Edit program',
       description: 'Manage a Secretariat program record.',
@@ -193,18 +392,20 @@ export class ProgramEditPage implements OnInit {
     void this.load();
   }
 
-  private async load(): Promise<void> {
+  async load(): Promise<void> {
+    this.loadError.set(null);
     if (this.programs().length === 0) {
       try {
         await this.store.loadPrograms();
-      } catch {
-        this.toast.error('Could not load the program.');
+      } catch (error) {
+        this.loadError.set(describeApiError(error, 'Could not load the program.'));
         return;
       }
     }
     const program = this.program();
     if (program) {
       this.patchFromProgram(program);
+      this.form.markAsPristine();
     } else {
       this.notFound.set(true);
     }
@@ -294,36 +495,44 @@ export class ProgramEditPage implements OnInit {
   // --- submit -------------------------------------------------------------
 
   async onSubmit(): Promise<void> {
+    if (this.submitting()) return;
     if (this.form.invalid || (this.isNew && this.slugControl.invalid)) {
-      this.form.markAllAsTouched();
-      this.slugControl.markAsTouched();
+      this.submitAttempted.set(true);
+      const counts = this.errorCounts();
+      const firstWithErrors = SECTIONS.find((section) => counts[section.id] > 0);
+      if (firstWithErrors) this.activeSection.set(firstWithErrors.id);
+      this.rejectInvalid(this.slugControl);
       this.toast.error('Some fields need attention.');
       return;
     }
     const content = this.toContent();
-    this.submitting = true;
+    const slug = this.isNew ? this.slugControl.value.trim() : (this.slug as string);
     try {
-      if (this.isNew) {
-        await this.store.createProgram({ slug: this.slugControl.value, ...content });
-        this.toast.success('Program created and published.');
-      } else {
-        await this.store.saveProgram(this.slug as string, content);
-        this.toast.success('Program updated.');
-      }
-      await this.router.navigate(['/console/programs']);
+      await this.guardedSave(async () => {
+        if (this.isNew) {
+          await this.store.createProgram({ slug, ...content });
+        } else {
+          await this.store.saveProgram(slug, content);
+        }
+      });
+      this.slugControl.markAsPristine();
+      this.published.set({ title: content.title, slug, created: this.isNew });
     } catch (error) {
       this.toast.error(
         error instanceof HttpErrorResponse && error.status === 409
           ? 'A program with this slug already exists.'
-          : 'Could not save the program.',
+          : describeApiError(error, 'Could not save the program.'),
       );
-    } finally {
-      this.submitting = false;
     }
   }
 
+  /** "Edit this program again" — back to the form, now showing the saved values. */
+  editAgain(): void {
+    this.published.set(null);
+  }
+
   private toContent(): ProgramContent {
-    const value = this.form.getRawValue();
+    const value = trimStrings(this.form.getRawValue());
     return {
       ...value,
       kpis: value.kpis.map(fromStatValue),

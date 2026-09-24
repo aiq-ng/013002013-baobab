@@ -1,0 +1,56 @@
+<app-modal
+  [open]="pending() !== null"
+  dialogRole="alertdialog"
+  [label]="pending()?.title ?? ''"
+  labelledBy="confirm-dialog-title"
+  describedBy="confirm-dialog-message"
+  [showClose]="false"
+  (closed)="answer(false)"
+>
+  @if (pending(); as request) {
+    <div class="text-left">
+      @if (request.tone === 'danger') {
+        <span
+          aria-hidden="true"
+          class="mb-4 flex size-11 items-center justify-center rounded-full bg-red-50 text-red-600"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="size-5"
+          >
+            <path
+              d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"
+            />
+          </svg>
+        </span>
+      }
+      <h2 id="confirm-dialog-title" class="text-lg font-semibold text-ink-950">
+        {{ request.title }}
+      </h2>
+      <p id="confirm-dialog-message" class="mt-2 text-sm leading-relaxed text-console-muted">
+        {{ request.message }}
+      </p>
+      <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <app-button
+          data-testid="confirm-cancel"
+          [attr.data-autofocus]="request.tone === 'danger' ? '' : null"
+          variant="console-soft"
+          [label]="request.cancelLabel"
+          (pressed)="answer(false)"
+        />
+        <app-button
+          data-testid="confirm-accept"
+          [attr.data-autofocus]="request.tone === 'danger' ? null : ''"
+          [variant]="request.tone === 'danger' ? 'danger' : 'console'"
+          [label]="request.confirmLabel"
+          (pressed)="answer(true)"
+        />
+      </div>
+    </div>
+  }
+</app-modal>

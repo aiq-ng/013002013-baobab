@@ -10,7 +10,15 @@ import { RouterLink } from '@angular/router';
 import { AnalyticsService } from '../../../core/services/analytics.service';
 
 export type ButtonVariant =
-  'primary' | 'secondary' | 'light' | 'light-accent' | 'mint' | 'outline-light' | 'console';
+  | 'primary'
+  | 'secondary'
+  | 'light'
+  | 'light-accent'
+  | 'mint'
+  | 'outline-light'
+  | 'console'
+  | 'console-soft'
+  | 'danger';
 export type ButtonSize = 'md' | 'lg';
 
 /**
@@ -40,6 +48,9 @@ export class Button {
   @Input() download = false;
   @Input() type: 'button' | 'submit' = 'button';
   @Input() disabled = false;
+  /** An action is in flight: disables, sets `aria-busy`, shows a spinner and `busyLabel`. */
+  @Input() busy = false;
+  @Input() busyLabel: string | null = null;
   /** When set, every click (routed or plain) is reported via AnalyticsService.trackCtaClick. */
   @Input() ctaId: string | null = null;
 
@@ -59,8 +70,15 @@ export class Button {
     if (this.variant === 'primary') {
       return 'bg-brand-600 text-white hover:bg-brand-700';
     }
+    // Console colours live in styles.css recipes so plain <button>s share them exactly.
     if (this.variant === 'console') {
-      return 'bg-console-accent text-white hover:bg-console-accent-hover';
+      return 'console-btn--primary';
+    }
+    if (this.variant === 'console-soft') {
+      return 'console-btn--soft';
+    }
+    if (this.variant === 'danger') {
+      return 'console-btn--danger';
     }
     if (this.variant === 'light') {
       return 'bg-white text-ink-950 shadow-sm hover:bg-slate-50';
@@ -77,8 +95,16 @@ export class Button {
     return 'border border-current bg-transparent text-brand-700 hover:bg-brand-50';
   }
 
+  get inactive(): boolean {
+    return this.disabled || this.busy;
+  }
+
+  get displayLabel(): string {
+    return this.busy && this.busyLabel ? this.busyLabel : this.label;
+  }
+
   onClick(): void {
-    if (!this.disabled) {
+    if (!this.inactive) {
       this.trackClick();
       this.pressed.emit();
     }

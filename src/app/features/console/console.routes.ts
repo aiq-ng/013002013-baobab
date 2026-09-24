@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ConsoleLayout } from '../../layouts/console-layout/console-layout';
 import { authGuard } from './guards/auth.guard';
+import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
 
 export const CONSOLE_ROUTES: Routes = [
   {
@@ -31,12 +32,14 @@ export const CONSOLE_ROUTES: Routes = [
       {
         path: 'programs/new',
         canActivate: [authGuard],
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/programs/program-edit/program-edit.page').then((m) => m.ProgramEditPage),
       },
       {
         path: 'programs/:slug',
         canActivate: [authGuard],
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/programs/program-edit/program-edit.page').then((m) => m.ProgramEditPage),
       },
@@ -49,8 +52,20 @@ export const CONSOLE_ROUTES: Routes = [
       {
         path: 'resources/new',
         canActivate: [authGuard],
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
-          import('./pages/resources/resource-new/resource-new.page').then((m) => m.ResourceNewPage),
+          import('./pages/resources/resource-edit/resource-edit.page').then(
+            (m) => m.ResourceEditPage,
+          ),
+      },
+      {
+        path: 'resources/:id',
+        canActivate: [authGuard],
+        canDeactivate: [unsavedChangesGuard],
+        loadComponent: () =>
+          import('./pages/resources/resource-edit/resource-edit.page').then(
+            (m) => m.ResourceEditPage,
+          ),
       },
       {
         path: 'archive',
@@ -60,16 +75,21 @@ export const CONSOLE_ROUTES: Routes = [
       {
         path: 'archive/new',
         canActivate: [authGuard],
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/archive/archive-edit/archive-edit.page').then((m) => m.ArchiveEditPage),
       },
       {
         path: 'archive/:id',
         canActivate: [authGuard],
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/archive/archive-edit/archive-edit.page').then((m) => m.ArchiveEditPage),
       },
       { path: '', redirectTo: 'submissions', pathMatch: 'full' },
+      // An unknown console URL stays inside the console rather than falling
+      // through to the public site's 404.
+      { path: '**', redirectTo: 'submissions' },
     ],
   },
 ];

@@ -83,6 +83,7 @@ export class ConsoleStore {
       await firstValueFrom(this.api.signOut());
     } finally {
       this._session.set(null);
+      this.clearCollections();
     }
   }
 
@@ -91,6 +92,19 @@ export class ConsoleStore {
   clearSession(): void {
     this._session.set(null);
     this._sessionChecked.set(true);
+    this.clearCollections();
+  }
+
+  /** Submissions and access requests hold visitors' names, emails and
+   * messages — none of it may outlive the session that fetched it, or the
+   * next person at a shared machine could read it back out of memory. */
+  private clearCollections(): void {
+    this._engagements.set([]);
+    this._engagementsTotal.set(0);
+    this._accessRequests.set([]);
+    this._programs.set([]);
+    this._resources.set([]);
+    this._archiveEntries.set([]);
   }
 
   async loadEngagements(query: {

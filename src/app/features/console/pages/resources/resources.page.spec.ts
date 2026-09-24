@@ -5,6 +5,7 @@ import { ResourcesPage } from './resources.page';
 import { ConsoleStore } from '../../services/console-store';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AdminResource } from '../../models/admin';
+import { ConfirmService } from '../../../../shared/ui/confirm-dialog/confirm.service';
 
 function makeResource(overrides: Partial<AdminResource> = {}): AdminResource {
   return {
@@ -37,6 +38,8 @@ function makeResource(overrides: Partial<AdminResource> = {}): AdminResource {
 describe('ResourcesPage', () => {
   let fixture: ComponentFixture<ResourcesPage>;
   let store: Partial<ConsoleStore>;
+  let confirm: { ask: ReturnType<typeof vi.fn> };
+  const el = (): HTMLElement => fixture.nativeElement;
 
   beforeEach(async () => {
     const resources = [makeResource(), makeResource({ id: 'r2', downloadUrl: null })];
@@ -47,12 +50,15 @@ describe('ResourcesPage', () => {
       setResourcePublished: vi.fn().mockResolvedValue(undefined),
     };
 
+    confirm = { ask: vi.fn().mockResolvedValue(true) };
+
     await TestBed.configureTestingModule({
       imports: [ResourcesPage],
       providers: [
         provideRouter([]),
         { provide: ConsoleStore, useValue: store },
         { provide: SeoService, useValue: { update: vi.fn() } },
+        { provide: ConfirmService, useValue: confirm },
       ],
     }).compileComponents();
 
@@ -69,12 +75,49 @@ describe('ResourcesPage', () => {
     expect(rows.length).toBe(2);
   });
 
-  it('calls store.setResourcePublished(id, false) when Unpublish is clicked', () => {
-    const button: HTMLButtonElement = fixture.nativeElement.querySelector(
+  it('confirms before unpublishing, then unpublishes', async () => {
+    const button: HTMLButtonElement = el().querySelector(
       '[data-testid="resource-row"] button[data-testid="unpublish-btn"]',
-    );
+    )!;
     button.click();
+    await fixture.whenStable();
 
+    expect(confirm.ask).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Unpublish 2025 Sovereign Partnership Protocol?' }),
+    );
     expect(store.setResourcePublished).toHaveBeenCalledWith('r1', false);
+  });
+
+  it('keeps the resource published when the editor cancels', async () => {
+    confirm.ask.mockResolvedValue(false);
+    (el().querySelector('button[data-testid="unpublish-btn"]') as HTMLButtonElement).click();
+    await fixture.whenStable();
+
+    expect(store.setResourcePublished).not.toHaveBeenCalled();
+  });
+
+  it('publishes without a confirmation step', async () => {
+    const rows = el().querySelectorAll('[data-testid="resource-row"]');
+    (rows[1].querySelector('button[data-testid="unpublish-btn"]') as HTMLButtonElement).click();
+    await fixture.whenStable();
+
+    expect(confirm.ask).not.toHaveBeenCalled();
+    expect(store.setResourcePublished).toHaveBeenCalledWith('r2', true);
+  });
+
+  it('links Edit to the resource editor (never back to the list)', () => {
+    const edit = el().querySelector('a[data-testid="resource-edit-link"]');
+    expect(edit?.getAttribute('href')).toBe('/console/resources/r1');
+  });
+
+  it('shows the published state as text, not only via the action label', () => {
+    const rows = el().querySelectorAll('[data-testid="resource-row"]');
+    expect(rows[0].querySelector('.tone-badge')?.textContent).toContain('Published');
+    expect(rows[1].querySelector('.tone-badge')?.textContent).toContain('Unpublished');
+  });
+
+  it('formats size and upload date', () => {
+    expect(el().textContent).toContain('4.2 MB');
+    expect(el().textContent).toContain('Jan 14, 2025');
   });
 });

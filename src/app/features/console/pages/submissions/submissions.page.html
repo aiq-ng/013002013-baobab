@@ -1,30 +1,73 @@
-<div class="space-y-4">
-  <div class="flex items-center justify-between">
-    <h1 class="text-lg font-semibold text-ink-950">Submissions</h1>
-    <span class="text-sm text-slate-500">{{ total() }} total</span>
-  </div>
+<app-console-page-header
+  eyebrow="Engagement registry"
+  title="Submissions"
+  meta="Messages and requests sent from forms across the public site."
+/>
 
-  <app-filter-bar
-    [options]="statusFilters"
-    [active]="activeStatus()"
-    label="Filter by status"
-    (selected)="onFilterSelected($event)"
-  />
-
-  @if (loading()) {
-    <p class="text-sm text-slate-500">Loading…</p>
-  } @else {
-    <app-data-table
-      [columns]="columns"
-      [rows]="rows()"
-      emptyMessage="No submissions match this filter."
-      (rowActivated)="open($event)"
+@if (loadError(); as message) {
+  <div class="console-card">
+    <app-status-panel
+      variant="error"
+      title="Submissions didn't load"
+      [message]="message"
+      actionLabel="Try again"
+      (action)="reload()"
     />
-  }
+  </div>
+} @else {
+  <app-data-table
+    caption="Submissions"
+    [columns]="columns"
+    [rows]="rows()"
+    [rowKey]="rowKey"
+    [rowLabel]="rowLabel"
+    [loading]="loading()"
+    emptyMessage="No submissions match this filter."
+    (rowActivated)="open($event)"
+  >
+    <div toolbar data-testid="list-toolbar" class="console-list-toolbar">
+      <app-filter-bar
+        [options]="statusFilters"
+        [active]="activeStatus()"
+        label="Filter by status"
+        (selected)="onFilterSelected($event)"
+      />
+      <p class="text-sm text-console-muted" aria-live="polite">
+        {{ plural(total(), 'submission') }}
+      </p>
+    </div>
 
-  <app-detail-drawer
-    [submission]="selected()"
-    (statusChanged)="onStatusChanged($event)"
-    (closed)="selected.set(null)"
-  />
-</div>
+    @if (total() > 0) {
+      <nav footer aria-label="Submissions pages" class="console-list-footer">
+        <p>{{ rangeLabel() }}</p>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            data-testid="page-prev"
+            class="console-btn console-btn--soft !min-h-9 !px-4 !py-1.5"
+            [disabled]="page() <= 1 || loading()"
+            (click)="goToPage(page() - 1)"
+          >
+            <span aria-hidden="true">←</span> Previous
+          </button>
+          <button
+            type="button"
+            data-testid="page-next"
+            class="console-btn console-btn--soft !min-h-9 !px-4 !py-1.5"
+            [disabled]="page() >= pageCount() || loading()"
+            (click)="goToPage(page() + 1)"
+          >
+            Next <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </nav>
+    }
+  </app-data-table>
+}
+
+<app-detail-drawer
+  [submission]="selected()"
+  [busy]="updatingStatus()"
+  (statusChanged)="onStatusChanged($event)"
+  (closed)="selected.set(null)"
+/>

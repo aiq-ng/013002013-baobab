@@ -28,8 +28,18 @@
      a warm grey for secondary text than the public site's brand scale. */
   --color-console-accent: #239e66;
   --color-console-accent-hover: #1c8656;
+  /* #239e66 is 3.4:1 on white — fine for non-text UI (borders, icons, focus rings: WCAG 1.4.11
+     needs 3:1) but below the 4.5:1 WCAG 1.4.3 needs for body-size text. Text, links, and white-on-
+     green buttons use this deeper shade of the same hue (5.0:1) instead. */
+  --color-console-accent-strong: #1a7f51;
+  --color-console-accent-strong-hover: #146a43;
   --color-console-muted: #585f68;
   --color-console-glow: #effff8;
+  /* Cool blue-grey tint the admin exports use for table headers, the active nav item, batch pills,
+     soft buttons and the success banner (design/admin/*.png). */
+  --color-console-tint: #eff3fc;
+  --color-console-tint-strong: #e1e8f7;
+  --color-console-line: #e8ecf3;
   --shadow-console-card: 0 24px 64px -16px rgb(2 6 23 / 0.1), 0 0 32px rgb(2 6 23 / 0.04);
 
   --radius-card: 0.75rem;
@@ -62,29 +72,239 @@
   /* Registry Console form controls — the admin screens use square-cornered inputs with small
      uppercase labels (design/admin/*EDIT.png), distinct from the public site's pill inputs. */
   .console-label {
-    @apply mb-2 block text-xs font-semibold tracking-wide text-slate-500 uppercase;
+    @apply mb-2 block text-xs font-semibold tracking-wide text-slate-600 uppercase;
   }
 
   .console-input {
-    @apply w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-ink-950 focus:border-console-accent focus:outline-none;
+    @apply w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-ink-950 transition-colors placeholder:text-slate-500 hover:border-slate-300 focus:border-console-accent focus:ring-2 focus:ring-console-accent/25 focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-console-muted aria-invalid:border-red-500 aria-invalid:focus:ring-red-500/20;
   }
 
   /* Sign-in variants (design/admin/LOGIN.png): taller, rounder fields with muted placeholders. */
   .console-input--auth {
-    @apply rounded-xl py-3.5 text-base placeholder:text-slate-300 focus:border-console-accent focus:ring-1 focus:ring-console-accent aria-invalid:border-red-500;
+    @apply rounded-xl py-3.5 text-base;
+  }
+
+  .console-hint {
+    @apply mt-1.5 text-sm text-console-muted;
   }
 
   .console-field-error {
-    @apply mt-1.5 text-sm text-red-600;
+    @apply mt-1.5 flex items-start gap-1.5 text-sm text-red-700;
   }
 
   /* Add / remove buttons for repeatable rows in console forms (KPIs, pillars, milestones…). */
   .console-row-add {
-    @apply text-sm font-medium text-console-accent hover:text-console-accent-hover;
+    @apply inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-dashed border-slate-300 px-4 text-sm font-medium text-console-accent-strong transition-colors hover:border-console-accent hover:bg-console-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-console-accent;
   }
 
   .console-row-remove {
-    @apply text-sm font-medium text-red-600 hover:text-red-700 disabled:cursor-not-allowed disabled:text-slate-300 sm:mt-7;
+    @apply inline-flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:bg-transparent disabled:text-slate-400 sm:mt-7;
+  }
+
+  /* Square icon-only action (remove row). Always paired with an aria-label. */
+  .console-icon-btn {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-red-50 hover:text-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-console-accent disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-transparent;
+  }
+
+  /* Segmented control (single-choice filter). Selection is driven by aria-pressed. */
+  .console-segmented {
+    @apply inline-flex flex-wrap gap-1 rounded-full bg-console-tint p-1;
+  }
+
+  .console-segment {
+    @apply inline-flex min-h-8 items-center rounded-full px-3.5 text-sm font-medium text-slate-700 transition-colors hover:text-ink-950 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-console-accent aria-pressed:bg-white aria-pressed:text-ink-950 aria-pressed:shadow-sm aria-pressed:ring-1 aria-pressed:ring-ink-950/5;
+  }
+
+  /* Long-form section tabs: a scrollable row on phones, a sticky vertical list from lg. */
+  .console-section-tabs {
+    @apply -mx-4 mb-5 flex gap-1 overflow-x-auto px-4 pb-1 lg:sticky lg:top-24 lg:mx-0 lg:mb-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0;
+  }
+
+  .console-section-tab {
+    @apply relative flex min-h-10 shrink-0 items-center gap-2 rounded-lg px-3 text-sm whitespace-nowrap text-slate-700 transition-colors hover:bg-slate-50 hover:text-ink-950 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-console-accent aria-selected:bg-console-tint aria-selected:font-medium aria-selected:text-console-accent-strong lg:before:absolute lg:before:inset-y-1.5 lg:before:left-0 lg:before:w-[3px] lg:before:rounded-full lg:aria-selected:before:bg-console-accent;
+  }
+
+  .console-error-count {
+    @apply inline-flex min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-semibold text-white;
+  }
+
+  /* Console buttons. Colour variants are shared by <app-button> (variant="console" | "console-soft"
+     | "danger") and plain <button>s, so both render identically. */
+  .console-btn {
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors duration-200 ease-premium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-console-accent disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .console-btn--primary {
+    @apply bg-console-accent-strong text-white hover:bg-console-accent-strong-hover;
+  }
+
+  .console-btn--soft {
+    @apply bg-console-tint text-ink-950 hover:bg-console-tint-strong;
+  }
+
+  .console-btn--danger {
+    @apply bg-red-600 text-white hover:bg-red-700 focus-visible:outline-red-600;
+  }
+
+  /* Inline text action (table "Edit", breadcrumb links). min-h keeps a 24px+ target (WCAG 2.5.8). */
+  .console-link {
+    @apply inline-flex min-h-6 items-center gap-1 rounded text-console-accent-strong underline-offset-4 transition-colors hover:text-console-accent-strong-hover hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-console-accent;
+  }
+
+  .console-action {
+    @apply inline-flex min-h-8 items-center gap-1 rounded-md px-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-console-accent disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Row actions: a column on phones so a table never has to scroll sideways to reach them. */
+  .console-row-actions {
+    @apply inline-flex flex-col items-end gap-1 md:flex-row md:items-center;
+  }
+
+  .console-action--accent {
+    @apply text-console-accent-strong hover:bg-console-tint;
+  }
+
+  .console-action--neutral {
+    @apply text-slate-700 hover:bg-slate-100 hover:text-ink-950;
+  }
+
+  .console-action--danger {
+    @apply text-red-700 hover:bg-red-50;
+  }
+
+  /* Visually hidden until focused — the first Tab stop on every console page. */
+  .console-skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-ink-950 focus:shadow-lg focus:outline-2 focus:outline-console-accent;
+  }
+
+  /* COLLECTIONS sidebar item (design/admin/*.png): tinted fill + accent rule when active. */
+  .console-nav-link {
+    @apply relative flex min-h-11 items-center gap-3 rounded-lg px-3 text-[0.9375rem] text-slate-700 transition-colors hover:bg-slate-50 hover:text-ink-950 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-console-accent;
+  }
+
+  .console-nav-link--active {
+    @apply bg-console-tint font-medium text-console-accent-strong before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-console-accent hover:bg-console-tint hover:text-console-accent-strong;
+  }
+
+  /* Toggle chip (filters, submission status). State comes from aria-pressed, so the visual and the
+     announced state can never disagree. */
+  .console-chip {
+    @apply inline-flex min-h-9 items-center rounded-full border border-console-line bg-white px-3.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:text-ink-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-console-accent disabled:cursor-not-allowed disabled:opacity-60 aria-pressed:border-console-accent-strong aria-pressed:bg-console-accent-strong aria-pressed:text-white;
+  }
+
+  /* Long-form editors keep their primary action in reach: pinned to the viewport bottom. */
+  .console-save-bar {
+    @apply sticky bottom-0 z-20 -mx-4 flex flex-col gap-3 border-t border-console-line bg-white/95 px-4 py-4 backdrop-blur sm:mx-0 sm:flex-row sm:items-center sm:justify-between sm:rounded-2xl sm:border sm:px-6 sm:shadow-lg;
+  }
+
+  /* White console panel — form sections, list frames. */
+  .console-card {
+    @apply rounded-2xl border border-console-line bg-white;
+  }
+
+  /* Admin list tables (design/admin/PROGRAMS MAIN.png, RESOURCES.png): tinted uppercase header,
+     hairline row dividers, generous row height. */
+  .console-table-frame {
+    @apply rounded-2xl border border-console-line bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-console-accent;
+  }
+
+  .console-scroll-region {
+    @apply overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-console-accent;
+  }
+
+  /* Filter/count bar and pagination bar that sit inside a list's frame. */
+  .console-list-toolbar {
+    @apply flex flex-col gap-3 border-b border-console-line px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6;
+  }
+
+  .console-list-footer {
+    @apply flex items-center justify-between gap-4 border-t border-console-line px-4 py-3 text-sm text-console-muted sm:px-6;
+  }
+
+  .console-table {
+    @apply w-full border-collapse text-left text-sm;
+
+    & thead {
+      @apply bg-console-tint;
+    }
+
+    & th {
+      @apply px-4 py-3.5 text-xs font-semibold tracking-wide text-slate-600 uppercase md:whitespace-nowrap first:pl-4 last:pr-4 sm:first:pl-6 sm:last:pr-6;
+    }
+
+    & td {
+      @apply px-4 py-4 align-middle text-ink-950 first:pl-4 last:pr-4 sm:first:pl-6 sm:last:pr-6;
+    }
+
+    & tbody tr {
+      @apply border-t border-console-line;
+    }
+  }
+
+  .console-table__row--interactive {
+    @apply cursor-pointer transition-colors hover:bg-slate-50/80;
+  }
+
+  /* Status pill; tone chosen with data-tone so templates never branch on colour classes. */
+  .tone-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap capitalize;
+
+    &::before {
+      @apply size-1.5 rounded-full bg-current content-[''];
+    }
+
+    &[data-tone='neutral'] {
+      @apply bg-slate-100 text-slate-700;
+    }
+    &[data-tone='info'] {
+      @apply bg-blue-50 text-blue-800;
+    }
+    &[data-tone='success'] {
+      @apply bg-emerald-50 text-emerald-800;
+    }
+    &[data-tone='warning'] {
+      @apply bg-amber-50 text-amber-800;
+    }
+    &[data-tone='danger'] {
+      @apply bg-red-50 text-red-800;
+    }
+  }
+
+  /* Neutral pill (batch numbers, categories) — design/admin/RESOURCES.png. */
+  .console-pill {
+    @apply inline-flex items-center rounded-full bg-console-tint px-3 py-1 text-xs font-medium whitespace-nowrap text-ink-950;
+  }
+
+  .console-eyebrow {
+    @apply text-xs font-semibold tracking-[0.12em] text-console-accent-strong uppercase;
+  }
+
+  .skeleton {
+    @apply block animate-pulse bg-slate-200/80;
+  }
+
+  .toast {
+    @apply pointer-events-auto flex items-start gap-3 rounded-xl border border-console-line bg-white py-3 pr-2 pl-3 shadow-lg ring-1 ring-ink-950/5;
+  }
+
+  .toast__icon {
+    @apply mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-white;
+  }
+
+  .toast[data-variant='success'] .toast__icon {
+    @apply bg-console-accent-strong;
+  }
+
+  .toast[data-variant='error'] {
+    @apply border-red-200;
+  }
+
+  .toast[data-variant='error'] .toast__icon {
+    @apply bg-red-600;
+  }
+
+  .toast__close {
+    @apply -my-1 flex size-8 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-ink-950 focus-visible:outline-2 focus-visible:outline-console-accent;
   }
 
   /* Container padding scale — mobile-first.

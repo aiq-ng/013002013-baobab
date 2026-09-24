@@ -5,6 +5,7 @@ import { ProgramsPage } from './programs.page';
 import { ConsoleStore } from '../../services/console-store';
 import { SeoService } from '../../../../core/services/seo.service';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
+import { ConfirmService } from '../../../../shared/ui/confirm-dialog/confirm.service';
 import { makeProgram } from '../../../programs/testing/program-fixture';
 
 describe('ProgramsPage', () => {
@@ -15,7 +16,7 @@ describe('ProgramsPage', () => {
   const el = (): HTMLElement => fixture.nativeElement;
   const deleteButtons = (): HTMLButtonElement[] =>
     Array.from(el().querySelectorAll('button[data-testid="program-delete-btn"]'));
-  const dialog = (): HTMLElement | null => el().querySelector('[role="dialog"]');
+  let confirm: { ask: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     const programs = Array.from({ length: 6 }, (_, i) =>
@@ -28,6 +29,7 @@ describe('ProgramsPage', () => {
       deleteProgram: vi.fn().mockResolvedValue(undefined),
     };
     toast = { success: vi.fn(), error: vi.fn() };
+    confirm = { ask: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [ProgramsPage],
@@ -36,6 +38,7 @@ describe('ProgramsPage', () => {
         { provide: ConsoleStore, useValue: store },
         { provide: SeoService, useValue: { update: vi.fn() } },
         { provide: ToastService, useValue: toast },
+        { provide: ConfirmService, useValue: confirm },
       ],
     }).compileComponents();
 
@@ -70,46 +73,44 @@ describe('ProgramsPage', () => {
     expect(el().textContent).not.toContain('permanently disabled');
   });
 
-  it('asks for confirmation before deleting, naming the program', () => {
+  it('asks for a danger confirmation naming the program and its public URL before deleting', async () => {
+    confirm.ask.mockResolvedValue(false);
     deleteButtons()[1].click();
-    fixture.detectChanges();
+    await fixture.whenStable();
 
+    expect(confirm.ask).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Delete Program 2?',
+        message: expect.stringContaining('/programs/program-2'),
+        tone: 'danger',
+      }),
+    );
     expect(store.deleteProgram).not.toHaveBeenCalled();
-    expect(dialog()?.textContent).toContain('Program 2');
   });
 
-  it('deletes the confirmed program and closes the dialog', async () => {
+  it('deletes the confirmed program', async () => {
+    confirm.ask.mockResolvedValue(true);
     deleteButtons()[1].click();
-    fixture.detectChanges();
-
-    (dialog()!.querySelector('[data-testid="confirm-delete-btn"]') as HTMLButtonElement).click();
     await fixture.whenStable();
-    fixture.detectChanges();
 
     expect(store.deleteProgram).toHaveBeenCalledWith('program-2');
     expect(toast.success).toHaveBeenCalled();
-    expect(dialog()).toBeNull();
-  });
-
-  it('cancelling the dialog deletes nothing', () => {
-    deleteButtons()[0].click();
-    fixture.detectChanges();
-
-    (dialog()!.querySelector('[data-testid="cancel-delete-btn"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
-
-    expect(store.deleteProgram).not.toHaveBeenCalled();
-    expect(dialog()).toBeNull();
   });
 
   it('reports a failed delete', async () => {
+    confirm.ask.mockResolvedValue(true);
     store.deleteProgram = vi.fn().mockRejectedValue(new Error('500'));
     deleteButtons()[0].click();
-    fixture.detectChanges();
-
-    (dialog()!.querySelector('[data-testid="confirm-delete-btn"]') as HTMLButtonElement).click();
     await fixture.whenStable();
 
     expect(toast.error).toHaveBeenCalled();
+  });
+
+  it('shows a retryable error state when the list fails to load', async () => {
+    (store.loadPrograms as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('boom'));
+    await fixture.componentInstance.reload();
+    fixture.detectChanges();
+
+    expect(el().querySelector('[role="alert"]')?.textContent).toContain('Could not load programs');
   });
 });

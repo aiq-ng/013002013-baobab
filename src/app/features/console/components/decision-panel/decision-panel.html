@@ -1,50 +1,79 @@
 <app-drawer [open]="request() !== null" label="Access request review" (closed)="dismiss()">
   @if (request(); as r) {
-    <dl class="space-y-4 text-sm">
-      <div>
-        <dt class="font-medium text-slate-500">Reference</dt>
-        <dd class="text-ink-950">{{ r.referenceId }}</dd>
+    <p class="console-eyebrow">Track 1.5 accreditation</p>
+    <p class="mt-1 text-xl font-semibold text-ink-950">{{ r.name }}</p>
+    <p class="text-sm text-console-muted">{{ r.referenceId }}</p>
+
+    <dl class="mt-6 divide-y divide-console-line rounded-xl border border-console-line text-sm">
+      <div class="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:gap-4">
+        <dt class="w-32 shrink-0 text-console-muted">Email</dt>
+        <dd class="min-w-0 break-words text-ink-950">{{ r.email }}</dd>
       </div>
-      <div>
-        <dt class="font-medium text-slate-500">Email</dt>
-        <dd class="text-ink-950">{{ r.email }}</dd>
+      <div class="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:gap-4">
+        <dt class="w-32 shrink-0 text-console-muted">Institution</dt>
+        <dd class="text-ink-950">{{ r.institution ?? '—' }}</dd>
       </div>
-      @if (r.institution) {
-        <div>
-          <dt class="font-medium text-slate-500">Institution</dt>
-          <dd class="text-ink-950">{{ r.institution }}</dd>
-        </div>
-      }
-      <div>
-        <dt class="font-medium text-slate-500">
-          Delegation token (unverified, shown as context only)
-        </dt>
-        <dd class="break-all text-ink-950">{{ r.delegationToken ?? '(none supplied)' }}</dd>
-      </div>
-      <div>
-        <dt class="font-medium text-slate-500">Requested</dt>
-        <dd class="text-ink-950">{{ r.createdAt }}</dd>
+      <div class="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:gap-4">
+        <dt class="w-32 shrink-0 text-console-muted">Requested</dt>
+        <dd class="text-ink-950">
+          <time [attr.datetime]="r.createdAt">{{ formatDateTime(r.createdAt) }}</time>
+        </dd>
       </div>
     </dl>
 
-    <div class="mt-8">
-      <label
-        for="decision-note"
-        class="text-xs font-semibold uppercase tracking-wide text-slate-500"
-        >Decision note</label
-      >
+    <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm">
+      <p class="font-medium text-amber-900">Delegation token — unverified</p>
+      <p class="mt-1 text-amber-900/80">
+        Supplied by the requester and shown as context only. Verify it independently before
+        approving.
+      </p>
+      <p class="mt-2 font-mono text-xs break-all text-ink-950">
+        {{ r.delegationToken ?? '(none supplied)' }}
+      </p>
+    </div>
+
+    <div class="mt-6">
+      <div class="flex items-baseline justify-between">
+        <label for="decision-note" class="console-label"
+          >Decision note
+          <span class="font-normal tracking-normal normal-case text-console-muted">(optional)</span>
+        </label>
+        <span aria-hidden="true" class="mb-2 text-xs tabular-nums text-console-muted"
+          >{{ note().length }} / {{ noteMax }}</span
+        >
+      </div>
       <textarea
         id="decision-note"
         rows="3"
+        [maxlength]="noteMax"
         [ngModel]="note()"
         (ngModelChange)="note.set($event)"
-        class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-console-accent focus:outline-none focus:ring-1 focus:ring-console-accent"
+        [disabled]="deciding() !== null"
+        aria-describedby="decision-note-hint"
+        class="console-input resize-y"
       ></textarea>
+      <p id="decision-note-hint" class="console-hint">
+        Kept in the audit trail with your decision.
+      </p>
     </div>
 
-    <div class="mt-6 flex gap-3">
-      <app-button label="Approve" (pressed)="decide(true)" />
-      <app-button label="Deny" variant="secondary" (pressed)="decide(false)" />
+    <div class="mt-6 flex flex-wrap gap-3">
+      <app-button
+        label="Approve"
+        busyLabel="Approving…"
+        variant="console"
+        [busy]="deciding() === 'approve'"
+        [disabled]="deciding() !== null"
+        (pressed)="decide(true)"
+      />
+      <app-button
+        label="Deny"
+        busyLabel="Denying…"
+        variant="console-soft"
+        [busy]="deciding() === 'deny'"
+        [disabled]="deciding() !== null"
+        (pressed)="decide(false)"
+      />
     </div>
   }
 </app-drawer>

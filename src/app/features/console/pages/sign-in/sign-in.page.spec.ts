@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { vi } from 'vitest';
+import { HttpErrorResponse } from '@angular/common/http';
 import { SignInPage } from './sign-in.page';
 import { ConsoleStore } from '../../services/console-store';
 import { SeoService } from '../../../../core/services/seo.service';
@@ -124,5 +125,69 @@ describe('SignInPage', () => {
     expect(query('[data-testid="sign-in-error"]')!.textContent).toContain(
       'Incorrect email or password.',
     );
+  });
+
+  async function signInWith(returnUrl: string): Promise<ReturnType<typeof vi.spyOn>> {
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl(`/?returnUrl=${encodeURIComponent(returnUrl)}`);
+    const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    fill('liaison@baobab-statecraft.org', 'secret');
+    submit();
+    await fixture.whenStable();
+    return navigate;
+  }
+
+  it('returns to an in-console returnUrl after sign-in', async () => {
+    const navigate = await signInWith('/console/programs');
+    expect(navigate).toHaveBeenCalledWith('/console/programs');
+  });
+
+  it('never follows an off-console returnUrl (open-redirect defence)', async () => {
+    const navigate = await signInWith('https://evil.example/console');
+    expect(navigate).toHaveBeenCalledWith('/console/submissions');
+  });
+
+  async function failWith(status: number): Promise<void> {
+    store.signIn.mockRejectedValue(new HttpErrorResponse({ status }));
+    fill('liaison@baobab-statecraft.org', 'wrong');
+    submit();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  it('explains rate limiting instead of blaming the credentials', async () => {
+    await failWith(429);
+    expect(query('[data-testid="sign-in-error"]')!.textContent).toContain('Too many');
+  });
+
+  it('explains a network failure instead of blaming the credentials', async () => {
+    await failWith(0);
+    expect(query('[data-testid="sign-in-error"]')!.textContent).toContain('reach the server');
+  });
+
+  it('clears the password after a rejected attempt but keeps the email', async () => {
+    await failWith(401);
+    expect(query<HTMLInputElement>('#password')!.value).toBe('');
+    expect(query<HTMLInputElement>('#email')!.value).toBe('liaison@baobab-statecraft.org');
+  });
+
+  it('locks the submit button while a sign-in is in flight', () => {
+    store.signIn.mockReturnValue(new Promise(() => undefined));
+    fill('liaison@baobab-statecraft.org', 'secret');
+    submit();
+
+    const button = query<HTMLButtonElement>('button[type="submit"]')!;
+    expect(button.disabled).toBe(true);
+    expect(button.getAttribute('aria-busy')).toBe('true');
+  });
+
+  it('warns when Caps Lock is on while typing the password', () => {
+    const event = new KeyboardEvent('keyup', { key: 'A' });
+    Object.defineProperty(event, 'getModifierState', { value: () => true });
+    query('#password')!.dispatchEvent(event);
+    fixture.detectChanges();
+
+    expect(query('#caps-lock-warning')!.textContent).toContain('Caps Lock is on');
+    expect(query('#password')!.getAttribute('aria-describedby')).toContain('caps-lock-warning');
   });
 });

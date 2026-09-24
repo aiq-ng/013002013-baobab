@@ -95,7 +95,7 @@ describe('Button', () => {
     fixture.componentInstance.variant = 'console';
     fixture.detectChanges();
     const el: HTMLElement = fixture.nativeElement.querySelector('button, a');
-    expect(el.className).toContain('bg-console-accent');
+    expect(el.className).toContain('console-btn--primary');
     expect(el.className).not.toContain('bg-brand-600');
   });
 
@@ -161,5 +161,34 @@ describe('Button', () => {
     fixture.detectChanges();
     const button = fixture.debugElement.query(By.css('button'));
     expect(button.nativeElement.disabled).toBe(true);
+  });
+
+  it('marks itself busy, disables, and shows the busy label while an action is in flight', () => {
+    const fixture = TestBed.createComponent(Button);
+    fixture.componentInstance.label = 'Save';
+    fixture.componentInstance.busy = true;
+    fixture.componentInstance.busyLabel = 'Saving…';
+    fixture.detectChanges();
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+
+    expect(button.disabled).toBe(true);
+    expect(button.getAttribute('aria-busy')).toBe('true');
+    expect(button.textContent).toContain('Saving…');
+    button.click();
+    expect(trackCtaClick).not.toHaveBeenCalled();
+  });
+
+  it('offers a soft console variant for subordinate actions and a danger variant', () => {
+    const fixture = TestBed.createComponent(Button);
+    fixture.componentInstance.label = 'Go';
+    fixture.componentInstance.variant = 'console-soft';
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('button').className).toContain('console-btn--soft');
+
+    fixture.componentRef.setInput('variant', 'danger');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('button').className).toContain(
+      'console-btn--danger',
+    );
   });
 });

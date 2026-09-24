@@ -1,111 +1,131 @@
-<div class="space-y-4">
-  <div class="flex items-start justify-between gap-4">
-    <div>
-      <p class="text-xs font-semibold tracking-wide text-console-accent">
-        SECRETARIAT REPOSITORIES
-      </p>
-      <h1 class="text-3xl font-bold text-ink-950">Programs</h1>
-    </div>
-    <div class="flex flex-wrap items-center justify-end gap-3">
-      <span
-        class="whitespace-nowrap rounded-full bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-800"
-      >
-        {{ programs().length }} Strategic Portfolios
-      </span>
-      <app-button label="+ New Program" variant="console" routerLink="/console/programs/new" />
-    </div>
+<app-console-page-header
+  eyebrow="Secretariat repositories"
+  title="Programs"
+  meta="Every program card and detail page on the public site."
+>
+  <span actions class="console-pill !px-4 !py-1.5 !text-sm">
+    {{ plural(programs().length, 'Strategic Portfolio') }}
+  </span>
+  <app-button actions label="+ New Program" variant="console" routerLink="/console/programs/new" />
+</app-console-page-header>
+
+@if (loadError(); as message) {
+  <div class="console-card">
+    <app-status-panel
+      variant="error"
+      title="Could not load programs"
+      [message]="message"
+      actionLabel="Try again"
+      (action)="reload()"
+    />
   </div>
-
-  @if (loading()) {
-    <p class="text-sm text-slate-500">Loading…</p>
-  } @else {
-    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-      <table class="w-full min-w-[720px] text-left text-sm">
-        <thead class="border-b border-slate-200 bg-slate-50">
-          <tr>
-            <th scope="col" class="px-4 py-3 font-medium text-slate-600">No.</th>
-            <th scope="col" class="px-4 py-3 font-medium text-slate-600">Portfolio</th>
-            <th scope="col" class="px-4 py-3 font-medium text-slate-600">
-              Mandate &amp; Customary Jurisdiction
-            </th>
-            <th scope="col" class="px-4 py-3 text-right font-medium text-slate-600">Actions</th>
+} @else if (loading()) {
+  <div class="console-table-frame">
+    <app-table-skeleton [rows]="6" label="Loading programs" />
+  </div>
+} @else if (programs().length === 0) {
+  <div class="console-card">
+    <app-status-panel
+      title="No programs yet"
+      message="Create the first program to publish its card and detail page."
+    />
+  </div>
+} @else {
+  <div role="region" tabindex="0" aria-label="Programs" class="console-table-frame overflow-x-auto">
+    <table class="console-table md:min-w-[720px]">
+      <caption class="sr-only">
+        Programs
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col" class="w-16 max-md:hidden">No.</th>
+          <th scope="col" class="w-28 max-md:hidden">Portfolio</th>
+          <th scope="col">Mandate &amp; Customary Jurisdiction</th>
+          <th scope="col" class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (program of programs(); track program.slug) {
+          <tr
+            data-testid="program-row"
+            [attr.aria-busy]="deleting() === program.slug ? 'true' : null"
+          >
+            <td class="font-mono text-sm text-console-muted max-md:hidden">
+              {{ number(program) }}
+            </td>
+            <td class="max-md:hidden">
+              <img
+                [src]="program.imageUrl"
+                [alt]="program.imageAlt"
+                width="80"
+                height="80"
+                loading="lazy"
+                decoding="async"
+                class="size-16 rounded-lg bg-slate-100 object-cover sm:size-20"
+              />
+            </td>
+            <td class="max-w-xl">
+              <p class="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                <span class="text-base font-medium text-ink-950">{{ program.title }}</span>
+                @if (program.badgeText) {
+                  <span class="console-pill !py-0.5 text-[0.6875rem] tracking-wide uppercase">{{
+                    program.badgeText
+                  }}</span>
+                }
+              </p>
+              <p class="mt-1 line-clamp-2 text-sm leading-relaxed text-console-muted">
+                {{ program.description }}
+              </p>
+            </td>
+            <td class="text-right md:whitespace-nowrap">
+              <span class="console-row-actions">
+                <a
+                  data-testid="program-edit-link"
+                  [routerLink]="['/console/programs', program.slug]"
+                  class="console-action console-action--accent"
+                  [attr.aria-label]="'Edit ' + program.title"
+                >
+                  Edit
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    class="size-4"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4 10h12m-5-5 5 5-5 5"
+                    />
+                  </svg>
+                </a>
+                <button
+                  type="button"
+                  data-testid="program-delete-btn"
+                  class="console-action console-action--danger"
+                  [disabled]="deleting() !== null"
+                  [attr.aria-label]="'Delete ' + program.title"
+                  (click)="askDelete(program)"
+                >
+                  {{ deleting() === program.slug ? 'Deleting…' : 'Delete' }}
+                </button>
+              </span>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          @for (program of programs(); track program.slug) {
-            <tr data-testid="program-row" class="border-b border-slate-100 last:border-0">
-              <td class="px-4 py-4 align-top text-slate-500">
-                {{ program.sortOrder.toString().padStart(2, '0') }}
-              </td>
-              <td class="px-4 py-4 align-top">
-                <div class="flex items-center gap-3">
-                  <img
-                    [src]="program.imageUrl"
-                    alt=""
-                    class="h-14 w-14 shrink-0 rounded-md object-cover"
-                  />
-                  <span class="font-medium text-ink-950">{{ program.title }}</span>
-                </div>
-              </td>
-              <td class="max-w-md px-4 py-4 align-top text-slate-600">
-                {{ truncate(program.description) }}
-              </td>
-              <td class="px-4 py-4 text-right align-top">
-                <span class="inline-flex items-center gap-3">
-                  <a
-                    data-testid="program-edit-link"
-                    [routerLink]="['/console/programs', program.slug]"
-                    class="font-medium text-console-accent hover:text-console-accent-hover"
-                    >Edit &rarr;</a
-                  >
-                  <button
-                    type="button"
-                    data-testid="program-delete-btn"
-                    (click)="askDelete(program)"
-                    class="font-medium text-red-600 hover:text-red-700"
-                  >
-                    Delete
-                  </button>
-                </span>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="4" class="px-4 py-8 text-center text-slate-500">No programs found.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  }
-
-  <app-modal [open]="pendingDelete() !== null" label="Delete program" (closed)="cancelDelete()">
-    @if (pendingDelete(); as program) {
-      <h2 class="text-lg font-semibold text-ink-950">Delete {{ program.title }}?</h2>
-      <p class="mt-2 text-sm text-slate-600">
-        Its public page at /programs/{{ program.slug }} will stop working immediately. This cannot
-        be undone.
-      </p>
-      <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <button
-          type="button"
-          data-testid="cancel-delete-btn"
-          (click)="cancelDelete()"
-          [disabled]="deleting()"
-          class="ghost-pill px-6 py-3"
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          data-testid="confirm-delete-btn"
-          (click)="confirmDelete()"
-          [disabled]="deleting()"
-          class="rounded-full bg-red-600 px-6 py-3 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
-        >
-          {{ deleting() ? 'Deleting…' : 'Delete program' }}
-        </button>
-      </div>
-    }
-  </app-modal>
-</div>
+        }
+      </tbody>
+      <tfoot>
+        <tr class="border-t border-console-line bg-surface-muted max-md:hidden">
+          <td colspan="4" class="!py-3.5 text-sm text-console-muted">
+            <span class="flex flex-wrap items-center justify-between gap-2">
+              <span>Changes publish to the public site as soon as they're saved.</span>
+              <span>All {{ plural(programs().length, 'program') }} synchronized</span>
+            </span>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+}

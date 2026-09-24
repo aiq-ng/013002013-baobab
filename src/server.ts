@@ -4,6 +4,7 @@ import {
   getContext,
   getTrustProxyHeaders,
 } from '@netlify/angular-runtime/app-engine.js';
+import { withConsoleSecurityHeaders } from './app/core/security/console-security-headers';
 
 const angularAppEngine = new AngularAppEngine({
   allowedHosts: getAllowedHosts(),
@@ -14,7 +15,10 @@ export async function netlifyAppEngineHandler(request: Request): Promise<Respons
   const context = getContext();
 
   const result = await angularAppEngine.handle(request, context);
-  return result || new Response('Not found', { status: 404 });
+  return withConsoleSecurityHeaders(
+    new URL(request.url).pathname,
+    result || new Response('Not found', { status: 404 }),
+  );
 }
 
 /**

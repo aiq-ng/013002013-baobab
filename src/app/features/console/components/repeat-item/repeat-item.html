@@ -1,0 +1,40 @@
+<div
+  role="group"
+  [attr.aria-labelledby]="headingId()"
+  class="rounded-xl border border-console-line bg-white"
+>
+  <div class="flex items-center justify-between gap-3 border-b border-console-line px-4 py-2.5">
+    <p class="min-w-0 truncate text-sm">
+      <span [id]="headingId()" class="font-semibold text-ink-950">{{ title() }}</span>
+      @if (summary()) {
+        <span class="text-console-muted"> · {{ summary() }}</span>
+      }
+    </p>
+    <button
+      type="button"
+      class="console-icon-btn"
+      [disabled]="!canRemove()"
+      [attr.aria-label]="'Remove ' + title()"
+      [attr.title]="canRemove() ? 'Remove ' + title() : 'At least one is required'"
+      (click)="remove.emit()"
+    >
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        class="size-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 6h12M8 6V4.5A1 1 0 0 1 9 3.5h2a1 1 0 0 1 1 1V6m2 0-.6 9.1a1.5 1.5 0 0 1-1.5 1.4H8.1a1.5 1.5 0 0 1-1.5-1.4L6 6"
+        />
+      </svg>
+    </button>
+  </div>
+  <div class="space-y-5 p-4">
+    <ng-content />
+  </div>
+</div>

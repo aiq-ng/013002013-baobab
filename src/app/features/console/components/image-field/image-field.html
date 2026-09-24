@@ -1,0 +1,56 @@
+<div
+  class="grid grid-cols-1 items-start gap-5 rounded-xl bg-console-tint p-4 sm:grid-cols-[12rem_1fr] sm:p-5"
+>
+  <figure data-testid="image-preview" class="m-0">
+    <div
+      class="flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border border-console-line bg-white"
+    >
+      @if (previewUrl && !failed()) {
+        <img
+          [src]="previewUrl"
+          alt=""
+          width="192"
+          height="108"
+          class="size-full object-cover"
+          (error)="failed.set(true)"
+        />
+      } @else {
+        <span
+          class="flex flex-col items-center gap-1.5 px-3 text-center text-xs text-console-muted"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            class="size-6"
+          >
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <circle cx="8.5" cy="10" r="1.5" />
+            <path stroke-linejoin="round" d="m21 16-5-5-8 8" />
+          </svg>
+          {{ failed() ? "This image couldn't load — check the URL." : 'No image to preview yet.' }}
+        </span>
+      }
+    </div>
+    <figcaption class="mt-2 text-xs text-console-muted">Preview</figcaption>
+  </figure>
+
+  <div class="min-w-0 space-y-5">
+    <app-console-field
+      [fieldId]="idPrefix + '-url'"
+      [label]="urlLabel"
+      type="url"
+      [hint]="urlHint"
+      [control]="urlControl"
+    />
+    <app-console-field
+      [fieldId]="idPrefix + '-text'"
+      [label]="textLabel"
+      [hint]="textHint"
+      [maxLength]="textMaxLength"
+      [control]="textControl"
+    />
+  </div>
+</div>

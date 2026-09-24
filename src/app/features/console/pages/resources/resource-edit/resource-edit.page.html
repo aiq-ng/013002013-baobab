@@ -1,0 +1,376 @@
+@if (published(); as done) {
+  <app-console-success-panel
+    eyebrow="Institutional release confirmed"
+    title="Resource Published to Library"
+    [tag]="done.batchReference"
+  >
+    <p>The document has been securely published to the public sovereign repository.</p>
+    <button actions type="button" class="console-btn console-btn--primary" (click)="startAnother()">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        class="size-4"
+      >
+        <path stroke-linecap="round" d="M10 4v12M4 10h12" />
+      </svg>
+      Upload Another Resource
+    </button>
+    <a actions routerLink="/console/resources" class="console-btn console-btn--soft">
+      View in Resources List
+    </a>
+    @if (done.downloadUrl) {
+      <a
+        actions
+        data-testid="preview-pdf"
+        [href]="done.downloadUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="console-action console-action--neutral sm:ml-auto"
+      >
+        Preview Published PDF
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          class="size-4"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11 4h5v5m0-5-7 7M8 5H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-3"
+          />
+        </svg>
+        <span class="sr-only">(opens in a new tab)</span>
+      </a>
+    }
+    <p
+      note
+      class="mt-6 flex items-start gap-3 rounded-xl bg-console-tint px-5 py-4 text-sm text-console-muted"
+    >
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        class="mt-0.5 size-4 shrink-0"
+      >
+        <circle cx="10" cy="10" r="7.5" />
+        <path stroke-linecap="round" d="M10 9v4.5M10 6.5h.01" />
+      </svg>
+      This file is now available for public download and preview on the live Resources portal.
+    </p>
+  </app-console-success-panel>
+} @else {
+  <div class="max-w-3xl">
+    <app-console-page-header
+      [title]="isNew ? 'New Resource' : 'Edit Resource'"
+      backLink="/console/resources"
+      backLabel="Resources"
+    />
+
+    @if (loadError(); as message) {
+      <div class="console-card">
+        <app-status-panel
+          variant="error"
+          title="Could not load the resource"
+          [message]="message"
+          actionLabel="Try again"
+          (action)="load()"
+        />
+      </div>
+    } @else if (notFound()) {
+      <div class="console-card">
+        <app-status-panel
+          title="This resource no longer exists"
+          message="It may have been removed by another editor."
+        />
+      </div>
+    } @else if (loading()) {
+      <p role="status" class="text-sm text-console-muted">Loading resource…</p>
+    } @else {
+      @if (isNew) {
+        <p
+          class="mb-5 flex items-start gap-2.5 rounded-xl bg-console-tint px-4 py-3 text-sm text-ink-950"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            class="mt-0.5 size-4 shrink-0 text-console-accent-strong"
+          >
+            <circle cx="10" cy="10" r="7.5" />
+            <path stroke-linecap="round" d="M10 9v4.5M10 6.5h.01" />
+          </svg>
+          <span
+            >On the public site, this PDF powers both the <strong>Preview</strong> and
+            <strong>Download</strong> actions automatically.</span
+          >
+        </p>
+      }
+
+      <form class="space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <section class="console-card pad-card space-y-6" aria-labelledby="doc-heading">
+          <h2 id="doc-heading" class="text-lg font-semibold tracking-tight text-ink-950">
+            Document
+          </h2>
+
+          @if (isNew) {
+            <div>
+              <p id="file-label" class="console-label">Resource document</p>
+              <label
+                for="file-input"
+                class="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-console-accent"
+                [class.border-console-accent]="dragging()"
+                [class.bg-console-tint]="dragging()"
+                [class.border-slate-300]="!dragging() && !fileError()"
+                [class.border-red-400]="!dragging() && fileError()"
+                [class.hover:border-console-accent]="!fileError()"
+                (dragover)="onDragOver($event)"
+                (dragleave)="dragging.set(false)"
+                (drop)="onDrop($event)"
+              >
+                <span
+                  aria-hidden="true"
+                  class="flex size-11 items-center justify-center rounded-full bg-console-tint text-console-accent-strong"
+                >
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    class="size-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M10 13V4m0 0L6.5 7.5M10 4l3.5 3.5M4 13v2a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-2"
+                    />
+                  </svg>
+                </span>
+                <span class="font-medium text-ink-950">Drop PDF here or click to browse</span>
+                <span class="text-sm text-console-muted"
+                  >Accepts single treaty dossier or publication (PDF only, max 25 MB)</span
+                >
+                <input
+                  id="file-input"
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  class="sr-only"
+                  aria-labelledby="file-label"
+                  aria-required="true"
+                  [attr.aria-invalid]="fileError() ? 'true' : null"
+                  [attr.aria-describedby]="
+                    fileError() ? 'file-error' : file() ? 'file-selected' : null
+                  "
+                  (change)="onFileSelected($event)"
+                />
+              </label>
+              @if (file(); as f) {
+                <p id="file-selected" class="mt-2 flex items-center gap-2 text-sm text-ink-950">
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="size-4 text-console-accent-strong"
+                  >
+                    <path d="M4 4a2 2 0 0 1 2-2h4.6L16 7.4V16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4Z" />
+                  </svg>
+                  <span class="truncate font-medium">{{ f.name }}</span>
+                  <span class="text-console-muted">{{ formatSize(f.size) }}</span>
+                </p>
+              }
+              @if (fileError(); as message) {
+                <p id="file-error" class="console-field-error">{{ message }}</p>
+              }
+            </div>
+
+            <app-console-field
+              fieldId="title"
+              label="Name"
+              placeholder="e.g. 2025 Sovereign Partnership Protocol"
+              hint="What displays on the public Resources page."
+              [maxLength]="limits.title"
+              [control]="form.controls.title"
+            />
+            <app-console-field
+              fieldId="batchReference"
+              label="Batch number"
+              placeholder="e.g. Batch 12"
+              hint="Free-typed reference batch number."
+              [maxLength]="limits.batchReference"
+              [control]="form.controls.batchReference"
+            />
+          } @else if (resource(); as r) {
+            <dl
+              class="grid grid-cols-1 gap-4 rounded-xl bg-console-tint p-4 text-sm sm:grid-cols-3"
+            >
+              <div class="sm:col-span-3">
+                <dt class="text-console-muted">Name</dt>
+                <dd class="font-medium text-ink-950">{{ r.title }}</dd>
+              </div>
+              <div>
+                <dt class="text-console-muted">Batch</dt>
+                <dd class="text-ink-950">{{ r.batchReference }}</dd>
+              </div>
+              <div>
+                <dt class="text-console-muted">File</dt>
+                <dd class="text-ink-950">PDF · {{ formatSize(r.fileSizeBytes) }}</dd>
+              </div>
+              <div>
+                <dt class="text-console-muted">Uploaded</dt>
+                <dd class="text-ink-950">{{ formatDate(r.uploadedAt) }}</dd>
+              </div>
+            </dl>
+            <p class="text-sm text-console-muted">
+              The file, name and batch number are fixed once uploaded. To replace them, upload a new
+              resource and unpublish this one.
+            </p>
+          }
+        </section>
+
+        <section class="console-card pad-card space-y-6" aria-labelledby="codex-heading">
+          <h2 id="codex-heading" class="text-lg font-semibold tracking-tight text-ink-950">
+            Resource highlight
+          </h2>
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <app-console-field
+              fieldId="batchLabel"
+              label="Batch label"
+              placeholder="e.g. Annual Codex · Vol. IX"
+              [maxLength]="limits.batchLabel"
+              [control]="form.controls.batchLabel"
+            />
+            <app-console-field
+              fieldId="releaseTag"
+              label="Release tag"
+              placeholder="e.g. Permanent Archive Release"
+              [maxLength]="limits.releaseTag"
+              [control]="form.controls.releaseTag"
+            />
+          </div>
+          <app-console-field
+            fieldId="documentDateLabel"
+            label="Document date label"
+            placeholder="e.g. Annual Statecraft Review (2024-2025)"
+            [maxLength]="limits.documentDateLabel"
+            [control]="form.controls.documentDateLabel"
+          />
+          <app-console-field
+            fieldId="description"
+            label="Description"
+            placeholder="A definitive strategic audit synthesis…"
+            [rows]="4"
+            [maxLength]="limits.description"
+            [control]="form.controls.description"
+          />
+          <app-console-field
+            fieldId="chapters"
+            label="Chapters"
+            placeholder="e.g. Ch. I: Sultanate Water Rights"
+            hint="One chapter per line."
+            [rows]="4"
+            [control]="form.controls.chapters"
+          />
+        </section>
+
+        <section class="console-card pad-card space-y-6" aria-labelledby="excerpt-heading">
+          <h2 id="excerpt-heading" class="text-lg font-semibold tracking-tight text-ink-950">
+            Excerpt
+          </h2>
+          <app-console-field
+            fieldId="excerptHeading"
+            label="Excerpt heading"
+            placeholder="e.g. Excerpt: Article 14.3"
+            [maxLength]="limits.excerptHeading"
+            [control]="form.controls.excerptHeading"
+          />
+          <app-console-field
+            fieldId="excerptQuote"
+            label="Excerpt quote"
+            placeholder="Where state cadastral maps diverge…"
+            [rows]="3"
+            [maxLength]="limits.excerptQuote"
+            [control]="form.controls.excerptQuote"
+          />
+          <app-console-field
+            fieldId="excerptAttribution"
+            label="Excerpt attribution"
+            placeholder="e.g. — Dakar Secretariat Depositary"
+            [maxLength]="limits.excerptAttribution"
+            [control]="form.controls.excerptAttribution"
+          />
+          <app-console-field
+            fieldId="onlineUrl"
+            label="Online URL"
+            type="url"
+            placeholder="e.g. /documents/annual-statecraft-review-2024-25.html"
+            [maxLength]="limits.onlineUrl"
+            [control]="form.controls.onlineUrl"
+          />
+        </section>
+
+        <fieldset class="console-card pad-card space-y-4" formArrayName="metadataRows">
+          <legend class="float-left mb-2 w-full text-lg font-semibold tracking-tight text-ink-950">
+            Metadata
+          </legend>
+          <p class="clear-left text-sm text-console-muted">
+            Exactly four rows. Accent highlights the value on the public card.
+          </p>
+          @for (row of metadataRows.controls; track $index; let i = $index) {
+            <div
+              role="group"
+              [attr.aria-label]="'Metadata row ' + (i + 1)"
+              class="grid grid-cols-1 items-start gap-3 rounded-xl border border-console-line p-4 sm:grid-cols-[1fr_1fr_auto] sm:border-0 sm:p-0"
+            >
+              <app-console-field
+                [fieldId]="'meta-label-' + i"
+                [label]="'Row ' + (i + 1) + ' label'"
+                [maxLength]="limits.metadataLabel"
+                [control]="row.controls.label"
+              />
+              <app-console-field
+                [fieldId]="'meta-value-' + i"
+                [label]="'Row ' + (i + 1) + ' value'"
+                [maxLength]="limits.metadataValue"
+                [control]="row.controls.value"
+              />
+              <label class="flex min-h-11 items-center gap-2 text-sm text-ink-950 sm:mt-7">
+                <input
+                  type="checkbox"
+                  [formControl]="row.controls.accent"
+                  class="size-4 rounded border-slate-300 accent-console-accent-strong"
+                />
+                Accent
+              </label>
+            </div>
+          }
+        </fieldset>
+
+        <div class="console-save-bar">
+          <p class="text-sm text-console-muted">
+            {{
+              isNew
+                ? 'Publishing uploads the PDF and makes it public immediately.'
+                : 'Changes go live as soon as you save.'
+            }}
+          </p>
+          <app-button
+            type="submit"
+            variant="console"
+            [label]="isNew ? 'Publish resource' : 'Save details'"
+            [busyLabel]="isNew ? 'Uploading…' : 'Saving…'"
+            [busy]="submitting()"
+          />
+        </div>
+      </form>
+    }
+  </div>
+}

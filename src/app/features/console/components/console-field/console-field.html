@@ -1,5 +1,22 @@
 <div>
-  <label [for]="fieldId" class="console-label">{{ label }}</label>
+  <div class="flex items-baseline justify-between gap-3">
+    <label [for]="fieldId" class="console-label"
+      >{{ label }}
+      @if (optional) {
+        <span class="font-normal tracking-normal normal-case text-console-muted">(optional)</span>
+      }
+    </label>
+    @if (maxLength) {
+      <span
+        [attr.data-testid]="fieldId + '-count'"
+        aria-hidden="true"
+        class="mb-2 text-xs tabular-nums text-console-muted"
+        [class.!text-red-700]="length > maxLength"
+      >
+        {{ length }} / {{ maxLength }}
+      </span>
+    }
+  </div>
   @if (rows > 0) {
     <textarea
       [id]="fieldId"
@@ -7,19 +24,43 @@
       [formControl]="control"
       [placeholder]="placeholder"
       [attr.aria-invalid]="error ? 'true' : null"
-      class="console-input"
+      [attr.aria-required]="optional ? null : 'true'"
+      [attr.aria-describedby]="describedBy"
+      class="console-input resize-y"
     ></textarea>
   } @else {
     <input
       [id]="fieldId"
-      type="text"
+      [type]="type === 'email' ? 'email' : 'text'"
+      [attr.inputmode]="type === 'url' ? 'url' : null"
+      [attr.autocomplete]="autocomplete"
+      [attr.spellcheck]="type === 'text' ? null : 'false'"
       [formControl]="control"
       [placeholder]="placeholder"
       [attr.aria-invalid]="error ? 'true' : null"
+      [attr.aria-required]="optional ? null : 'true'"
+      [attr.aria-describedby]="describedBy"
       class="console-input"
     />
   }
+  @if (hint) {
+    <p [id]="hintId" class="console-hint">{{ hint }}</p>
+  }
   @if (error; as message) {
-    <p role="alert" class="mt-1 text-sm text-red-600">{{ message }}</p>
+    <p [id]="errorId" class="console-field-error">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="mt-0.5 size-4 shrink-0"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      {{ message }}
+    </p>
   }
 </div>

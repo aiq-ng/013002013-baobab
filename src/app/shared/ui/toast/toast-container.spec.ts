@@ -46,4 +46,17 @@ describe('ToastContainer', () => {
     expect(fixture.nativeElement.textContent).toContain('First.');
     expect(fixture.nativeElement.textContent).toContain('Second.');
   });
+
+  it('announces errors assertively and successes politely', () => {
+    const { fixture, toastService } = setup();
+    toastService.success('Saved.');
+    toastService.error('Failed.');
+    fixture.detectChanges();
+
+    const assertive = fixture.debugElement.query(By.css('[aria-live="assertive"]'));
+    const polite = fixture.debugElement.query(By.css('[aria-live="polite"]'));
+    expect(assertive.nativeElement.textContent).toContain('Failed.');
+    expect(assertive.nativeElement.textContent).not.toContain('Saved.');
+    expect(polite.nativeElement.textContent).toContain('Saved.');
+  });
 });

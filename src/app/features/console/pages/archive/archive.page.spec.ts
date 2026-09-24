@@ -5,6 +5,7 @@ import { ArchivePage } from './archive.page';
 import { ConsoleStore } from '../../services/console-store';
 import { SeoService } from '../../../../core/services/seo.service';
 import { AdminArchiveEntry } from '../../models/admin';
+import { ConfirmService } from '../../../../shared/ui/confirm-dialog/confirm.service';
 
 function makeEntry(overrides: Partial<AdminArchiveEntry> = {}): AdminArchiveEntry {
   return {
@@ -27,6 +28,8 @@ function makeEntry(overrides: Partial<AdminArchiveEntry> = {}): AdminArchiveEntr
 describe('ArchivePage', () => {
   let fixture: ComponentFixture<ArchivePage>;
   let store: Partial<ConsoleStore>;
+  let confirm: { ask: ReturnType<typeof vi.fn> };
+  const el = (): HTMLElement => fixture.nativeElement;
 
   beforeEach(async () => {
     const entries = [makeEntry(), makeEntry({ id: 'a2', published: false })];
@@ -38,12 +41,15 @@ describe('ArchivePage', () => {
       deleteArchiveEntry: vi.fn().mockResolvedValue(undefined),
     };
 
+    confirm = { ask: vi.fn().mockResolvedValue(true) };
+
     await TestBed.configureTestingModule({
       imports: [ArchivePage],
       providers: [
         provideRouter([]),
         { provide: ConsoleStore, useValue: store },
         { provide: SeoService, useValue: { update: vi.fn() } },
+        { provide: ConfirmService, useValue: confirm },
       ],
     }).compileComponents();
 
@@ -60,21 +66,32 @@ describe('ArchivePage', () => {
     expect(rows.length).toBe(2);
   });
 
-  it('calls store.setArchiveEntryPublished(id, false) when Unpublish is clicked', () => {
-    const button: HTMLButtonElement = fixture.nativeElement.querySelector(
-      '[data-testid="archive-row"] button[data-testid="unpublish-btn"]',
-    );
-    button.click();
+  it('confirms, then unpublishes', async () => {
+    (el().querySelector('button[data-testid="unpublish-btn"]') as HTMLButtonElement).click();
+    await fixture.whenStable();
 
+    expect(confirm.ask).toHaveBeenCalled();
     expect(store.setArchiveEntryPublished).toHaveBeenCalledWith('a1', false);
   });
 
-  it('calls store.deleteArchiveEntry(id) when Delete is clicked', () => {
-    const button: HTMLButtonElement = fixture.nativeElement.querySelector(
-      '[data-testid="archive-row"] button[data-testid="delete-btn"]',
-    );
-    button.click();
+  it('requires a danger confirmation before deleting', async () => {
+    (el().querySelector('button[data-testid="delete-btn"]') as HTMLButtonElement).click();
+    await fixture.whenStable();
 
+    expect(confirm.ask).toHaveBeenCalledWith(expect.objectContaining({ tone: 'danger' }));
     expect(store.deleteArchiveEntry).toHaveBeenCalledWith('a1');
+  });
+
+  it('deletes nothing when the editor cancels', async () => {
+    confirm.ask.mockResolvedValue(false);
+    (el().querySelector('button[data-testid="delete-btn"]') as HTMLButtonElement).click();
+    await fixture.whenStable();
+
+    expect(store.deleteArchiveEntry).not.toHaveBeenCalled();
+  });
+
+  it('shows draft entries as such', () => {
+    const rows = el().querySelectorAll('[data-testid="archive-row"]');
+    expect(rows[1].querySelector('.tone-badge')?.textContent).toContain('Draft');
   });
 });

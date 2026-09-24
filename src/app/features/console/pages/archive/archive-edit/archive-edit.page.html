@@ -1,152 +1,125 @@
-<div class="max-w-3xl space-y-4">
-  <p class="flex items-center gap-2 text-sm">
-    <a routerLink="/console/archive" class="text-slate-500 hover:text-ink-950"
-      >&larr; Treaties Archive</a
+<div class="max-w-3xl">
+  <app-console-page-header
+    [title]="isNew ? 'New archive entry' : 'Edit archive entry'"
+    [meta]="
+      isNew
+        ? 'Files a new accord in the public Treaties & Conciliation Archive.'
+        : (entry()?.refCode ?? '')
+    "
+    backLink="/console/archive"
+    backLabel="Treaties Archive"
+  />
+
+  @if (loadError(); as message) {
+    <div class="console-card">
+      <app-status-panel
+        variant="error"
+        title="Could not load the entry"
+        [message]="message"
+        actionLabel="Try again"
+        (action)="load()"
+      />
+    </div>
+  } @else if (notFound()) {
+    <div class="console-card">
+      <app-status-panel
+        title="This entry no longer exists"
+        message="It may have been deleted by another editor."
+      />
+    </div>
+  } @else if (loading()) {
+    <p role="status" class="text-sm text-console-muted">Loading entry…</p>
+  } @else {
+    <form
+      class="console-card pad-card space-y-6"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      novalidate
     >
-    <span class="text-slate-300">/</span>
-    <span class="font-semibold text-ink-950">{{ isNew ? 'New Entry' : 'Edit Entry' }}</span>
-  </p>
-
-  <form
-    class="space-y-6 rounded-xl border border-slate-200 bg-white pad-card-sm"
-    (ngSubmit)="onSubmit()"
-    [formGroup]="form"
-  >
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <div>
-        <label for="refCode" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-          >REF CODE</label
-        >
-        <input
-          id="refCode"
-          type="text"
-          formControlName="refCode"
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <app-console-field
+          fieldId="refCode"
+          label="Ref code"
           placeholder="e.g. REF: BBG-LQ-2023-TRX"
-          class="console-input"
+          [maxLength]="limits.refCode"
+          [control]="form.controls.refCode"
         />
-        @if (form.controls.refCode.invalid && form.controls.refCode.touched) {
-          <p class="mt-1 text-sm text-red-600">Ref code is required.</p>
-        }
-      </div>
-
-      <div>
-        <label for="category" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-          >CATEGORY</label
-        >
-        <select id="category" formControlName="category" class="console-input">
-          @for (category of categories; track category) {
-            <option [value]="category">{{ category }}</option>
-          }
-        </select>
-      </div>
-
-      <div>
-        <label for="regionTag" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-          >REGION TAG</label
-        >
-        <input
-          id="regionTag"
-          type="text"
-          formControlName="regionTag"
+        <div>
+          <label for="category" class="console-label">Category</label>
+          <select
+            id="category"
+            formControlName="category"
+            class="console-input"
+            aria-required="true"
+          >
+            @for (category of categories; track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </div>
+        <app-console-field
+          fieldId="regionTag"
+          label="Region tag"
           placeholder="e.g. Sahel Central Basin"
-          class="console-input"
+          [maxLength]="limits.regionTag"
+          [control]="form.controls.regionTag"
         />
-        @if (form.controls.regionTag.invalid && form.controls.regionTag.touched) {
-          <p class="mt-1 text-sm text-red-600">Region tag is required.</p>
-        }
-      </div>
-
-      <div>
-        <label for="statusTag" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-          >STATUS TAG</label
-        >
-        <input
-          id="statusTag"
-          type="text"
-          formControlName="statusTag"
+        <app-console-field
+          fieldId="statusTag"
+          label="Status tag"
           placeholder="e.g. Ratified: November 2023 · In Active Force"
-          class="console-input"
+          [maxLength]="limits.statusTag"
+          [control]="form.controls.statusTag"
         />
-        @if (form.controls.statusTag.invalid && form.controls.statusTag.touched) {
-          <p class="mt-1 text-sm text-red-600">Status tag is required.</p>
-        }
       </div>
-    </div>
 
-    <div>
-      <label for="title" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-        >TITLE</label
-      >
-      <input
-        id="title"
-        type="text"
-        formControlName="title"
+      <app-console-field
+        fieldId="title"
+        label="Title"
         placeholder="e.g. Liptako-Gourma Tri-Border Accord & Customary Grazing Charter"
-        class="console-input"
+        [maxLength]="limits.title"
+        [control]="form.controls.title"
       />
-      @if (form.controls.title.invalid && form.controls.title.touched) {
-        <p class="mt-1 text-sm text-red-600">Title is required.</p>
-      }
-    </div>
-
-    <div>
-      <label for="description" class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-        >DESCRIPTION</label
-      >
-      <textarea
-        id="description"
-        formControlName="description"
-        rows="4"
-        class="console-input"
-      ></textarea>
-      @if (form.controls.description.invalid && form.controls.description.touched) {
-        <p class="mt-1 text-sm text-red-600">Description is required.</p>
-      }
-    </div>
-
-    <div>
-      <label
-        for="ratifyingParties"
-        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-        >RATIFYING PARTIES</label
-      >
-      <input
-        id="ratifyingParties"
-        type="text"
-        formControlName="ratifyingParties"
+      <app-console-field
+        fieldId="description"
+        label="Description"
+        [rows]="5"
+        [maxLength]="limits.description"
+        [control]="form.controls.description"
+      />
+      <app-console-field
+        fieldId="ratifyingParties"
+        label="Ratifying parties"
         placeholder="e.g. Delegations of Mali, Niger, Burkina Faso"
-        class="console-input"
+        [maxLength]="limits.ratifyingParties"
+        [control]="form.controls.ratifyingParties"
       />
-      @if (form.controls.ratifyingParties.invalid && form.controls.ratifyingParties.touched) {
-        <p class="mt-1 text-sm text-red-600">Ratifying parties is required.</p>
-      }
-    </div>
-
-    <div>
-      <label
-        for="workingLanguages"
-        class="mb-2 block text-xs font-semibold tracking-wide text-slate-500"
-        >WORKING LANGUAGES</label
-      >
-      <input
-        id="workingLanguages"
-        type="text"
-        formControlName="workingLanguages"
+      <app-console-field
+        fieldId="workingLanguages"
+        label="Working languages"
         placeholder="e.g. Français, Hausa, Fulfulde, Tamasheq"
-        class="console-input"
+        [maxLength]="limits.workingLanguages"
+        [control]="form.controls.workingLanguages"
       />
-      @if (form.controls.workingLanguages.invalid && form.controls.workingLanguages.touched) {
-        <p class="mt-1 text-sm text-red-600">Working languages is required.</p>
-      }
-    </div>
 
-    <div class="flex justify-end border-t border-slate-100 pt-4">
-      <app-button
-        [label]="isNew ? 'Create entry' : 'Save entry'"
-        type="submit"
-        variant="console"
-        [disabled]="submitting"
-      />
-    </div>
-  </form>
+      <div
+        class="flex flex-col-reverse gap-3 border-t border-console-line pt-5 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <p class="text-sm text-console-muted">
+          {{
+            isNew
+              ? 'New entries are published immediately.'
+              : 'Changes go live as soon as you save.'
+          }}
+        </p>
+        <app-button
+          type="submit"
+          variant="console"
+          [label]="isNew ? 'Create entry' : 'Save entry'"
+          busyLabel="Saving…"
+          [busy]="submitting()"
+        />
+      </div>
+    </form>
+  }
 </div>

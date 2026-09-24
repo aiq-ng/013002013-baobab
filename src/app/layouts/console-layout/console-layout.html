@@ -1,82 +1,196 @@
-<div class="min-h-screen bg-slate-50">
-  @if (session(); as s) {
-    <header class="flex items-center justify-between bg-ink-950 px-6 py-4">
-      <div class="flex items-center gap-3">
-        <a routerLink="/console" class="flex shrink-0 items-center">
-          <img
-            ngSrc="/images/shared/logo-baobab.png"
-            alt="Baobab"
-            width="260"
-            height="66"
-            appImgFadeIn
-            class="h-7 w-auto brightness-0 invert"
-          />
-        </a>
-        <span
-          class="rounded-full bg-console-accent px-3 py-0.5 text-xs font-semibold tracking-wide text-white"
-        >
-          Admin
-        </span>
-      </div>
-      <div class="flex items-center gap-4">
-        <a routerLink="/" class="text-sm text-white/60 hover:text-white">Back to website</a>
-        <span class="text-sm text-white/70">{{ s.email }}</span>
-        <button
-          type="button"
-          (click)="signOut()"
-          class="text-sm font-medium text-white/70 hover:text-white"
-        >
-          Log out
-        </button>
+@if (session(); as s) {
+  <div class="flex min-h-screen flex-col bg-white">
+    <a href="#console-main" class="console-skip-link" (click)="skipToMain($event)"
+      >Skip to main content</a
+    >
+
+    <header class="sticky top-0 z-40 bg-black">
+      <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:h-[4.5rem] lg:px-8">
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            data-testid="nav-toggle"
+            class="-ml-2 flex size-10 items-center justify-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white lg:hidden"
+            aria-controls="console-nav"
+            [attr.aria-expanded]="navOpen()"
+            [attr.aria-label]="navOpen() ? 'Close navigation' : 'Open navigation'"
+            (click)="toggleNav()"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              class="size-5"
+            >
+              @if (navOpen()) {
+                <path d="M6 6l12 12M18 6L6 18" />
+              } @else {
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              }
+            </svg>
+          </button>
+          <a
+            routerLink="/console"
+            class="flex shrink-0 items-center rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          >
+            <img
+              ngSrc="/images/shared/logo-baobab.png"
+              alt="Baobab Registry Console home"
+              width="260"
+              height="66"
+              appImgFadeIn
+              class="h-6 w-auto brightness-0 invert sm:h-7"
+            />
+          </a>
+          <span
+            class="rounded-full bg-console-accent-strong px-2.5 py-0.5 text-xs font-semibold tracking-wide text-white"
+          >
+            Admin
+          </span>
+        </div>
+
+        <div class="flex items-center gap-1 sm:gap-3">
+          <a
+            routerLink="/"
+            class="hidden rounded-md px-2 py-1.5 text-sm text-white/70 hover:text-white focus-visible:outline-2 focus-visible:outline-white md:inline-flex"
+          >
+            View website
+          </a>
+          <span aria-hidden="true" class="hidden h-5 w-px bg-white/20 md:block"></span>
+          <div class="hidden text-right leading-tight sm:block">
+            <p class="text-sm font-medium text-white">{{ roleLabel() }}</p>
+            <p class="max-w-[16rem] truncate text-xs text-white/60">{{ s.email }}</p>
+          </div>
+          <button
+            type="button"
+            data-testid="sign-out"
+            (click)="signOut()"
+            class="rounded-md px-2 py-1.5 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white"
+          >
+            Log out
+          </button>
+        </div>
       </div>
     </header>
 
-    <div class="flex">
+    <div class="flex flex-1">
       <aside
-        class="min-h-[calc(100vh-65px)] w-56 shrink-0 border-r border-slate-200 bg-white px-4 py-6"
+        id="console-nav"
+        class="border-console-line bg-white max-lg:fixed max-lg:inset-x-0 max-lg:top-16 max-lg:bottom-0 max-lg:z-30 max-lg:overflow-y-auto max-lg:border-t lg:sticky lg:top-[4.5rem] lg:block lg:h-[calc(100vh-4.5rem)] lg:w-64 lg:shrink-0 lg:border-r"
+        [class.max-lg:hidden]="!navOpen()"
       >
-        <p class="px-3 text-xs font-semibold tracking-wide text-slate-400">COLLECTIONS</p>
-        <nav class="mt-3 flex flex-col gap-1" aria-label="Registry Console">
-          <a
-            routerLink="/console/submissions"
-            routerLinkActive="border-console-accent bg-brand-50 font-medium text-console-accent"
-            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-            >Submissions</a
+        <nav class="px-4 py-6 lg:px-5" aria-labelledby="console-nav-heading">
+          <p
+            id="console-nav-heading"
+            class="px-3 text-xs font-semibold tracking-[0.12em] text-slate-500"
           >
-          <a
-            routerLink="/console/access-requests"
-            routerLinkActive="border-console-accent bg-brand-50 font-medium text-console-accent"
-            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-            >Access Requests</a
-          >
-          <a
-            routerLink="/console/programs"
-            routerLinkActive="border-console-accent bg-brand-50 font-medium text-console-accent"
-            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-            >Programs</a
-          >
-          <a
-            routerLink="/console/resources"
-            routerLinkActive="border-console-accent bg-brand-50 font-medium text-console-accent"
-            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-            >Resources</a
-          >
-          <a
-            routerLink="/console/archive"
-            routerLinkActive="border-console-accent bg-brand-50 font-medium text-console-accent"
-            class="rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-            >Treaties Archive</a
-          >
+            COLLECTIONS
+          </p>
+          <ul class="mt-3 flex flex-col gap-1" role="list">
+            @for (item of navItems; track item.path) {
+              <li>
+                <a
+                  [routerLink]="item.path"
+                  routerLinkActive="console-nav-link--active"
+                  ariaCurrentWhenActive="page"
+                  class="console-nav-link"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="size-[1.125rem] shrink-0"
+                  >
+                    @switch (item.icon) {
+                      @case ('inbox') {
+                        <path d="M3 13h5l1.5 3h5L16 13h5" />
+                        <path d="M5.5 5h13L21 13v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5l2.5-8Z" />
+                      }
+                      @case ('key') {
+                        <circle cx="8" cy="15" r="4" />
+                        <path d="m11 12 9-9m-3 3 3 3m-6 0 2 2" />
+                      }
+                      @case ('grid') {
+                        <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
+                        <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
+                        <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
+                        <rect x="13.5" y="13.5" width="7" height="7" rx="1.5" />
+                      }
+                      @case ('document') {
+                        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+                        <path d="M14 3v5h5M9 13h6M9 17h6" />
+                      }
+                      @case ('archive') {
+                        <rect x="3" y="4" width="18" height="4" rx="1" />
+                        <path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4" />
+                      }
+                    }
+                  </svg>
+                  {{ item.label }}
+                </a>
+              </li>
+            }
+          </ul>
+
+          <div class="mt-8 border-t border-console-line pt-6 sm:hidden">
+            <p class="px-3 text-sm font-medium text-ink-950">{{ roleLabel() }}</p>
+            <p class="truncate px-3 text-xs text-console-muted">{{ s.email }}</p>
+          </div>
+          <a routerLink="/" class="console-nav-link mt-2 md:hidden">View website</a>
         </nav>
       </aside>
 
-      <main class="flex-1 p-4 sm:p-6">
-        <router-outlet />
+      <main
+        id="console-main"
+        #main
+        tabindex="-1"
+        class="min-w-0 flex-1 px-4 py-6 outline-none sm:px-6 sm:py-8 lg:px-10 lg:py-10"
+      >
+        <div class="mx-auto max-w-6xl">
+          <router-outlet />
+        </div>
       </main>
     </div>
-  } @else {
-    <router-outlet />
-  }
+  </div>
 
-  <app-toast-container />
-</div>
+  <app-modal
+    [open]="idle.warning()"
+    dialogRole="alertdialog"
+    label="Still there?"
+    labelledBy="idle-title"
+    describedBy="idle-message"
+    [showClose]="false"
+    (closed)="staySignedIn()"
+  >
+    <div class="text-left">
+      <h2 id="idle-title" class="text-lg font-semibold text-ink-950">Still there?</h2>
+      <p id="idle-message" class="mt-2 text-sm leading-relaxed text-console-muted">
+        For security, you'll be signed out in
+        <strong class="font-semibold text-ink-950">{{ idle.secondsLeft() }} seconds</strong>
+        because the console has been inactive. Unsaved changes will be lost.
+      </p>
+      <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <app-button variant="console-soft" label="Sign out now" (pressed)="signOut()" />
+        <app-button
+          data-testid="idle-stay"
+          data-autofocus
+          variant="console"
+          label="Stay signed in"
+          (pressed)="staySignedIn()"
+        />
+      </div>
+    </div>
+  </app-modal>
+} @else {
+  <router-outlet />
+}
+
+<app-confirm-dialog-host />
+<app-toast-container />

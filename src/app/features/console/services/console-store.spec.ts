@@ -378,4 +378,54 @@ describe('ConsoleStore', () => {
     expect(updateResourceCodexDetails).toHaveBeenCalledWith('r1', CODEX_FIELDS);
     expect(listResources).toHaveBeenCalled();
   });
+
+  describe('sign-out hygiene', () => {
+    async function populated() {
+      const store = setup({
+        listEngagements: () =>
+          of({
+            items: [
+              {
+                id: 'e1',
+                referenceId: 'R-1',
+                source: 'contact',
+                name: 'Private Person',
+                email: 'private@example.org',
+                message: 'Sensitive',
+                status: 'new' as const,
+                submittedAt: '2026-01-01T00:00:00Z',
+              },
+            ],
+            total: 1,
+            page: 1,
+            pageSize: 25,
+          }),
+        listPrograms: () => of([makeProgram({ slug: 'p1' })]),
+      });
+      await store.signIn('a@b.example', 'pw');
+      await store.loadEngagements({});
+      await store.loadPrograms();
+      return store;
+    }
+
+    it('signOut wipes every cached collection so no PII outlives the session', async () => {
+      const store = await populated();
+      await store.signOut();
+
+      expect(store.engagements()).toEqual([]);
+      expect(store.engagementsTotal()).toBe(0);
+      expect(store.programs()).toEqual([]);
+      expect(store.accessRequests()).toEqual([]);
+      expect(store.resources()).toEqual([]);
+      expect(store.archiveEntries()).toEqual([]);
+    });
+
+    it('clearSession (server-side expiry) wipes cached collections too', async () => {
+      const store = await populated();
+      store.clearSession();
+
+      expect(store.engagements()).toEqual([]);
+      expect(store.programs()).toEqual([]);
+    });
+  });
 });

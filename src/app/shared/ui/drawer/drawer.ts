@@ -11,9 +11,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+import { FocusReturn, trapTab } from '../../a11y/focus';
 
 /**
  * Side-panel drawer for the console's detail views (plan §8d). Same contract
@@ -35,7 +33,7 @@ export class Drawer implements AfterViewInit, OnChanges {
 
   @ViewChild('panel') panelRef?: ElementRef<HTMLElement>;
 
-  private previouslyFocused: HTMLElement | null = null;
+  private readonly focusReturn = new FocusReturn();
 
   ngAfterViewInit(): void {
     if (this.open) {
@@ -55,14 +53,13 @@ export class Drawer implements AfterViewInit, OnChanges {
 
   private captureFocus(): void {
     if (typeof document === 'undefined') return;
-    this.previouslyFocused = document.activeElement as HTMLElement | null;
+    this.focusReturn.capture();
     // Wait a tick for the panel to actually be in the DOM (it's behind an @if).
     setTimeout(() => this.panelRef?.nativeElement.focus(), 0);
   }
 
   private restoreFocus(): void {
-    this.previouslyFocused?.focus();
-    this.previouslyFocused = null;
+    this.focusReturn.restore();
   }
 
   @HostListener('document:keydown.escape')
@@ -74,22 +71,8 @@ export class Drawer implements AfterViewInit, OnChanges {
 
   @HostListener('document:keydown', ['$event'])
   onTab(event: KeyboardEvent): void {
-    if (event.key !== 'Tab' || !this.open || !this.panelRef) return;
-    const focusable = Array.from(
-      this.panelRef.nativeElement.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-    );
-    if (focusable.length === 0) return;
-
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    const active = document.activeElement;
-
-    if (event.shiftKey && active === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && active === last) {
-      event.preventDefault();
-      first.focus();
+    if (this.open && this.panelRef) {
+      trapTab(event, this.panelRef.nativeElement);
     }
   }
 

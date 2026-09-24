@@ -1,47 +1,53 @@
 <app-drawer [open]="submission() !== null" label="Submission detail" (closed)="dismiss()">
   @if (submission(); as s) {
-    <dl class="space-y-4 text-sm">
-      <div>
-        <dt class="font-medium text-slate-500">Reference</dt>
-        <dd class="text-ink-950">{{ s.referenceId }}</dd>
+    <p class="console-eyebrow">{{ humanize(s.source) }}</p>
+    <p class="mt-1 text-xl font-semibold text-ink-950">{{ s.name }}</p>
+    <p class="text-sm text-console-muted">{{ s.referenceId }}</p>
+
+    <dl class="mt-6 divide-y divide-console-line rounded-xl border border-console-line text-sm">
+      <div class="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:gap-4">
+        <dt class="w-28 shrink-0 text-console-muted">Email</dt>
+        <dd class="min-w-0 break-words">
+          <a [href]="mailto(s)" class="console-link">{{ s.email }}</a>
+        </dd>
       </div>
-      <div>
-        <dt class="font-medium text-slate-500">Source</dt>
-        <dd class="text-ink-950">{{ s.source }}</dd>
-      </div>
-      <div>
-        <dt class="font-medium text-slate-500">Name</dt>
-        <dd class="text-ink-950">{{ s.name }}</dd>
-      </div>
-      <div>
-        <dt class="font-medium text-slate-500">Email</dt>
-        <dd class="text-ink-950">{{ s.email }}</dd>
-      </div>
-      @if (s.message) {
-        <div>
-          <dt class="font-medium text-slate-500">Message</dt>
-          <dd class="whitespace-pre-wrap text-ink-950">{{ s.message }}</dd>
-        </div>
-      }
-      <div>
-        <dt class="font-medium text-slate-500">Submitted</dt>
-        <dd class="text-ink-950">{{ s.submittedAt }}</dd>
+      <div class="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:gap-4">
+        <dt class="w-28 shrink-0 text-console-muted">Submitted</dt>
+        <dd class="text-ink-950">
+          <time [attr.datetime]="s.submittedAt">{{ formatDateTime(s.submittedAt) }}</time>
+        </dd>
       </div>
     </dl>
 
+    @if (s.message) {
+      <h3 class="console-label mt-6">Message</h3>
+      <!-- Bound via textContent so template formatting can never leak into pre-wrapped text. -->
+      <p
+        class="rounded-xl bg-surface-muted px-4 py-3 text-sm leading-relaxed break-words text-ink-950"
+      >
+        <span
+          data-testid="submission-message"
+          class="whitespace-pre-wrap"
+          [textContent]="s.message"
+        ></span>
+      </p>
+    }
+
     <div class="mt-8">
-      <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</h3>
-      <div class="mt-2 flex flex-wrap gap-2">
+      <h3 id="status-heading" class="console-label">Status</h3>
+      <div
+        class="flex flex-wrap gap-2"
+        role="group"
+        aria-labelledby="status-heading"
+        [attr.aria-busy]="busy() ? 'true' : null"
+      >
         @for (status of statusOptions; track status) {
           <button
             type="button"
+            class="console-chip capitalize"
             (click)="setStatus(status)"
+            [disabled]="busy()"
             [attr.aria-pressed]="s.status === status"
-            class="rounded-full px-3 py-1.5 text-xs font-medium capitalize transition-colors"
-            [class.bg-console-accent]="s.status === status"
-            [class.text-white]="s.status === status"
-            [class.bg-slate-100]="s.status !== status"
-            [class.text-slate-600]="s.status !== status"
           >
             {{ status }}
           </button>

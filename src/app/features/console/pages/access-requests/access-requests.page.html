@@ -1,21 +1,35 @@
-<div class="space-y-4">
-  <h1 class="text-lg font-semibold text-ink-950">Access requests</h1>
-  <p class="text-sm text-slate-500">Pending Track 1.5 accreditation review.</p>
+<app-console-page-header
+  eyebrow="Track 1.5"
+  title="Access requests"
+  meta="Pending accreditation reviews, oldest first."
+/>
 
-  @if (loading()) {
-    <p class="text-sm text-slate-500">Loading…</p>
-  } @else {
-    <app-data-table
-      [columns]="columns"
-      [rows]="rows()"
-      emptyMessage="No pending access requests."
-      (rowActivated)="open($event)"
+@if (loadError(); as message) {
+  <div class="console-card">
+    <app-status-panel
+      variant="error"
+      title="The review queue didn't load"
+      [message]="message"
+      actionLabel="Try again"
+      (action)="reload()"
     />
-  }
-
-  <app-decision-panel
-    [request]="selected()"
-    (decided)="onDecided($event)"
-    (closed)="selected.set(null)"
+  </div>
+} @else {
+  <app-data-table
+    caption="Pending access requests"
+    [columns]="columns"
+    [rows]="rows()"
+    [rowKey]="rowKey"
+    [rowLabel]="rowLabel"
+    [loading]="loading()"
+    emptyMessage="No pending access requests — the queue is clear."
+    (rowActivated)="open($event)"
   />
-</div>
+}
+
+<app-decision-panel
+  [request]="selected()"
+  [deciding]="deciding()"
+  (decided)="onDecided($event)"
+  (closed)="selected.set(null)"
+/>
