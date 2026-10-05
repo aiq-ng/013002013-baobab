@@ -76,7 +76,8 @@ describe('PublicLayout', () => {
       ),
     ) as HTMLAnchorElement[];
 
-    expect(legalLinks.length).toBe(3);
+    // expect(legalLinks.length).toBe(3);
+    expect(legalLinks.length).toBe(2); // Portal Login is commented out in the component, so only 2 links are expected
     legalLinks.forEach((link) => {
       expect(link.getAttribute('href')).toBeTruthy();
       expect(link.getAttribute('href')).not.toBe('#');

@@ -70,6 +70,6 @@ export class PublicLayout {
   readonly legalLinks = [
     { label: 'Security Protocol', path: '/about' },
     { label: 'Diplomatic Status', path: '/about' },
-    { label: 'Portal Login', path: '/console' },
+    // { label: 'Portal Login', path: '/console' },
   ];
 }
