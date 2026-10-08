@@ -11,14 +11,16 @@ describe('ContactHero', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders the headline, eyebrow, and direct contact details', () => {
+  it('renders the eyebrow, headline, and intro copy without the old liaison column', () => {
     const fixture = TestBed.createComponent(ContactHero);
     fixture.detectChanges();
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('CONTACT US');
-    expect(text).toContain("We'd love to hear from your delegation");
-    expect(text).toContain('+221 33 820 00 44');
-    expect(text).toContain('liaison@baobab-statecraft.org');
-    expect(text).toContain('Villa 14, Almadies Diplomatic Enclave');
+    expect(text).toContain("We'd love to hear from you.");
+    expect(text).toContain(
+      'Tell us about your organization, your question or your idea for working together.',
+    );
+    expect(text).not.toContain("Let's talk!");
+    expect(text).not.toContain('Head Office');
   });
 });

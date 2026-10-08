@@ -18,4 +18,14 @@ describe('ContactPage', () => {
     expect(fixture.componentInstance).toBeTruthy();
     expect(update).toHaveBeenCalledWith(expect.objectContaining({ title: 'Contact Us' }));
   });
+
+  it('ends at the FAQ — no closing CTA band competing with the form', () => {
+    TestBed.configureTestingModule({
+      imports: [ContactPage],
+      providers: [provideRouter([]), { provide: SeoService, useValue: { update: vi.fn() } }],
+    });
+    const fixture = TestBed.createComponent(ContactPage);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-cta-band')).toBeNull();
+  });
 });

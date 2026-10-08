@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
 
-/** Contact page hero: intro copy + direct liaison details, per "CONTACT US.png". */
+/** Contact page hero: eyebrow, headline and intro copy, per "CONTACT US (1).png". */
 @Component({
   selector: 'app-contact-hero',
   standalone: true,

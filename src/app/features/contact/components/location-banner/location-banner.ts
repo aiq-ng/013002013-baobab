@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
 
-/** Full-width Head Office location photo banner, per "Contact us 3.png". */
+/** Full-width community photo banner, per "CONTACT US (1).png". */
 @Component({
   selector: 'app-contact-location-banner',
   standalone: true,

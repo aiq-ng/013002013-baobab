@@ -12,11 +12,11 @@ describe('ContactLocationBanner', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders a labelled photo of the head office', () => {
+  it('renders a labelled community photo', () => {
     const fixture = TestBed.createComponent(ContactLocationBanner);
     fixture.detectChanges();
     const img = fixture.debugElement.query(By.css('img'));
     expect(img).toBeTruthy();
-    expect(img.attributes['alt']).toContain('Dakar');
+    expect(img.attributes['alt']).toMatch(/women/i);
   });
 });

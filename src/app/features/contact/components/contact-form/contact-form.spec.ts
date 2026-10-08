@@ -56,6 +56,26 @@ describe('ContactForm', () => {
     expect(fixture.nativeElement.textContent).toContain('Stabilize, Resolve.');
   });
 
+  it('renders the Abidjan contact details as working links', () => {
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('+225 27 22 48 88 44');
+    expect(text).toContain('info@baobabgroup.org');
+    expect(text).toContain("Abidjan, Côte d'Ivoire");
+    expect(text).toContain('Monday - Friday');
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('a[href="tel:+2252722488844"]')).toBeTruthy();
+    expect(el.querySelector('a[href="mailto:info@baobabgroup.org"]')).toBeTruthy();
+  });
+
+  it('exposes an anchor id so other sections can scroll to the form', () => {
+    expect(fixture.nativeElement.querySelector('#contact-form')).toBeTruthy();
+  });
+
+  it('labels the submit button "Send us a message"', () => {
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[type="submit"]');
+    expect(button.textContent).toContain('Send us a message');
+  });
+
   it('shows validation errors and does not submit when required fields are empty', () => {
     submitForm();
 

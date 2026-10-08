@@ -22,22 +22,33 @@ describe('ContactFaq', () => {
     const text = fixture.nativeElement.textContent;
 
     expect(text).toContain('Frequently Asked Questions');
-    expect(text).toContain('Diplomatic Repository');
-    expect(text).toContain('5 Clarifications');
+    expect(text).toContain('Short answers about who we are and how we work.');
     expect(text).toContain('Key Mandates & Sovereign Protocols');
+    expect(text).not.toContain('Diplomatic Repository');
     expect(fixture.componentInstance.faqs.length).toBe(5);
-    expect(text).toContain('1. How can my government or institution initiate a dialogue?');
-    expect(text).toContain('Reach the Office of the Permanent Secretariat');
-    expect(text).toContain('5. Access to statecraft archives & customary treaties?');
+    expect(text).toContain('1. Who do you work with?');
+    expect(text).toContain('2. Where do you work?');
+    expect(text).toContain('3. Do you replace state security efforts?');
+    expect(text).toContain('4. Is engagement confidential?');
+    expect(text).toContain('5. How do I read your publications?');
+    expect(text).toContain('Across ECOWAS and AES countries in West Africa.');
   });
 
-  it('links "View All 5 FAQs" to the FAQ detail route, not a dead click', () => {
+  it('routes "How do I read your publications?" readers to the Resources page', () => {
     const fixture = TestBed.createComponent(ContactFaq);
     fixture.detectChanges();
-    const links = fixture.debugElement.queryAll(By.css('a'));
-    expect(links.length).toBeGreaterThan(0);
-    for (const link of links) {
-      expect(link.nativeElement.getAttribute('href')).toBe('/contact/faq');
-    }
+    const link = fixture.debugElement
+      .queryAll(By.css('a'))
+      .find((a) => a.nativeElement.textContent.includes('Resources'));
+    expect(link?.nativeElement.getAttribute('href')).toBe('/resources');
+  });
+
+  it('points the "Ready to start a conversation?" CTA at the contact form, not a dead click', () => {
+    const fixture = TestBed.createComponent(ContactFaq);
+    fixture.detectChanges();
+    const cta = fixture.debugElement
+      .queryAll(By.css('a'))
+      .find((a) => a.nativeElement.textContent.includes('Ready to start a conversation?'));
+    expect(cta?.nativeElement.getAttribute('href')).toBe('/contact#contact-form');
   });
 });
