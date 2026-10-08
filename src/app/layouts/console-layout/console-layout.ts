@@ -33,9 +33,9 @@ interface ConsoleNavItem {
 
 const NAV_ITEMS: ConsoleNavItem[] = [
   { path: '/console/submissions', label: 'Submissions', icon: 'inbox' },
-  { path: '/console/access-requests', label: 'Access Requests', icon: 'key' },
+  // { path: '/console/access-requests', label: 'Access Requests', icon: 'key' },
   { path: '/console/programs', label: 'Programs', icon: 'grid' },
-  { path: '/console/archive', label: 'Treaties Archive', icon: 'archive' },
+  { path: '/console/archive', label: 'Resources', icon: 'archive' },
 ];
 
 const ROLE_LABELS: Record<string, string> = {

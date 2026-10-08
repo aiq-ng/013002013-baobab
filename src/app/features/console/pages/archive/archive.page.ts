@@ -34,7 +34,7 @@ export class ArchivePage implements OnInit {
 
   ngOnInit(): void {
     this.seo.update({
-      title: 'Treaties Archive',
+      title: 'Resources',
       description: 'Manage the public Treaties & Conciliation Archive entries.',
       noIndex: true,
     });
@@ -55,7 +55,7 @@ export class ArchivePage implements OnInit {
     if (entry.published) {
       const confirmed = await this.confirm.ask({
         title: `Unpublish ${entry.title}?`,
-        message: 'It will be hidden from the public Treaties Archive until you publish it again.',
+        message: 'It will be hidden from the public Resources page until you publish it again.',
         confirmLabel: 'Unpublish',
       });
       if (!confirmed) return;

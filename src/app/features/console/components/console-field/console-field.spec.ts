@@ -110,6 +110,15 @@ describe('ConsoleField', () => {
     expect(el.querySelector('#link-error')?.textContent).toContain('https://');
   });
 
+  it('asks the editor to wait while an image upload is running', () => {
+    const { fixture, el } = setup();
+    const link = fixture.componentInstance.linkControl;
+    link.setErrors({ uploading: true });
+    link.markAsTouched();
+    fixture.detectChanges();
+    expect(el.querySelector('#link-error')?.textContent).toContain('Wait for the image upload');
+  });
+
   it('explains a length error with the limit', () => {
     const { fixture, el, control } = setup();
     control.setValue('/toolong');

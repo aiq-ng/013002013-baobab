@@ -4,6 +4,8 @@ import { provideRouter, withInMemoryScrolling, withViewTransitions } from '@angu
 import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { provideClientHydration } from '@angular/platform-browser';
+import { IMAGE_LOADER } from '@angular/common';
+import { cloudinaryImageLoader } from './core/images/cloudinary-image-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,5 +17,6 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(withInterceptors([errorInterceptor])),
     provideClientHydration(),
+    { provide: IMAGE_LOADER, useValue: cloudinaryImageLoader },
   ],
 };

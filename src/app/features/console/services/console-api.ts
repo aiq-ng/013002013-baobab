@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '../../../core/api/api-client';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import {
   AdminAccessRequest,
   AdminArchiveEntry,
@@ -11,6 +11,8 @@ import {
   AdminResource,
   AdminSession,
   ArchiveEntryWrite,
+  CloudinaryUploadResult,
+  ImageUploadSignature,
   ProgramCreate,
   ProgramWrite,
   SubmissionStatus,
@@ -129,6 +131,35 @@ export class ConsoleApi {
     return this.api.delete<void>(`admin/programs/${encodeURIComponent(slug)}`, {
       withCredentials: true,
       headers: this.csrfHeaders(),
+    });
+  }
+
+  /** Mints a short-lived signature for one direct-to-Cloudinary image upload. */
+  signImageUpload(): Observable<ImageUploadSignature> {
+    return this.api.post<ImageUploadSignature>(
+      'admin/media/image-uploads',
+      {},
+      { withCredentials: true, headers: this.csrfHeaders() },
+    );
+  }
+
+  /**
+   * Sends the file straight to Cloudinary with the signed fields, reporting
+   * upload progress. Never `withCredentials` — the console's session cookie
+   * must not travel to a third party; the signature is the authorisation.
+   */
+  uploadImage(
+    signature: ImageUploadSignature,
+    file: File,
+  ): Observable<HttpEvent<CloudinaryUploadResult>> {
+    const form = new FormData();
+    for (const [key, value] of Object.entries(signature.fields)) {
+      form.append(key, value);
+    }
+    form.append('file', file);
+    return this.http.post<CloudinaryUploadResult>(signature.uploadUrl, form, {
+      reportProgress: true,
+      observe: 'events',
     });
   }
 

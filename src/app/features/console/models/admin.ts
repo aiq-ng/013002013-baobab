@@ -102,3 +102,22 @@ export interface ArchiveEntryWrite {
   workingLanguages: string;
   category: ArchiveCategory;
 }
+
+/** `POST /admin/media/image-uploads` — a one-off signed Cloudinary upload. */
+export interface ImageUploadSignature {
+  uploadUrl: string;
+  /** Sent verbatim as multipart fields alongside `file`. */
+  fields: Record<string, string>;
+  maxBytes: number;
+  allowedFormats: string[];
+}
+
+/** The subset of Cloudinary's upload response the console uses. */
+export interface CloudinaryUploadResult {
+  secure_url: string;
+  public_id: string;
+  width: number;
+  height: number;
+  bytes: number;
+  format: string;
+}

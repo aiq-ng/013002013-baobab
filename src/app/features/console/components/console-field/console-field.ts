@@ -85,6 +85,9 @@ export class ConsoleField implements OnInit {
     if (errors['maxlength']) {
       return `${this.label} must be ${errors['maxlength'].requiredLength} characters or fewer.`;
     }
+    if (errors['uploading']) {
+      return 'Wait for the image upload to finish.';
+    }
     if (errors['safeLink']) {
       return SAFE_LINK_MESSAGE;
     }

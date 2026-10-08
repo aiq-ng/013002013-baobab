@@ -3,7 +3,15 @@
 >
   <figure data-testid="image-preview" class="m-0">
     <div
-      class="flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border border-console-line bg-white"
+      data-testid="image-dropzone"
+      class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border bg-white transition-colors"
+      [class.border-console-line]="!dragging()"
+      [class.border-console-accent]="dragging()"
+      [class.ring-2]="dragging()"
+      [class.ring-console-accent/25]="dragging()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="dragging.set(false)"
+      (drop)="onDrop($event)"
     >
       @if (previewUrl && !failed()) {
         <img
@@ -30,7 +38,13 @@
             <circle cx="8.5" cy="10" r="1.5" />
             <path stroke-linejoin="round" d="m21 16-5-5-8 8" />
           </svg>
-          {{ failed() ? "This image couldn't load — check the URL." : 'No image to preview yet.' }}
+          {{
+            failed()
+              ? "This image couldn't load — check the URL."
+              : uploading
+                ? 'Uploading…'
+                : 'No image yet. Drop one here.'
+          }}
         </span>
       }
     </div>
@@ -38,6 +52,77 @@
   </figure>
 
   <div class="min-w-0 space-y-5">
+    <div class="space-y-3">
+      @if (uploading) {
+        <div class="flex items-center gap-3">
+          <div
+            role="progressbar"
+            [attr.aria-label]="'Uploading ' + urlLabel"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuenow]="progress()"
+            class="h-2 flex-1 overflow-hidden rounded-full bg-white ring-1 ring-console-line"
+          >
+            <div
+              class="h-full rounded-full bg-console-accent transition-[width]"
+              [style.width.%]="progress()"
+            ></div>
+          </div>
+          <span class="w-10 text-right text-xs tabular-nums text-console-muted"
+            >{{ progress() }}%</span
+          >
+          <button
+            type="button"
+            data-testid="cancel-upload"
+            class="console-row-add min-h-9"
+            (click)="cancelUpload()"
+          >
+            Cancel
+          </button>
+        </div>
+      } @else {
+        <label
+          [for]="idPrefix + '-file'"
+          class="console-row-add cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-console-accent"
+          [class.pointer-events-none]="urlControl.disabled"
+          [class.opacity-50]="urlControl.disabled"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            class="size-4"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 16V4m0 0-4 4m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"
+            />
+          </svg>
+          Upload image
+          <input
+            type="file"
+            class="sr-only"
+            [id]="idPrefix + '-file'"
+            [accept]="acceptedTypes"
+            [disabled]="urlControl.disabled"
+            [attr.aria-describedby]="idPrefix + '-file-hint'"
+            (change)="onFileChosen($event)"
+          />
+        </label>
+        <p [id]="idPrefix + '-file-hint'" class="console-hint !mt-1">
+          JPEG, PNG, WebP or AVIF, at least 1200px wide.
+        </p>
+      }
+
+      @if (uploadError()) {
+        <p role="alert" class="console-field-error">{{ uploadError() }}</p>
+      }
+      <p role="status" class="text-sm text-console-muted empty:hidden">{{ uploadNotice() }}</p>
+    </div>
+
     <app-console-field
       [fieldId]="idPrefix + '-url'"
       [label]="urlLabel"
