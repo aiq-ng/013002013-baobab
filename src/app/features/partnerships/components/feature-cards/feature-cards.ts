@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 export interface PartnershipFeature {
   icon: string;
@@ -29,6 +30,7 @@ const FEATURES: PartnershipFeature[] = [
 @Component({
   selector: 'app-partnerships-feature-cards',
   standalone: true,
+  imports: [StaggerRevealDirective],
   templateUrl: './feature-cards.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

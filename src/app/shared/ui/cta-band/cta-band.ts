@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Button } from '../button/button';
+import { StaggerRevealDirective } from '../../../shared/directives/stagger-reveal.directive';
 
 /**
  * Closing dual-CTA gradient band. Primary CTA is always visually dominant;
@@ -8,7 +9,7 @@ import { Button } from '../button/button';
 @Component({
   selector: 'app-cta-band',
   standalone: true,
-  imports: [Button],
+  imports: [StaggerRevealDirective, Button],
   templateUrl: './cta-band.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

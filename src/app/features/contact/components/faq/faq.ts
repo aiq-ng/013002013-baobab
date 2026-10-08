@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 export interface FaqEntry {
   question: string;
@@ -45,7 +46,7 @@ const FAQS: FaqEntry[] = [
 @Component({
   selector: 'app-contact-faq',
   standalone: true,
-  imports: [RouterLink],
+  imports: [StaggerRevealDirective, RouterLink],
   templateUrl: './faq.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 export interface StrategicPillar {
   code: string;
@@ -38,6 +39,7 @@ const PILLARS: StrategicPillar[] = [
 @Component({
   selector: 'app-strategic-pillars',
   standalone: true,
+  imports: [StaggerRevealDirective],
   templateUrl: './strategic-pillars.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

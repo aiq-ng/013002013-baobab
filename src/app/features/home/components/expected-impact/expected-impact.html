@@ -2,7 +2,7 @@
   <app-eyebrow text="WHAT WE CAN DO" />
   <h2 class="mt-4 text-2xl font-bold text-ink-950 sm:text-3xl md:text-4xl">Expected impact</h2>
 
-  <ul class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  <ul appStaggerReveal class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
     @for (outcome of outcomes; track outcome.number) {
       <li class="rounded-card bg-surface-tint pad-card-sm text-center">
         <span

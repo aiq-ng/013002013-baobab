@@ -1,5 +1,5 @@
 <section class="mx-auto max-w-7xl px-4 py-16">
-  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+  <div appStaggerReveal class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div>
       <app-eyebrow text="THEMATIC ACTION" />
       <h2 class="mt-4 text-2xl font-bold text-ink-950 sm:text-3xl md:text-4xl">Programs preview</h2>
@@ -9,7 +9,7 @@
     </p>
   </div>
 
-  <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  <div appStaggerReveal class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
     @for (program of programs; track program.title) {
       <article
         class="group relative aspect-[4/5] w-full overflow-hidden rounded-card shadow-sm sm:aspect-[11/12]"

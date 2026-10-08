@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 type ValueIcon = 'africa' | 'handshake' | 'bridge' | 'baobab' | 'badge';
 
@@ -13,7 +14,7 @@ interface CoreValue {
 @Component({
   selector: 'app-core-values',
   standalone: true,
-  imports: [Eyebrow],
+  imports: [StaggerRevealDirective, Eyebrow],
   templateUrl: './core-values.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

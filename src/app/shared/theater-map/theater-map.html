@@ -15,7 +15,7 @@
     </p>
   </div>
 } @else {
-  <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+  <div appStaggerReveal class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
     @for (item of filteredTheaters(); track item.name) {
       <app-card [imageUrl]="item.imageUrl" [imageAlt]="item.name" [badgeText]="item.theater">
         <h3 title class="text-base font-semibold text-ink-950">{{ item.name }}</h3>

@@ -6,10 +6,10 @@
     <span class="h-px flex-1 bg-ink-950/10" aria-hidden="true"></span>
   </div>
 
-  <ul class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
+  <ul appStaggerReveal class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
     @for (group of groups; track group.label) {
       <li
-        class="flex flex-col items-center gap-3 rounded-card px-4 py-6 text-center transition-shadow hover:bg-white hover:shadow-lg"
+        class="flex flex-col items-center gap-3 rounded-card px-4 py-6 text-center transition-[background-color,box-shadow] duration-300 ease-premium hover:bg-white hover:shadow-lg"
       >
         <svg
           viewBox="0 0 24 24"

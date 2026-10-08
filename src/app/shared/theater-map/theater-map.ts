@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, computed, signal } from '@an
 import { RouterLink } from '@angular/router';
 import { Card } from '../ui/card/card';
 import { FilterPills } from '../ui/filter-pills/filter-pills';
+import { StaggerRevealDirective } from '../../shared/directives/stagger-reveal.directive';
 
 export interface TheaterEntry {
   name: string;
@@ -21,7 +22,7 @@ const ALL = 'All';
 @Component({
   selector: 'app-theater-map',
   standalone: true,
-  imports: [Card, RouterLink, FilterPills],
+  imports: [StaggerRevealDirective, Card, RouterLink, FilterPills],
   templateUrl: './theater-map.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

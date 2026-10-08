@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 export interface PartnerGroup {
   icon: 'government' | 'crown' | 'globe' | 'agency' | 'community';
@@ -20,6 +21,7 @@ const PARTNER_GROUPS: PartnerGroup[] = [
 @Component({
   selector: 'app-partnerships-partner-groups',
   standalone: true,
+  imports: [StaggerRevealDirective],
   templateUrl: './partner-groups.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

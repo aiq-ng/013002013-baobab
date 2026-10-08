@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { StaggerRevealDirective } from '../../../shared/directives/stagger-reveal.directive';
 
 export type PartnerCategoryIcon = 'government' | 'traditional' | 'regional' | 'agency' | 'civil';
 
@@ -11,6 +12,7 @@ interface PartnerCategory {
 @Component({
   selector: 'app-partner-categories',
   standalone: true,
+  imports: [StaggerRevealDirective],
   templateUrl: './partner-categories.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

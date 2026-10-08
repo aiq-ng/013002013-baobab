@@ -3,12 +3,13 @@ import { NgOptimizedImage } from '@angular/common';
 import { Button } from '../../../../shared/ui/button/button';
 import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
 import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 /** Key points list + "From our strategy" heading, expected impact, About Us CTA and portrait. */
 @Component({
   selector: 'app-program-strategy',
   standalone: true,
-  imports: [NgOptimizedImage, Button, Eyebrow, ImageFadeInDirective],
+  imports: [StaggerRevealDirective, NgOptimizedImage, Button, Eyebrow, ImageFadeInDirective],
   templateUrl: './program-strategy.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

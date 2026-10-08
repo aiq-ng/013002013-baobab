@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Card } from '../../../../shared/ui/card/card';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 interface Approach {
   title: string;
@@ -12,7 +13,7 @@ interface Approach {
 @Component({
   selector: 'app-approach-grid',
   standalone: true,
-  imports: [Card],
+  imports: [StaggerRevealDirective, Card],
   templateUrl: './approach-grid.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

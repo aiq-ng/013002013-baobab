@@ -49,6 +49,47 @@
 
   /* Motion system — used by shared UI hover states, the scroll-reveal directive, and route transitions */
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* One timing scale for the whole site. Any bare `transition` / `transition-colors` utility now
+     inherits 200ms + the premium curve instead of Tailwind's 150ms default, so hovers feel the
+     same on every page. Scale: 200ms hover/colour · 300ms card lift · 500ms media/zoom · 600ms reveal. */
+  --default-transition-duration: 200ms;
+  --default-transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base polish: crisp type, balanced headings, brand-tinted selection, and colour transitions on
+   every link/button so no hover snaps instantly. Utilities still override all of this. */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Keep in-page anchor targets clear of the sticky header. */
+    scroll-padding-top: 5rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-200);
+    color: var(--color-ink-950);
+  }
+
+  a,
+  button,
+  summary {
+    transition-property: color, background-color, border-color, text-decoration-color, opacity;
+    transition-duration: 200ms;
+    transition-timing-function: var(--ease-premium);
+  }
 }
 
 /* Shared element recipes — the class strings that would otherwise be copy-pasted across
@@ -361,6 +402,21 @@ html {
   transform: translateY(0);
 }
 
+/* Staggered columns: applied per child by the [appStaggerReveal] directive, which also sets each
+   child's transition-delay (150ms per column position in its row). */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity 0.6s var(--ease-premium),
+    transform 0.6s var(--ease-premium);
+}
+
+.stagger-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Accordion panel entrance */
 @keyframes accordion-fade-in {
   from {
@@ -381,13 +437,29 @@ html {
    between routes rather than the browser's default instant swap. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 220ms;
+  animation-duration: 280ms;
   animation-timing-function: var(--ease-premium);
+}
+
+/* Mobile menu panel entrance — same lift/fade language as the scroll reveal, just quicker. */
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-menu-in {
+  animation: menu-in 0.3s var(--ease-premium) both;
 }
 
 .img-fade-in {
   opacity: 0;
-  transition: opacity 0.25s var(--ease-premium);
+  transition: opacity 0.4s var(--ease-premium);
 }
 
 .img-fade-in--loaded {
@@ -404,7 +476,8 @@ html {
     scroll-behavior: auto !important;
   }
 
-  .scroll-reveal {
+  .scroll-reveal,
+  .stagger-item {
     opacity: 1;
     transform: none;
   }

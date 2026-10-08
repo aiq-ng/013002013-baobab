@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Button } from '../../../../shared/ui/button/button';
 import { baobabValidators, errorMessageFor } from '../../../../shared/forms/validators';
 import { createEngagementSubmission } from '../../../engagement/services/engagement-submission';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 type ContactFormControl = 'firstName' | 'lastName' | 'email' | 'phone' | 'subject' | 'message';
 
@@ -10,7 +11,7 @@ type ContactFormControl = 'firstName' | 'lastName' | 'email' | 'phone' | 'subjec
 @Component({
   selector: 'app-contact-form',
   standalone: true,
-  imports: [ReactiveFormsModule, Button],
+  imports: [StaggerRevealDirective, ReactiveFormsModule, Button],
   templateUrl: './contact-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

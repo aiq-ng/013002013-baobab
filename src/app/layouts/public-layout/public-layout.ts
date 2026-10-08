@@ -4,11 +4,13 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Button } from '../../shared/ui/button/button';
 import { SuccessModal } from '../../features/engagement/success-modal/success-modal';
 import { ImageFadeInDirective } from '../../shared/directives/image-fade-in.directive';
+import { StaggerRevealDirective } from '../../shared/directives/stagger-reveal.directive';
 
 @Component({
   selector: 'app-public-layout',
   standalone: true,
   imports: [
+    StaggerRevealDirective,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,

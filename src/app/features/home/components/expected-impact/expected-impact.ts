@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 export type ImpactIcon = 'handshake' | 'cycle';
 
@@ -13,7 +14,7 @@ interface ImpactOutcome {
 @Component({
   selector: 'app-expected-impact',
   standalone: true,
-  imports: [Eyebrow],
+  imports: [StaggerRevealDirective, Eyebrow],
   templateUrl: './expected-impact.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

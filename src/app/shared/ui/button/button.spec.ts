@@ -63,6 +63,15 @@ describe('Button', () => {
     expect(pressed).toBe(true);
   });
 
+  it('gives tactile press feedback with the shared motion easing', () => {
+    const fixture = TestBed.createComponent(Button);
+    fixture.componentInstance.label = 'Go';
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('button, a');
+    expect(el.className).toContain('active:scale-[0.98]');
+    expect(el.className).toContain('ease-premium');
+  });
+
   it('applies the primary variant class by default', () => {
     const fixture = TestBed.createComponent(Button);
     fixture.componentInstance.label = 'Go';

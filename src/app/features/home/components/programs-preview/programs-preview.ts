@@ -5,6 +5,7 @@ import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
 import { Badge } from '../../../../shared/ui/badge/badge';
 import { Button } from '../../../../shared/ui/button/button';
 import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
+import { StaggerRevealDirective } from '../../../../shared/directives/stagger-reveal.directive';
 
 interface ProgramArea {
   title: string;
@@ -17,7 +18,15 @@ interface ProgramArea {
 @Component({
   selector: 'app-programs-preview',
   standalone: true,
-  imports: [Eyebrow, Badge, Button, RouterLink, NgOptimizedImage, ImageFadeInDirective],
+  imports: [
+    StaggerRevealDirective,
+    Eyebrow,
+    Badge,
+    Button,
+    RouterLink,
+    NgOptimizedImage,
+    ImageFadeInDirective,
+  ],
   templateUrl: './programs-preview.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

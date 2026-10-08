@@ -59,7 +59,7 @@ export class Button {
   private readonly analyticsService = inject(AnalyticsService);
 
   readonly baseClass =
-    'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 ease-premium hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0';
+    'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-premium hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0';
 
   get sizeClass(): string {
     const padding = this.size === 'lg' ? 'px-8 py-4 text-base font-semibold' : 'px-6 py-3 text-sm';

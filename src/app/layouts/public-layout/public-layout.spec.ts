@@ -133,6 +133,7 @@ describe('PublicLayout', () => {
 
       const panel: HTMLElement = fixture.nativeElement.querySelector('[data-testid="mobile-nav"]');
       expect(panel).toBeTruthy();
+      expect(panel.classList).toContain('animate-menu-in');
 
       const links = Array.from(panel.querySelectorAll('a')) as HTMLAnchorElement[];
       expect(links.length).toBe(6);
