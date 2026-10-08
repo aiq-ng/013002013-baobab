@@ -63,6 +63,6 @@ export class PublicLayout {
   readonly legalLinks = [
     { label: 'Privacy Policy', path: '/about' },
     { label: 'Terms of Use', path: '/about' },
-    { label: 'Portal Login', path: '/console' },
+    // { label: 'Portal Login', path: '/console' },
   ];
 }
