@@ -41,35 +41,28 @@ export class PublicLayout {
     { label: 'Contact Us', path: '/contact' },
   ];
 
-  readonly thematicFocus = [
-    'Transhumance Grazing Pacts',
-    'Customary Sultanate Jurisprudence',
-    'Non-Kinetic Disarmament & Re-entry',
-    'Cross-Border Borderland Security',
-    'Inter-Faith Elder Councils',
+  readonly footerPrograms = [
+    'Sovereign Dialogue Facilitation',
+    'Hybrid Mediation & Reconciliation',
+    'Community Resilience',
+    'Research & Early Warning',
+    'Disengagement, DDR & Reintegration',
+    'Policy Advisory & Regional Harmonization',
   ];
 
-  readonly regionalHubs = [
-    'Dakar (Executive HQ)',
-    'Abuja (ECOWAS Secretariat)',
-    'Niamey (Sahel Mission)',
-    'Ouagadougou (Liptako)',
-    'Accra (Littoral Liaison)',
+  readonly exploreLinks = [
+    { label: 'About Us', path: '/about' },
+    { label: 'Resources', path: '/resources' },
+    { label: 'Partnerships', path: '/partnerships' },
+    { label: 'Contact Us', path: '/contact' },
   ];
 
-  readonly doctrineRecords = [
-    'Annual Statecraft Review (2024–2025)',
-    'Treaties & Conciliation Archive',
-    'Track 1.5 Confidential Protocol',
-    'Privacy & Sovereign Data Protections',
-  ];
-
-  // Security Protocol / Diplomatic Status have no dedicated routes yet.
-  // Routed to the nearest real, already-built pages as temporary stand-ins pending
-  // dedicated legal routes in a later phase — never a bare "#" dead link.
+  // Privacy Policy / Terms of Use have no dedicated routes yet.
+  // Routed to the nearest real, already-built page as a temporary stand-in pending
+  // dedicated legal routes — never a bare "#" dead link.
   readonly legalLinks = [
-    { label: 'Security Protocol', path: '/about' },
-    { label: 'Diplomatic Status', path: '/about' },
+    { label: 'Privacy Policy', path: '/about' },
+    { label: 'Terms of Use', path: '/about' },
     { label: 'Portal Login', path: '/console' },
   ];
 }

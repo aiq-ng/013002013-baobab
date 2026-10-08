@@ -28,5 +28,5 @@ export interface ProgramPreview {
 })
 export class ProgramGrid {
   @Input({ required: true }) programs: ProgramPreview[] = [];
-  @Input() ctaLabel = 'View Program →';
+  @Input() ctaLabel = 'View Program';
 }

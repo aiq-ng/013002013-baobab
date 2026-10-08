@@ -24,12 +24,22 @@ describe('PartnershipsPage', () => {
     expect(title.getTitle()).toContain('Partnerships');
   });
 
-  it('renders the hero, feature cards, dialogue form, and partner logo strip', () => {
+  it('renders the hero, feature cards, dialogue form, and partner groups', () => {
     const fixture = TestBed.createComponent(PartnershipsPage);
     fixture.detectChanges();
     const text = fixture.nativeElement.textContent;
-    expect(text).toContain('Partnering to Anchor Enduring Sovereign Peace');
-    expect(text).toContain('Multilateral Missions');
-    expect(text).toContain('Initiate Sovereign Partnership Dialogue');
+    expect(text).toContain('Partner with us for a stronger West Africa.');
+    expect(text).toContain('Governments and regional bodies');
+    expect(text).toContain('Start a conversation');
+    expect(text).toContain('Our Partners');
+    for (const group of [
+      'Governments and Local Authorities',
+      'Traditional and Religious Institutions',
+      'ECOWAS, AES and AU',
+      'Agencies and International Partners',
+      'Civil Society and Community Organizations',
+    ]) {
+      expect(text).toContain(group);
+    }
   });
 });

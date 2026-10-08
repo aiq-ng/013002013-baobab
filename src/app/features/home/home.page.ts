@@ -1,29 +1,28 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { Hero } from './components/hero/hero';
 import { MissionBlock } from './components/mission-block/mission-block';
+import { PartnerCategories } from '../../shared/ui/partner-categories/partner-categories';
 import { TrackModel } from './components/track-model/track-model';
-import { ConciliationCycle } from './components/conciliation-cycle/conciliation-cycle';
-import { TheaterPreviews } from './components/theater-previews/theater-previews';
-import { ImpactStats } from './components/impact-stats/impact-stats';
+import { ProgramsPreview } from './components/programs-preview/programs-preview';
+import { ExpectedImpact } from './components/expected-impact/expected-impact';
 import { DialogueForm } from './components/dialogue-form/dialogue-form';
-import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
 import { CtaBand } from '../../shared/ui/cta-band/cta-band';
 import { SeoService } from '../../core/services/seo.service';
-import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
+import { TrustBand } from '../../shared/ui/trust-band/trust-band';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
   imports: [
+    TrustBand,
     Hero,
     MissionBlock,
+    PartnerCategories,
     TrackModel,
-    ConciliationCycle,
-    TheaterPreviews,
-    ImpactStats,
+    ProgramsPreview,
+    ExpectedImpact,
     DialogueForm,
-    LogoStrip,
     CtaBand,
     ScrollRevealDirective,
   ],
@@ -33,14 +32,13 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 export class HomePage implements OnInit {
   private readonly seo = inject(SeoService);
 
-  readonly partnerLogos = PARTNER_LOGOS;
   readonly showDialogueForm = signal(false);
 
   ngOnInit(): void {
     this.seo.update({
       title: 'Home',
       description:
-        'The Baobab Group bridges high-level statecraft, Track 1.5 dialogue, and customary sultanate councils to de-escalate structural conflicts across West Africa.',
+        'The Baobab Group is a pan-West African peacebuilding and mediation institution strengthening peace and stability through non-kinetic approaches.',
     });
   }
 }

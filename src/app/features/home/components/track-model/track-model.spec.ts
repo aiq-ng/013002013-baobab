@@ -12,22 +12,24 @@ describe('TrackModel', () => {
     fixture.detectChanges();
   });
 
-  it('renders the section heading and intro copy', () => {
+  it('renders the "Our response" heading and intro copy', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.textContent).toContain('SOVEREIGNTY MATRIX');
-    expect(el.textContent).toContain('The Track 1.5 Architecture Model');
+    expect(el.textContent).toContain('Our response');
+    expect(el.textContent).toContain('Our response is a dual-track peace architecture.');
   });
 
-  it('renders all 3 tracks with Track 1.5 as the emphasized center pivot', () => {
-    expect(fixture.componentInstance.tracks.length).toBe(3);
-    expect(fixture.componentInstance.tracks[1].emphasized).toBe(true);
-    expect(fixture.componentInstance.tracks[0].emphasized).toBe(false);
-    expect(fixture.componentInstance.tracks[2].emphasized).toBe(false);
+  it('renders the 3 track cards with Track 1.5 as the emphasized center card', () => {
+    const tracks = fixture.componentInstance.tracks;
+    expect(tracks.map((t) => t.title)).toEqual([
+      'Legitimate Security Operations',
+      'Working together',
+      'Non-Kinetic Engagement',
+    ]);
+    expect(tracks.map((t) => t.emphasized)).toEqual([false, true, false]);
   });
 
-  it('renders both capability and limitation items for the Track 1 card', () => {
-    const track1 = fixture.componentInstance.tracks[0];
-    expect(track1.capabilities).toContain('Binding constitutional ratification');
-    expect(track1.limitations).toContain('Restricted from non-state armed contact');
+  it('renders the full-width banner image beneath the cards', () => {
+    expect(fixture.nativeElement.querySelector('img')).toBeTruthy();
   });
 });

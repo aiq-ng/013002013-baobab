@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { AboutHero } from './components/hero/hero';
-import { DocumentaryVideo } from './components/documentary-video/documentary-video';
+import { ImageBanner } from './components/image-banner/image-banner';
 import { MissionVisionPanel } from './components/mission-vision-panel/mission-vision-panel';
-import { TheaterSection } from './components/theater-section/theater-section';
-import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
-import { Eyebrow } from '../../shared/ui/eyebrow/eyebrow';
-import { ProgramGrid, ProgramPreview } from '../../shared/ui/program-grid/program-grid';
+import { WhyBaobab } from './components/why-baobab/why-baobab';
+import { ApproachGrid } from './components/approach-grid/approach-grid';
+import { CoreValues } from './components/core-values/core-values';
+import { WhereWeWork } from './components/where-we-work/where-we-work';
+import { PartnerCategories } from '../../shared/ui/partner-categories/partner-categories';
 import { SeoService } from '../../core/services/seo.service';
-import { ProgramsService } from '../programs/services/programs.service';
-import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
@@ -16,12 +15,13 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
   standalone: true,
   imports: [
     AboutHero,
-    DocumentaryVideo,
+    ImageBanner,
     MissionVisionPanel,
-    LogoStrip,
-    Eyebrow,
-    ProgramGrid,
-    TheaterSection,
+    PartnerCategories,
+    WhyBaobab,
+    ApproachGrid,
+    CoreValues,
+    WhereWeWork,
     ScrollRevealDirective,
   ],
   templateUrl: './about.page.html',
@@ -29,30 +29,12 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 })
 export class AboutPage implements OnInit {
   private readonly seo = inject(SeoService);
-  private readonly programsService = inject(ProgramsService);
-
-  readonly partnerLogos = PARTNER_LOGOS;
-  readonly programsUnavailable = computed(
-    () => this.programsService.status() === 'error' && this.programsService.programs().length === 0,
-  );
-
-  readonly activePrograms = computed<ProgramPreview[]>(() =>
-    this.programsService.programs().map((program) => ({
-      slug: program.slug,
-      badgeText: program.badgeText,
-      imageUrl: program.imageUrl,
-      imageAlt: program.imageAlt,
-      title: program.title,
-      description: program.description,
-    })),
-  );
 
   ngOnInit(): void {
     this.seo.update({
       title: 'About Us',
       description:
-        'The Baobab Group is an independent Track 1.5 sovereign advisory and peacecraft institute convening confidential dialogue across the Sahel and West Africa.',
+        'The Baobab Group is an African-led institution for peace and dialogue, working with governments, communities and regional bodies across West Africa.',
     });
-    void this.programsService.load();
   }
 }

@@ -1,7 +1,7 @@
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
   @for (program of programs; track program.slug) {
     <article
-      class="group relative aspect-[4/5] w-full overflow-hidden rounded-card shadow-sm sm:aspect-[3/4]"
+      class="group relative aspect-[4/5] w-full overflow-hidden rounded-card shadow-sm sm:aspect-[11/12]"
     >
       <img
         [ngSrc]="program.imageUrl"
@@ -12,19 +12,18 @@
         class="object-cover transition-transform duration-300 group-hover:scale-105"
       />
       <div
-        class="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/20 to-transparent"
+        class="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/40 to-ink-950/20"
       ></div>
-      <div class="absolute left-4 top-4">
+      <div class="absolute inset-x-0 bottom-0 flex flex-col items-start gap-2 p-6">
         <app-badge [text]="program.badgeText" />
-      </div>
-      <div class="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-5">
         <h3 class="text-lg font-semibold text-white sm:text-xl">{{ program.title }}</h3>
         <p class="text-sm text-white/80">{{ program.description }}</p>
         <a
           [routerLink]="['/programs', program.slug]"
-          class="mt-1 inline-flex items-center gap-1 text-sm font-medium text-brand-400 hover:text-brand-300"
+          class="mt-2 inline-flex items-center gap-1 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink-950 transition-colors hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          {{ ctaLabel }}
+          {{ ctaLabel }} <span aria-hidden="true">→</span>
+          <span class="sr-only">: {{ program.title }}</span>
         </a>
       </div>
     </article>

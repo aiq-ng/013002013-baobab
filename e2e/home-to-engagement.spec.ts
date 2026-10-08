@@ -11,13 +11,13 @@ test.describe('Primary flow: Home → browse → initiate engagement → submit 
     await expect(page).toHaveURL(/\/programs$/);
 
     await page.goto('/');
-    await page.getByRole('button', { name: /Initiate Dialogue/ }).click();
+    await page.getByRole('button', { name: /Partner With Us/ }).click();
 
     await page.locator('#home-dialogue-name').fill('Amina Diallo');
     await page.locator('#home-dialogue-email').fill('amina@mfa.gov');
     await page.getByRole('button', { name: 'Send Request' }).click();
 
-    await expect(page.getByText('Confirmation reference')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Return to homepage' })).toBeVisible();
     await expect(page.locator('p.font-mono')).toHaveText(/BB-/);
 
     await page.getByRole('button', { name: 'Return to homepage' }).click();

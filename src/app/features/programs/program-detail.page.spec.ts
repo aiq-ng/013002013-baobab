@@ -20,27 +20,28 @@ function configureWithResolved(program: Program | null) {
 }
 
 describe('ProgramDetailPage', () => {
-  it('renders the resolved program (hero, KPIs, doctrine, pillars, timeline, dispatch form)', () => {
+  it('renders the resolved program (header, principles, about, strategy, subscribe band)', () => {
     configureWithResolved(makeProgram());
     const fixture = TestBed.createComponent(ProgramDetailPage);
     fixture.detectChanges();
 
-    const text = fixture.nativeElement.textContent;
-    expect(text).toContain('Gourma Pastoral Wells & Riparian Demarcation');
-    expect(text).toContain('ACTIVE HYDRAULIC ACCORD');
-    expect(text).toContain('Codified Water Sharing and Seasonal Grazing Harmony');
-    expect(text).toContain('Hydraulic Rotational Clocks');
-    expect(text).toContain('Hombori Basin Water Allocation Framework Ratified');
-    expect(text).toContain('Request Confidential Addenda & Aquifer Telemetry Data');
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('h1')?.textContent).toContain('Hybrid Mediation & Reconciliation');
+    expect(el.textContent).toContain('State primacy');
+    expect(el.textContent).not.toContain('Four principles');
+    expect(el.textContent).toContain('About this program:');
+    expect(el.textContent).toContain('Second about paragraph.');
+    expect(el.textContent).toContain('Complements legitimate security efforts');
+    expect(el.textContent).toContain('Preventing conflict and community stabilization.');
+    expect(el.textContent).toContain('Receive new publications and updates from The Baobab Group.');
+    expect(el.querySelector('button[type="submit"]')?.textContent).toContain('Subscribe');
   });
 
-  it('sets the page title via SeoService on init', () => {
+  it('sets the page title and description via SeoService on init', () => {
     configureWithResolved(makeProgram());
     const fixture = TestBed.createComponent(ProgramDetailPage);
     fixture.detectChanges();
-    expect(TestBed.inject(Title).getTitle()).toContain(
-      'Gourma Pastoral Wells & Riparian Demarcation',
-    );
+    expect(TestBed.inject(Title).getTitle()).toContain('Hybrid Mediation & Reconciliation');
   });
 
   it('shows an unavailable state with a way back when the registry could not be reached', () => {

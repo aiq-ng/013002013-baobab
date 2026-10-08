@@ -1,37 +1,24 @@
 <article>
   <app-home-hero />
 
-  <div
-    class="bg-brand-700 py-6 text-center text-xs font-semibold uppercase tracking-wide text-white sm:py-8 sm:text-sm"
-  >
-    Diplomatic Observers • Conciliation Endorsers Operating Under Authorized African Union &amp; UN
-    Regional Frameworks
-  </div>
+  <app-trust-band />
 
   <app-mission-block appScrollReveal />
-
-  <section class="mx-auto max-w-7xl px-4 pb-16" appScrollReveal>
-    <p class="text-xs font-semibold uppercase tracking-wide text-ink-950/70">Our Supporters</p>
-    <div class="mt-6 border-t border-slate-100 pt-6">
-      <app-logo-strip [logos]="partnerLogos" [dividerIndex]="3" />
-    </div>
-  </section>
-
+  <app-partner-categories appScrollReveal />
   <app-track-model appScrollReveal />
-  <app-conciliation-cycle appScrollReveal />
-  <app-theater-previews appScrollReveal />
-  <app-impact-stats appScrollReveal />
+  <app-programs-preview appScrollReveal />
+  <app-expected-impact appScrollReveal />
 
   <section class="mx-auto max-w-7xl px-4 pb-16" appScrollReveal>
     <app-cta-band
-      heading="You can contribute to building resilient sovereign dialogue and regional security."
-      subtext="Join our diplomatic consultative registry or integrate customary non-kinetic peace protocols into your development and security strategies."
+      heading="Peace is strongest when it is locally owned, nationally supported, and regionally sustained."
+      subtext="Together, we build a West Africa where peace takes root and future generations thrive."
       backgroundImage="/images/home/last-section-bg.png"
-      primaryLabel="Initiate Dialogue →"
-      primaryCtaId="home-closing-initiate-dialogue"
-      secondaryLabel="Download Doctrine Dossier"
-      secondaryRoute="/resources"
-      secondaryCtaId="home-closing-download-doctrine"
+      primaryLabel="Partner With Us →"
+      primaryCtaId="home-closing-partner-with-us"
+      secondaryLabel="Contact Us"
+      secondaryRoute="/contact"
+      secondaryCtaId="home-closing-contact-us"
       (primaryPressed)="showDialogueForm.set(true)"
     />
     @if (showDialogueForm()) {

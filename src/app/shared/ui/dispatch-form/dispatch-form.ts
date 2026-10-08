@@ -5,9 +5,12 @@ import { baobabValidators, errorMessageFor } from '../../forms/validators';
 import { createEngagementSubmission } from '../../../features/engagement/services/engagement-submission';
 import { EngagementSource } from '../../../core/models/engagement-request';
 
+export type DispatchFormVariant = 'dispatch' | 'subscribe';
+
 /**
- * Shared "Diplomatic Dispatches" email-capture band, used wherever the design
- * repeats this pattern (Programs listing and program detail pages).
+ * Shared email-capture band. `dispatch` is the full "Diplomatic Dispatches"
+ * version (program detail pages); `subscribe` is the simpler "Stay informed"
+ * newsletter version (Programs listing).
  */
 @Component({
   selector: 'app-dispatch-form',
@@ -18,8 +21,9 @@ import { EngagementSource } from '../../../core/models/engagement-request';
 })
 export class DispatchForm {
   @Input({ required: true }) heading = '';
-  @Input({ required: true }) subtext = '';
+  @Input() subtext = '';
   @Input({ required: true }) protocolId = '';
+  @Input() variant: DispatchFormVariant = 'dispatch';
   @Input() source: EngagementSource = 'program-confidential-dispatch';
 
   private readonly fb = inject(FormBuilder);

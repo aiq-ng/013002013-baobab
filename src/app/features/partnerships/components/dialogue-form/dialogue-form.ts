@@ -5,7 +5,7 @@ import { baobabValidators, errorMessageFor } from '../../../../shared/forms/vali
 import { createEngagementSubmission } from '../../../engagement/services/engagement-submission';
 
 /**
- * "Initiate Sovereign Partnership Dialogue" email-capture panel — the
+ * "Start a conversation" email-capture panel — the
  * Partnerships page's primary CTA, source 'partnerships-dialogue'.
  */
 @Component({

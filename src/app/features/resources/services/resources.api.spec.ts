@@ -29,6 +29,7 @@ describe('ResourcesApi', () => {
         languages: 'English, Français',
         fileSizeBytes: 2_400_000,
         downloadUrl: 'https://cdn.example.com/a1b2c3.pdf',
+        uploadedAt: '2026-10-02T09:00:00Z',
         batchLabel: 'Annual Codex · Vol. IX',
         releaseTag: 'Permanent Archive Release',
         documentDateLabel: 'Annual Statecraft Review (2024–2025)',

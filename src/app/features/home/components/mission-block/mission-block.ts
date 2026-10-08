@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
+import { Button } from '../../../../shared/ui/button/button';
 import { ImageFadeInDirective } from '../../../../shared/directives/image-fade-in.directive';
 
-/** "Know About Us" mission block with the ancestral-sanctuary portrait and doctrine download. */
+/** "Who We Are" block with the spokesperson portrait and an About Us CTA. */
 @Component({
   selector: 'app-mission-block',
   standalone: true,
-  imports: [Eyebrow, NgOptimizedImage, ImageFadeInDirective],
+  imports: [Eyebrow, Button, NgOptimizedImage, ImageFadeInDirective],
   templateUrl: './mission-block.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

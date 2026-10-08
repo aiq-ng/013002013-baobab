@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { PartnershipsHero } from './components/hero/hero';
 import { PartnershipsFeatureCards } from './components/feature-cards/feature-cards';
 import { PartnershipsDialogueForm } from './components/dialogue-form/dialogue-form';
-import { LogoStrip } from '../../shared/ui/logo-strip/logo-strip';
+import { PartnershipsPartnerGroups } from './components/partner-groups/partner-groups';
 import { SeoService } from '../../core/services/seo.service';
-import { PARTNER_LOGOS } from '../../shared/data/partner-logos.data';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
 
 @Component({
@@ -14,7 +13,7 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
     PartnershipsHero,
     PartnershipsFeatureCards,
     PartnershipsDialogueForm,
-    LogoStrip,
+    PartnershipsPartnerGroups,
     ScrollRevealDirective,
   ],
   templateUrl: './partnerships.page.html',
@@ -23,13 +22,11 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 export class PartnershipsPage implements OnInit {
   private readonly seo = inject(SeoService);
 
-  readonly partnerLogos = PARTNER_LOGOS;
-
   ngOnInit(): void {
     this.seo.update({
       title: 'Partnerships',
       description:
-        'The Baobab Group partners with multilateral institutions, sovereign ministries, and customary traditional leadership to anchor enduring sovereign peace across West Africa and the Sahel.',
+        'Partner with The Baobab Group for a stronger West Africa. We collaborate with governments, communities, regional institutions and international partners to build durable peace.',
     });
   }
 }

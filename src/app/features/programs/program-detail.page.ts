@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProgramBreadcrumb } from './components/breadcrumb/breadcrumb';
-import { KpiGrid } from './components/kpi-grid/kpi-grid';
-import { DoctrineSection } from './components/doctrine-section/doctrine-section';
-import { OperationalPillars } from './components/operational-pillars/operational-pillars';
-import { AccordTimeline } from './components/accord-timeline/accord-timeline';
+import { ProgramHeader } from './components/program-header/program-header';
+import { StrategicPillars } from './components/strategic-pillars/strategic-pillars';
+import { ProgramAbout } from './components/program-about/program-about';
+import { ProgramStrategy } from './components/program-strategy/program-strategy';
 import { DispatchForm } from '../../shared/ui/dispatch-form/dispatch-form';
 import { SeoService } from '../../core/services/seo.service';
 import { BackLink } from '../../shared/ui/back-link/back-link';
@@ -15,11 +14,10 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
   selector: 'app-program-detail-page',
   standalone: true,
   imports: [
-    ProgramBreadcrumb,
-    KpiGrid,
-    DoctrineSection,
-    OperationalPillars,
-    AccordTimeline,
+    ProgramHeader,
+    StrategicPillars,
+    ProgramAbout,
+    ProgramStrategy,
     DispatchForm,
     ScrollRevealDirective,
     BackLink,
@@ -50,7 +48,7 @@ export class ProgramDetailPage implements OnInit {
 
     this.seo.update({
       title: this.program.title,
-      description: this.program.subtitle,
+      description: this.program.description,
     });
   }
 }

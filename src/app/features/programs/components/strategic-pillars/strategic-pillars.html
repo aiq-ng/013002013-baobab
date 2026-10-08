@@ -1,18 +1,15 @@
-<section class="mx-auto max-w-7xl px-4 py-16">
-  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-    <div>
-      <app-eyebrow text="METHODOLOGICAL ARCHITECTURE" />
-      <h2 class="mt-4 text-2xl font-bold text-ink-950 sm:text-3xl md:text-4xl">
-        The Four Strategic Pillars
-      </h2>
+<section class="mx-auto max-w-7xl px-4" [class.py-16]="showHeading" [class.py-8]="!showHeading">
+  @if (showHeading) {
+    <div class="mb-10 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <h2 class="text-2xl font-bold text-ink-950 sm:text-3xl md:text-4xl">Four principles</h2>
+      <p class="max-w-md text-sm text-slate-600 sm:text-base">
+        Four principles guide how we work: we support state authority, communities lead, traditional
+        and modern mediation work together, and ECOWAS and AES learn from each other.
+      </p>
     </div>
-    <p class="max-w-sm text-sm text-slate-600 sm:text-base">
-      A coherent operational doctrine synthesized from African customary justice, customary tenure
-      systems, and regional multilateral protocols.
-    </p>
-  </div>
+  }
 
-  <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
     @for (pillar of pillars; track pillar.code; let i = $index) {
       <div
         class="flex flex-col gap-4 rounded-card pad-card-sm text-white"
@@ -92,7 +89,7 @@
           </span>
         </div>
         <h3 class="text-lg font-semibold">{{ pillar.title }}</h3>
-        <p class="text-sm text-white/70">{{ pillar.description }}</p>
+        <p class="text-sm text-white/80">{{ pillar.description }}</p>
       </div>
     }
   </div>

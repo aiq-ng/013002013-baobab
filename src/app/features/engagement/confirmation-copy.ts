@@ -26,18 +26,12 @@ const CONFIRMATION_COPY: Record<EngagementSource, ConfirmationCopy> = {
     retryRoute: '/programs',
     retryLabel: 'Send another dispatch',
   },
-  'resources-addendum': {
-    headline: 'Addendum request received',
-    subtext: 'The requested addendum will be sent to your inbox shortly.',
-    retryRoute: '/resources',
-    retryLabel: 'Request another addendum',
-  },
-  'resources-classified-access': {
-    headline: 'Access request lodged',
+  'resources-newsletter': {
+    headline: "You're subscribed",
     subtext:
-      'Your accreditation is under review by the secretariat. If approved, a single-use access link will be sent to this address within two working days.',
+      "We'll email you when new publications and updates from The Baobab Group are released.",
     retryRoute: '/resources',
-    retryLabel: 'Submit another request',
+    retryLabel: 'Back to resources',
   },
   'contact-form': {
     headline: 'Message received',
@@ -47,8 +41,7 @@ const CONFIRMATION_COPY: Record<EngagementSource, ConfirmationCopy> = {
   },
   'partnerships-dialogue': {
     headline: 'Your message has been sent',
-    subtext:
-      "We've received your request and a member of our Strategic Partnerships team will respond within 2 business days.",
+    subtext: 'Your message has been sent Thank you. A member of our team will reply',
     retryRoute: '/partnerships',
     retryLabel: 'Send another request',
   },

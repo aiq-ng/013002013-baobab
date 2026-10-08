@@ -1,25 +1,33 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ResourcesHero } from './components/hero/hero';
-import { ResourceHighlight } from './components/resource-highlight/resource-highlight';
-import { TreatiesArchive } from './components/treaties-archive/treaties-archive';
-import { SanctuaryDoctrine } from './components/sanctuary-doctrine/sanctuary-doctrine';
-import { DataProtections } from './components/data-protections/data-protections';
+import { PublicationCard } from './components/publication-card/publication-card';
+import { PublicationsList } from './components/publications-list/publications-list';
+import { DispatchForm } from '../../shared/ui/dispatch-form/dispatch-form';
+import { StatusPanel } from '../../shared/ui/status-panel/status-panel';
 import { SeoService } from '../../core/services/seo.service';
-import { ArchiveApi } from './services/archive.api';
-import { ArchiveEntry } from './models/resource';
-import { PROTECTION_ITEMS } from './data/resources.data';
+import { ResourcesApi } from './services/resources.api';
+import { RegistryDocument } from './models/resource';
 import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.directive';
+
+type LoadStatus = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-resources-page',
   standalone: true,
   imports: [
     ResourcesHero,
-    ResourceHighlight,
-    TreatiesArchive,
-    SanctuaryDoctrine,
-    DataProtections,
+    PublicationCard,
+    PublicationsList,
+    DispatchForm,
+    StatusPanel,
     ScrollRevealDirective,
   ],
   templateUrl: './resources.page.html',
@@ -27,27 +35,31 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
 })
 export class ResourcesPage implements OnInit {
   private readonly seo = inject(SeoService);
-  private readonly archiveApi = inject(ArchiveApi);
+  private readonly resourcesApi = inject(ResourcesApi);
 
-  readonly protectionItems = PROTECTION_ITEMS;
+  private readonly documents = signal<RegistryDocument[]>([]);
+  readonly status = signal<LoadStatus>('loading');
 
-  private readonly _archiveEntries = signal<ArchiveEntry[]>([]);
-  readonly archiveEntries = this._archiveEntries.asReadonly();
+  /** The API returns newest first: the newest is featured, the rest are listed. */
+  readonly featured = computed(() => this.documents()[0] ?? null);
+  readonly others = computed(() => this.documents().slice(1));
 
   ngOnInit(): void {
     this.seo.update({
       title: 'Resources',
       description:
-        'Declassified diplomatic communiqués, codices, and strategic reviews from The Baobab Group — the Annual Statecraft Review, the Treaties & Conciliation Archive, and the Track 1.5 classified access gate.',
+        "Read and download The Baobab Group's strategy document and publications on dialogue, mediation, and community resilience across West Africa.",
     });
-    void this.loadArchiveEntries();
+    void this.load();
   }
 
-  private async loadArchiveEntries(): Promise<void> {
+  async load(): Promise<void> {
+    this.status.set('loading');
     try {
-      this._archiveEntries.set(await firstValueFrom(this.archiveApi.list()));
+      this.documents.set(await firstValueFrom(this.resourcesApi.list()));
+      this.status.set('ready');
     } catch {
-      // Leave the archive section empty rather than breaking the page.
+      this.status.set('error');
     }
   }
 }

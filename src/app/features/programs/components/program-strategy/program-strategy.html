@@ -1,0 +1,47 @@
+<section
+  class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 md:grid-cols-2 md:items-center md:gap-16 md:py-20"
+>
+  <div>
+    <p id="key-points-label" class="text-xs font-semibold uppercase tracking-wide text-brand-700">
+      Key points
+    </p>
+    <ul
+      aria-labelledby="key-points-label"
+      class="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600 marker:text-ink-950"
+    >
+      @for (point of keyPoints; track $index) {
+        <li>{{ point }}</li>
+      }
+    </ul>
+
+    <div class="mt-10">
+      <app-eyebrow text="From our strategy" />
+      <h2 class="mt-5 text-3xl font-bold tracking-tight text-ink-950 sm:text-4xl">
+        {{ heading }}
+      </h2>
+      <p class="mt-6 text-base leading-relaxed text-slate-600">
+        Expected impact: {{ expectedImpact }}
+      </p>
+      <div class="mt-10 max-w-xl">
+        <app-button
+          label="About Us"
+          variant="primary"
+          routerLink="/about"
+          ctaId="program-detail-about-us"
+          [fullWidth]="true"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="relative aspect-[16/15] w-full overflow-hidden rounded-card shadow-sm">
+    <img
+      [ngSrc]="imageUrl"
+      [alt]="imageAlt"
+      fill
+      loading="lazy"
+      appImgFadeIn
+      class="object-cover"
+    />
+  </div>
+</section>

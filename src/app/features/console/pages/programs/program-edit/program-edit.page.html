@@ -181,21 +181,12 @@
                       [maxLength]="600"
                       [control]="form.controls.description"
                     />
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                      <app-console-field
-                        fieldId="badgeText"
-                        label="Badge"
-                        placeholder="e.g. SAHEL CENTRAL"
-                        [control]="form.controls.badgeText"
-                      />
-                      <app-console-field
-                        fieldId="theater"
-                        label="Theater"
-                        placeholder="e.g. Sahel Central"
-                        hint="Drives the theater filter on the Programs map."
-                        [control]="form.controls.theater"
-                      />
-                    </div>
+                    <app-console-field
+                      fieldId="badgeText"
+                      label="Badge"
+                      placeholder="e.g. ALL REGIONS"
+                      [control]="form.controls.badgeText"
+                    />
                     <app-console-image-field
                       idPrefix="card-image"
                       textLabel="Alt text"
@@ -205,110 +196,29 @@
                     />
                   }
 
-                  @case ('header') {
-                    <app-console-field
-                      fieldId="subtitle"
-                      label="Subtitle"
-                      [rows]="2"
-                      [control]="form.controls.subtitle"
-                    />
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                      <app-console-field
-                        fieldId="referenceCode"
-                        label="Reference code"
-                        placeholder="e.g. REF: BO-LGP-2024-T1"
-                        [control]="form.controls.referenceCode"
-                      />
-                      <app-console-field
-                        fieldId="clearanceLevel"
-                        label="Clearance level"
-                        placeholder="e.g. DIPLOMATIC CLEARANCE L1"
-                        [control]="form.controls.clearanceLevel"
-                      />
-                      <app-console-field
-                        fieldId="statusTag"
-                        label="Status tag"
-                        placeholder="e.g. ACTIVE TRANSIT PROTOCOL"
-                        [control]="form.controls.statusTag"
-                      />
-                    </div>
-                    <fieldset class="space-y-3">
-                      <legend class="console-label">
-                        KPIs
-                        <span class="font-normal tracking-normal normal-case text-console-muted"
-                          >({{ form.controls.kpis.length }} of {{ limits.kpis.max }})</span
-                        >
-                      </legend>
-                      @for (kpi of form.controls.kpis.controls; track kpi; let i = $index) {
-                        <app-console-repeat-item
-                          [headingId]="'kpi-heading-' + i"
-                          [title]="'KPI ' + (i + 1)"
-                          [summary]="statSummary('kpis', i)"
-                          [canRemove]="canRemove('kpis')"
-                          (remove)="removeAt('kpis', i)"
-                        >
-                          <div class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_1fr_2fr]">
-                            <app-console-field
-                              [fieldId]="'kpi-value-' + i"
-                              label="Value"
-                              [control]="kpi.controls.value"
-                            />
-                            <app-console-field
-                              [fieldId]="'kpi-unit-' + i"
-                              label="Unit"
-                              [optional]="true"
-                              [control]="kpi.controls.unit"
-                            />
-                            <app-console-field
-                              [fieldId]="'kpi-label-' + i"
-                              label="Label"
-                              [control]="kpi.controls.label"
-                            />
-                          </div>
-                        </app-console-repeat-item>
-                      }
-                      @if (canAdd('kpis')) {
-                        <button type="button" class="console-row-add" (click)="addKpi()">
-                          + Add KPI
-                        </button>
-                      }
-                    </fieldset>
-                  }
-
-                  @case ('doctrine') {
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                      <app-console-field
-                        fieldId="doctrineEyebrow"
-                        label="Eyebrow"
-                        [control]="form.controls.doctrineEyebrow"
-                      />
-                      <app-console-field
-                        fieldId="doctrineHeading"
-                        label="Heading"
-                        [control]="form.controls.doctrineHeading"
-                      />
-                    </div>
+                  @case ('about') {
                     <fieldset class="space-y-3">
                       <legend class="console-label">
                         Paragraphs
                         <span class="font-normal tracking-normal normal-case text-console-muted"
-                          >({{ form.controls.doctrineParagraphs.length }} of
-                          {{ limits.doctrineParagraphs.max }})</span
+                          >({{ form.controls.aboutParagraphs.length }} of
+                          {{ limits.aboutParagraphs.max }})</span
                         >
                       </legend>
                       @for (
-                        paragraph of form.controls.doctrineParagraphs.controls;
+                        paragraph of form.controls.aboutParagraphs.controls;
                         track paragraph;
                         let i = $index
                       ) {
                         <app-console-repeat-item
                           [headingId]="'paragraph-heading-' + i"
                           [title]="'Paragraph ' + (i + 1)"
-                          [canRemove]="canRemove('doctrineParagraphs')"
-                          (remove)="removeAt('doctrineParagraphs', i)"
+                          [summary]="paragraphSummary(i)"
+                          [canRemove]="canRemove('aboutParagraphs')"
+                          (remove)="removeAt('aboutParagraphs', i)"
                         >
                           <app-console-field
-                            [fieldId]="'doctrine-paragraph-' + i"
+                            [fieldId]="'about-paragraph-' + i"
                             [label]="'Paragraph ' + (i + 1) + ' text'"
                             [rows]="4"
                             [maxLength]="2000"
@@ -316,225 +226,70 @@
                           />
                         </app-console-repeat-item>
                       }
-                      @if (canAdd('doctrineParagraphs')) {
-                        <button type="button" class="console-row-add" (click)="addParagraph()">
+                      @if (canAdd('aboutParagraphs')) {
+                        <button
+                          type="button"
+                          class="console-row-add"
+                          (click)="addRow('aboutParagraphs')"
+                        >
                           + Add paragraph
                         </button>
                       }
                     </fieldset>
-                    <app-console-image-field
-                      idPrefix="doctrine-image"
-                      textLabel="Image caption"
-                      [urlControl]="form.controls.doctrineImageUrl"
-                      [textControl]="form.controls.doctrineImageCaption"
-                    />
+                  }
+
+                  @case ('strategy') {
                     <fieldset class="space-y-3">
                       <legend class="console-label">
-                        Stats
+                        Key points
                         <span class="font-normal tracking-normal normal-case text-console-muted"
-                          >({{ form.controls.doctrineStats.length }} of
-                          {{ limits.doctrineStats.max }})</span
+                          >({{ form.controls.keyPoints.length }} of
+                          {{ limits.keyPoints.max }})</span
                         >
                       </legend>
                       @for (
-                        stat of form.controls.doctrineStats.controls;
-                        track stat;
+                        point of form.controls.keyPoints.controls;
+                        track point;
                         let i = $index
                       ) {
                         <app-console-repeat-item
-                          [headingId]="'stat-heading-' + i"
-                          [title]="'Stat ' + (i + 1)"
-                          [summary]="statSummary('doctrineStats', i)"
-                          [canRemove]="canRemove('doctrineStats')"
-                          (remove)="removeAt('doctrineStats', i)"
+                          [headingId]="'key-point-heading-' + i"
+                          [title]="'Key point ' + (i + 1)"
+                          [canRemove]="canRemove('keyPoints')"
+                          (remove)="removeAt('keyPoints', i)"
                         >
-                          <div class="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_1fr_2fr]">
-                            <app-console-field
-                              [fieldId]="'doctrine-stat-value-' + i"
-                              label="Value"
-                              [control]="stat.controls.value"
-                            />
-                            <app-console-field
-                              [fieldId]="'doctrine-stat-unit-' + i"
-                              label="Unit"
-                              [optional]="true"
-                              [control]="stat.controls.unit"
-                            />
-                            <app-console-field
-                              [fieldId]="'doctrine-stat-label-' + i"
-                              label="Label"
-                              [control]="stat.controls.label"
-                            />
-                          </div>
+                          <app-console-field
+                            [fieldId]="'key-point-' + i"
+                            [label]="'Key point ' + (i + 1) + ' text'"
+                            [control]="point"
+                          />
                         </app-console-repeat-item>
                       }
-                      @if (canAdd('doctrineStats')) {
-                        <button type="button" class="console-row-add" (click)="addDoctrineStat()">
-                          + Add stat
+                      @if (canAdd('keyPoints')) {
+                        <button type="button" class="console-row-add" (click)="addRow('keyPoints')">
+                          + Add key point
                         </button>
                       }
                     </fieldset>
-                  }
-
-                  @case ('pillars') {
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                      <app-console-field
-                        fieldId="pillarsEyebrow"
-                        label="Eyebrow"
-                        [control]="form.controls.pillarsEyebrow"
-                      />
-                      <app-console-field
-                        fieldId="pillarsHeading"
-                        label="Heading"
-                        [control]="form.controls.pillarsHeading"
-                      />
-                    </div>
                     <app-console-field
-                      fieldId="pillarsDescription"
-                      label="Description"
+                      fieldId="strategyHeading"
+                      label="Strategy heading"
+                      hint='Shown under "From our strategy".'
+                      [control]="form.controls.strategyHeading"
+                    />
+                    <app-console-field
+                      fieldId="expectedImpact"
+                      label="Expected impact"
+                      hint='Shown after "Expected impact:".'
                       [rows]="2"
-                      [control]="form.controls.pillarsDescription"
+                      [control]="form.controls.expectedImpact"
                     />
-                    @for (pillar of form.controls.pillars.controls; track pillar; let i = $index) {
-                      <app-console-repeat-item
-                        [headingId]="'pillar-heading-' + i"
-                        [title]="'Pillar ' + (i + 1)"
-                        [summary]="pillarSummary(i)"
-                        [canRemove]="canRemove('pillars')"
-                        (remove)="removeAt('pillars', i)"
-                      >
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                          <div>
-                            <label [for]="'pillar-icon-' + i" class="console-label">Icon</label>
-                            <select
-                              [id]="'pillar-icon-' + i"
-                              [formControl]="pillar.controls.icon"
-                              aria-required="true"
-                              class="console-input"
-                            >
-                              @for (icon of pillarIcons; track icon.key) {
-                                <option [value]="icon.emoji">
-                                  {{ icon.emoji }} {{ icon.label }}
-                                </option>
-                              }
-                            </select>
-                          </div>
-                          <app-console-field
-                            [fieldId]="'pillar-eyebrow-' + i"
-                            label="Eyebrow"
-                            [control]="pillar.controls.eyebrow"
-                          />
-                          <app-console-field
-                            [fieldId]="'pillar-title-' + i"
-                            label="Title"
-                            [control]="pillar.controls.title"
-                          />
-                        </div>
-                        <app-console-field
-                          [fieldId]="'pillar-description-' + i"
-                          label="Description"
-                          [rows]="3"
-                          [control]="pillar.controls.description"
-                        />
-                        <app-console-field
-                          [fieldId]="'pillar-footnote-' + i"
-                          label="Footnote"
-                          [control]="pillar.controls.footnote"
-                        />
-                      </app-console-repeat-item>
-                    }
-                    @if (canAdd('pillars')) {
-                      <button type="button" class="console-row-add" (click)="addPillar()">
-                        + Add pillar
-                      </button>
-                    }
-                  }
-
-                  @case ('timeline') {
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                      <app-console-field
-                        fieldId="timelineEyebrow"
-                        label="Eyebrow"
-                        [control]="form.controls.timelineEyebrow"
-                      />
-                      <app-console-field
-                        fieldId="timelineHeading"
-                        label="Heading"
-                        [control]="form.controls.timelineHeading"
-                      />
-                    </div>
-                    <app-console-field
-                      fieldId="timelineDescription"
-                      label="Description"
-                      [rows]="2"
-                      [control]="form.controls.timelineDescription"
-                    />
-                    @for (
-                      milestone of form.controls.milestones.controls;
-                      track milestone;
-                      let i = $index
-                    ) {
-                      <app-console-repeat-item
-                        [headingId]="'milestone-heading-' + i"
-                        [title]="'Milestone ' + (i + 1)"
-                        [summary]="milestoneSummary(i)"
-                        [canRemove]="canRemove('milestones')"
-                        (remove)="removeAt('milestones', i)"
-                      >
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                          <app-console-field
-                            [fieldId]="'milestone-date-' + i"
-                            label="Date"
-                            placeholder="e.g. October 2024"
-                            [control]="milestone.controls.date"
-                          />
-                          <app-console-field
-                            [fieldId]="'milestone-kicker-' + i"
-                            label="Kicker"
-                            placeholder="e.g. Diplomatic Decree"
-                            [control]="milestone.controls.kicker"
-                          />
-                          <app-console-field
-                            [fieldId]="'milestone-title-' + i"
-                            label="Title"
-                            [control]="milestone.controls.title"
-                          />
-                        </div>
-                        <app-console-field
-                          [fieldId]="'milestone-description-' + i"
-                          label="Description"
-                          [rows]="3"
-                          [control]="milestone.controls.description"
-                        />
-                        <app-console-field
-                          [fieldId]="'milestone-tags-' + i"
-                          label="Tags"
-                          placeholder="e.g. 12 Border Posts, Tri-State Ratification"
-                          hint="Comma-separated, up to 4."
-                          invalidMessage="Use at most 4 tags of up to 100 characters each."
-                          [optional]="true"
-                          [control]="milestone.controls.tags"
-                        />
-                      </app-console-repeat-item>
-                    }
-                    @if (canAdd('milestones')) {
-                      <button type="button" class="console-row-add" (click)="addMilestone()">
-                        + Add milestone
-                      </button>
-                    }
-                  }
-
-                  @case ('dispatch') {
-                    <app-console-field
-                      fieldId="dispatchHeading"
-                      label="Heading"
-                      [control]="form.controls.dispatchHeading"
-                    />
-                    <app-console-field
-                      fieldId="dispatchSubtext"
-                      label="Subtext"
-                      [rows]="3"
-                      [control]="form.controls.dispatchSubtext"
+                    <app-console-image-field
+                      idPrefix="strategy-image"
+                      textLabel="Alt text"
+                      textHint="Describe the image for people using screen readers."
+                      [urlControl]="form.controls.strategyImageUrl"
+                      [textControl]="form.controls.strategyImageAlt"
                     />
                   }
                 }

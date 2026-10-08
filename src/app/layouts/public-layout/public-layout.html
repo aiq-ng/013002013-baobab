@@ -30,10 +30,10 @@
     <div class="flex items-center gap-3">
       <div class="hidden md:block">
         <app-button
-          label="Strategic Partnerships"
+          label="Partner With Us"
           variant="primary"
           routerLink="/partnerships"
-          ctaId="header-strategic-partnerships"
+          ctaId="header-partner-with-us"
         />
       </div>
 
@@ -88,10 +88,10 @@
       </ul>
       <app-button
         class="mt-4 block"
-        label="Strategic Partnerships"
+        label="Partner With Us"
         variant="primary"
         routerLink="/partnerships"
-        ctaId="mobile-nav-strategic-partnerships"
+        ctaId="mobile-nav-partner-with-us"
         [fullWidth]="true"
         (pressed)="closeMenu()"
       />
@@ -104,7 +104,9 @@
 </main>
 
 <footer class="mt-16 bg-ink-950 px-4 py-12 text-sm text-white/70">
-  <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+  <div
+    class="mx-auto grid max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_2fr_1fr_1.5fr]"
+  >
     <div>
       <img
         ngSrc="/images/shared/logo-baobab.png"
@@ -115,60 +117,55 @@
         appImgFadeIn
         class="h-8 w-auto"
       />
-      <p class="mt-3 max-w-xs text-white/60">
-        Dedicated to non-kinetic conflict de-escalation, customary jurisprudence, and restorative
-        statecraft across the Sahel and greater West Africa.
+      <p class="mt-3 max-w-sm text-white/60">
+        The Baobab Group is an African-led Track 1.5 / Track 2 institution supporting governments,
+        communities and regional bodies to build durable peace through dialogue, inclusion and
+        non-kinetic approaches.
       </p>
-      <p class="mt-4">
-        <span class="font-semibold text-white">Secure Dispatch:</span>
-        secretar&#64;baobab-dialogue.org
-      </p>
-      <p class="mt-1">
-        <span class="font-semibold text-white">HQ Address:</span> Almadies Diplomatic Enclave,
-        Dakar, Senegal
-      </p>
-      <p class="mt-1">
-        <span class="font-semibold text-white">Operational Comms:</span> +221 33 820 00 44
-      </p>
+      <address class="mt-6 not-italic">
+        <p class="font-semibold text-white">Contact:</p>
+        <a href="https://www.baobabgroup.org" class="block hover:text-white">www.baobabgroup.org</a>
+        <a href="mailto:info&#64;baobabgroup.org" class="block font-semibold text-white">
+          info&#64;baobabgroup.org
+        </a>
+        <a href="tel:+2252722488844" class="block hover:text-white">+225 27 22 48 88 44</a>
+        <p class="font-semibold text-white">Abidjan, Côte d’Ivoire</p>
+        <p>&#64;BaobabGroup</p>
+      </address>
     </div>
 
-    <div>
-      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">Thematic Focus</p>
-      <ul class="mt-3 space-y-2">
-        @for (item of thematicFocus; track item) {
-          <li>{{ item }}</li>
+    <nav aria-label="Programs">
+      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">Programs</p>
+      <ul class="mt-3 space-y-1">
+        @for (item of footerPrograms; track item) {
+          <li>
+            <a routerLink="/programs" class="hover:text-white">· {{ item }}</a>
+          </li>
         }
       </ul>
-    </div>
+    </nav>
+
+    <nav aria-label="Explore">
+      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">Explore</p>
+      <ul class="mt-3 space-y-1 text-white">
+        @for (link of exploreLinks; track link.path) {
+          <li>
+            · <a [routerLink]="link.path" class="hover:text-brand-300">{{ link.label }}</a>
+          </li>
+        }
+      </ul>
+    </nav>
 
     <div>
-      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">Regional Hubs</p>
-      <ul class="mt-3 space-y-2">
-        @for (item of regionalHubs; track item) {
-          <li class="text-white">{{ item }}</li>
-        }
-      </ul>
-    </div>
-
-    <div>
-      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">
-        Doctrine &amp; Records
-      </p>
-      <ul class="mt-3 space-y-2">
-        @for (item of doctrineRecords; track item) {
-          <li>{{ item }}</li>
-        }
-      </ul>
+      <p class="text-xs font-semibold uppercase tracking-wide text-brand-400">Languages</p>
+      <p class="mt-3 text-xs">Français • English • Hausa • Fulfulde</p>
     </div>
   </div>
 
   <div
     class="mx-auto mt-10 flex max-w-7xl flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between"
   >
-    <p>
-      &copy; {{ currentYear }} The Baobab Group for Strategic Statecraft. All Sovereign Rights
-      Reserved.
-    </p>
+    <p>&copy; {{ currentYear }} The Baobab Group. All rights reserved.</p>
     <ul class="flex gap-6">
       @for (link of legalLinks; track link.label) {
         <li>

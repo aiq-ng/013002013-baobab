@@ -42,6 +42,20 @@ describe('PartnershipsDialogueForm', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  it('renders the "Start a conversation" copy and Send button', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toContain('Start a conversation');
+    expect(el.textContent).toContain(
+      'Tell us who you are and how you would like to work together.',
+    );
+    expect(el.textContent).toContain(
+      'Together, we build a West Africa where peace takes root and future generations thrive.',
+    );
+    expect(el.querySelector('button[type="submit"]')!.textContent).toContain('Send');
+    expect(el.querySelector('input')!.getAttribute('placeholder')).toBe('Your email address….');
+    expect(el.querySelector('a[href$=".pdf"]')).toBeNull();
+  });
+
   it('shows a validation error and does not submit when the email is invalid', () => {
     submitForm();
 

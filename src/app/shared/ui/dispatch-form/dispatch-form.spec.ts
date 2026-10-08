@@ -132,4 +132,33 @@ describe('DispatchForm', () => {
     expect(fixture.nativeElement.textContent).toContain('value is not a valid email address');
     expect(show).not.toHaveBeenCalled();
   });
+
+  describe('subscribe variant', () => {
+    beforeEach(() => {
+      fixture.componentRef.setInput('variant', 'subscribe');
+      fixture.componentRef.setInput('heading', 'Receive new publications and updates');
+      fixture.detectChanges();
+    });
+
+    it('shows the "Stay informed" badge, email placeholder, and Subscribe button', () => {
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.textContent).toContain('Stay informed');
+      expect(el.querySelector('input')?.getAttribute('placeholder')).toBe('Your email address..');
+      expect(el.querySelector('button[type="submit"]')?.textContent).toContain('Subscribe');
+    });
+
+    it('hides the dispatch-only subtext, protocol id, and trust badges', () => {
+      const text = fixture.nativeElement.textContent;
+      expect(text).not.toContain('Restricted access.');
+      expect(text).not.toContain('Protocol ID');
+      expect(text).not.toContain('Encrypted Delivery');
+      expect(text).not.toContain('Diplomatic Dispatches');
+    });
+
+    it('still validates before submitting', () => {
+      submitForm();
+      expect(fixture.nativeElement.textContent).toContain('Email is required.');
+      expect(submit).not.toHaveBeenCalled();
+    });
+  });
 });

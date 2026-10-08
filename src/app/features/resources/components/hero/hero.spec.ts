@@ -2,17 +2,21 @@ import { TestBed } from '@angular/core/testing';
 import { ResourcesHero } from './hero';
 
 describe('ResourcesHero', () => {
-  it('renders the eyebrow, headline, subtext, and the three static tag pills', () => {
+  it('renders the eyebrow, headline, and subtext from the design export', () => {
     TestBed.configureTestingModule({ imports: [ResourcesHero] });
     const fixture = TestBed.createComponent(ResourcesHero);
     fixture.detectChanges();
 
-    const text = fixture.nativeElement.textContent;
-    expect(text).toContain('Doctrine & Intellectual Repository');
-    expect(text).toContain('Declassified Diplomatic Communiqués, Codices & Strategic Reviews');
-    expect(text).toContain('Accredited Secretarial Standard');
-    expect(text).toContain('Declassified Cycle: Q2 2025');
-    expect(text).toContain('English');
-    expect(text).toContain('Fulfulde');
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toContain('Resources');
+    expect(el.querySelector('h1')!.textContent).toContain('Strategy and publications');
+    expect(el.textContent).toContain('Read and download our strategy document and publications.');
+  });
+
+  it('no longer renders the old tag pills', () => {
+    TestBed.configureTestingModule({ imports: [ResourcesHero] });
+    const fixture = TestBed.createComponent(ResourcesHero);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('ul')).toBeNull();
   });
 });

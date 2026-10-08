@@ -1,51 +1,33 @@
 @if (program) {
   <article>
-    <app-program-breadcrumb
-      [theater]="program.theater"
+    <app-program-header [title]="program.title" [description]="program.description" />
+
+    <app-strategic-pillars [showHeading]="false" />
+
+    <app-program-about
+      appScrollReveal
       [title]="program.title"
-      [statusTag]="program.statusTag"
-      [referenceCode]="program.referenceCode"
-      [clearanceLevel]="program.clearanceLevel"
+      [badgeText]="program.badgeText"
+      [imageUrl]="program.imageUrl"
+      [imageAlt]="program.imageAlt"
+      [paragraphs]="program.aboutParagraphs"
     />
 
-    <header class="mx-auto max-w-7xl px-4 pt-6 pb-4">
-      <h1 class="text-3xl font-bold text-ink-950 sm:text-4xl">{{ program.title }}</h1>
-      <p class="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">{{ program.subtitle }}</p>
-    </header>
-
-    <app-kpi-grid [kpis]="program.kpis" appScrollReveal />
-
-    <app-doctrine-section
+    <app-program-strategy
       appScrollReveal
-      [eyebrow]="program.doctrineEyebrow"
-      [heading]="program.doctrineHeading"
-      [paragraphs]="program.doctrineParagraphs"
-      [imageUrl]="program.doctrineImageUrl"
-      [imageCaption]="program.doctrineImageCaption"
-      [stats]="program.doctrineStats"
-    />
-
-    <app-operational-pillars
-      appScrollReveal
-      [eyebrow]="program.pillarsEyebrow"
-      [heading]="program.pillarsHeading"
-      [description]="program.pillarsDescription"
-      [pillars]="program.pillars"
-    />
-
-    <app-accord-timeline
-      appScrollReveal
-      [eyebrow]="program.timelineEyebrow"
-      [heading]="program.timelineHeading"
-      [description]="program.timelineDescription"
-      [milestones]="program.milestones"
+      [keyPoints]="program.keyPoints"
+      [heading]="program.strategyHeading"
+      [expectedImpact]="program.expectedImpact"
+      [imageUrl]="program.strategyImageUrl"
+      [imageAlt]="program.strategyImageAlt"
     />
 
     <app-dispatch-form
       appScrollReveal
-      [heading]="program.dispatchHeading"
-      [subtext]="program.dispatchSubtext"
-      [protocolId]="program.referenceCode"
+      variant="subscribe"
+      heading="Receive new publications and updates from The Baobab Group."
+      [protocolId]="program.slug"
+      source="program-confidential-dispatch"
     />
   </article>
 } @else {

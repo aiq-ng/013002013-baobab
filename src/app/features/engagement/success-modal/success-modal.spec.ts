@@ -25,13 +25,21 @@ describe('SuccessModal', () => {
     expect(fixture.debugElement.query(By.css('[role="dialog"]'))).toBeFalsy();
   });
 
-  it('shows the reference id and source-specific copy when a submission is active', () => {
+  it('shows source-specific copy without a confirmation reference box', () => {
     service.show('partnerships-dialogue', 'BG-2026-0847');
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent;
     expect(text).toContain('Your message has been sent');
-    expect(text).toContain('BG-2026-0847');
+    expect(text).toContain('Your message has been sent Thank you. A member of our team will reply');
+    expect(text).not.toContain('Confirmation reference');
+    expect(text).not.toContain('BG-2026-0847');
+  });
+
+  it('shows the current year in the modal footer', () => {
+    service.show('partnerships-dialogue', 'BG-2026-0847');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain(`© ${new Date().getFullYear()}`);
   });
 
   it('falls back to generic copy for an unrecognized source', () => {

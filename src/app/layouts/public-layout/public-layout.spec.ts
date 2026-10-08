@@ -38,14 +38,14 @@ describe('PublicLayout', () => {
     expect(footerText).toContain(String(new Date().getFullYear()));
   });
 
-  it('renders a Strategic Partnerships CTA that routes to a real destination', () => {
+  it('renders a Partner With Us CTA that routes to a real destination', () => {
     const fixture = TestBed.createComponent(PublicLayout);
     fixture.detectChanges();
 
     const links: HTMLAnchorElement[] = Array.from(
       fixture.nativeElement.querySelectorAll('header a'),
     );
-    const cta = links.find((a) => a.textContent!.includes('Strategic Partnerships'));
+    const cta = links.find((a) => a.textContent!.includes('Partner With Us'));
     expect(cta).toBeTruthy();
     expect(cta!.getAttribute('href')).toBe('/partnerships');
   });
@@ -55,14 +55,31 @@ describe('PublicLayout', () => {
     fixture.detectChanges();
 
     const footerText = fixture.nativeElement.querySelector('footer').textContent;
-    expect(footerText).toContain('Thematic Focus');
-    expect(footerText).toContain('Transhumance Grazing Pacts');
-    expect(footerText).toContain('Regional Hubs');
-    expect(footerText).toContain('Dakar');
-    expect(footerText).toContain('Doctrine & Records');
-    expect(footerText).toContain('Annual Statecraft Review (2024–2025)');
-    expect(footerText).toContain('secretar@baobab-dialogue.org');
-    expect(footerText).toContain('+221 33 820 00 44');
+    expect(footerText).toContain('African-led Track 1.5 / Track 2 institution');
+    expect(footerText).toContain('Programs');
+    expect(footerText).toContain('Sovereign Dialogue Facilitation');
+    expect(footerText).toContain('Policy Advisory & Regional Harmonization');
+    expect(footerText).toContain('Explore');
+    expect(footerText).toContain('Languages');
+    expect(footerText).toContain('info@baobabgroup.org');
+    expect(footerText).toContain('+225 27 22 48 88 44');
+    expect(footerText).toContain('Abidjan, Côte d’Ivoire');
+    expect(footerText).toContain('The Baobab Group. All rights reserved.');
+  });
+
+  it('routes every Explore link to its real page', () => {
+    const fixture = TestBed.createComponent(PublicLayout);
+    fixture.detectChanges();
+
+    const footer: HTMLElement = fixture.nativeElement.querySelector('footer');
+    const hrefFor = (label: string) =>
+      Array.from(footer.querySelectorAll('a'))
+        .find((a) => a.textContent!.trim() === label)!
+        .getAttribute('href');
+    expect(hrefFor('About Us')).toBe('/about');
+    expect(hrefFor('Resources')).toBe('/resources');
+    expect(hrefFor('Partnerships')).toBe('/partnerships');
+    expect(hrefFor('Contact Us')).toBe('/contact');
   });
 
   it('renders legal links as real routerLinks, never a bare "#" href', () => {
@@ -71,7 +88,7 @@ describe('PublicLayout', () => {
 
     const footer: HTMLElement = fixture.nativeElement.querySelector('footer');
     const legalLinks = Array.from(footer.querySelectorAll('a')).filter((a) =>
-      ['Security Protocol', 'Diplomatic Status', 'Portal Login'].includes(
+      ['Privacy Policy', 'Terms of Use', 'Portal Login'].includes(
         (a as HTMLAnchorElement).textContent!.trim(),
       ),
     ) as HTMLAnchorElement[];
@@ -119,7 +136,7 @@ describe('PublicLayout', () => {
 
       const links = Array.from(panel.querySelectorAll('a')) as HTMLAnchorElement[];
       expect(links.length).toBe(6);
-      expect(links.map((a) => a.textContent!.trim())).toContain('Strategic Partnerships');
+      expect(links.map((a) => a.textContent!.trim())).toContain('Partner With Us');
     });
 
     it('reflects open state on the toggle for assistive technology', () => {

@@ -3,8 +3,7 @@ export type EngagementSource =
   | 'home-dialogue'
   | 'programs-sovereign-dialogue'
   | 'program-confidential-dispatch'
-  | 'resources-addendum'
-  | 'resources-classified-access'
+  | 'resources-newsletter'
   | 'contact-form'
   | 'partnerships-dialogue';
 

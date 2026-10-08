@@ -51,4 +51,16 @@ describe('ProgramGrid', () => {
     expect(hrefs).toContain('/programs/liptako-gourma');
     expect(hrefs).toContain('/programs/lake-chad-basin');
   });
+
+  it('shows each card\'s CTA as a "View Program" link named after its program', () => {
+    const fixture = TestBed.createComponent(ProgramGrid);
+    fixture.componentInstance.programs = PROGRAMS;
+    fixture.detectChanges();
+
+    const link: HTMLAnchorElement = fixture.nativeElement.querySelector(
+      'a[href="/programs/liptako-gourma"]',
+    );
+    expect(link.textContent).toContain('View Program');
+    expect(link.textContent).toContain('Liptako-Gourma Peace Corridor');
+  });
 });

@@ -11,12 +11,16 @@ describe('AboutHero', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders the eyebrow, headline, and intro copy', () => {
+  it('renders the eyebrow, headline, and intro copy from the design export', () => {
     const fixture = TestBed.createComponent(AboutHero);
     fixture.detectChanges();
-    const text = fixture.nativeElement.textContent;
-    expect(text).toContain('KNOW ABOUT US');
-    expect(text).toContain('Track 1.5 sovereign advisory');
-    expect(text).toContain('ancestral premise of the West African palaver tree');
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toContain('ABOUT US');
+    expect(el.querySelector('h1')?.textContent?.trim()).toBe(
+      'An African-led institution for peace and dialogue.',
+    );
+    expect(el.textContent).toContain(
+      'The Baobab Group is a pan-West African peacebuilding and mediation institution.',
+    );
   });
 });

@@ -4,30 +4,24 @@ export interface PartnershipFeature {
   icon: string;
   title: string;
   description: string;
-  linkLabel: string;
 }
 
 const FEATURES: PartnershipFeature[] = [
   {
     icon: 'clipboard-check',
-    title: 'Multilateral Missions',
-    description:
-      'Harmonizing African Union (AU), ECOWAS, and UN Peacebuilding frameworks under shared regional treaty doctrines.',
-    linkLabel: 'Tier 1 Interoperability',
+    title: 'Governments and regional bodies',
+    description: 'Governments and Local Authorities, ECOWAS, AES and AU.',
   },
   {
     icon: 'gavel',
-    title: 'Customary Legitimacy',
+    title: 'Communities and institutions',
     description:
-      'Direct accords ratified across 480+ traditional emirates, sultanates, and village benches with binding local authority.',
-    linkLabel: 'Ancestral Jurisprudence',
+      'Traditional and Religious Institutions, and Civil Society and Community Organizations.',
   },
   {
     icon: 'palm-tree',
-    title: 'Zero Kinetic Escalation',
-    description:
-      '100% mediation and demilitarized transhumance corridors negotiated and secured without sovereign force.',
-    linkLabel: 'Sahelian Corridors',
+    title: 'International partners and donors',
+    description: 'UN Agencies and International Partners, and Development Partners and Donors.',
   },
 ];
 

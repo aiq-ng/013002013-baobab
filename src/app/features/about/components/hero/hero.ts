@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
 
-/** About Us hero: "KNOW ABOUT US" eyebrow, mission headline, and founding intro copy. */
+/** About Us hero: "ABOUT US" eyebrow, headline, and institutional intro copy. */
 @Component({
   selector: 'app-about-hero',
   standalone: true,

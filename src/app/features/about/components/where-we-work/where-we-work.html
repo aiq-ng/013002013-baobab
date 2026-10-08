@@ -1,0 +1,24 @@
+<section class="mx-auto max-w-7xl px-4 pb-16">
+  <div class="mb-8 flex justify-center">
+    <app-filter-pills
+      ariaLabel="Where we work"
+      [pills]="labels"
+      [active]="activeLabel()"
+      (activeChange)="activeLabel.set($event)"
+    />
+  </div>
+
+  <div aria-live="polite">
+    <app-cta-band
+      [heading]="active().heading"
+      [subtext]="active().body"
+      backgroundImage="/images/home/response-banner-market.jpg"
+      primaryLabel="Partner With Us →"
+      primaryRoute="/partnerships"
+      primaryCtaId="about-where-we-work-partner-with-us"
+      secondaryLabel="Contact Us"
+      secondaryRoute="/contact"
+      secondaryCtaId="about-where-we-work-contact-us"
+    />
+  </div>
+</section>

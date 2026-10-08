@@ -1,24 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AboutPage } from './about.page';
-import { makeProgram } from '../programs/testing/program-fixture';
 
 describe('AboutPage', () => {
-  let httpMock: HttpTestingController;
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [AboutPage],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideRouter([])],
     });
-    httpMock = TestBed.inject(HttpTestingController);
-  });
-
-  afterEach(() => {
-    httpMock.verify();
   });
 
   it('creates', () => {
@@ -29,30 +19,33 @@ describe('AboutPage', () => {
   it('sets the page title via SeoService on init', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
-    const title = TestBed.inject(Title).getTitle();
-    expect(title).toContain('About Us');
-    httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
+    expect(TestBed.inject(Title).getTitle()).toContain('About Us');
   });
 
-  it('renders the hero, mission/vision panel, program grid, and theater section', () => {
+  it('renders every section of the design export in order', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
-    const text = fixture.nativeElement.textContent;
-    expect(text).toContain('Track 1.5 sovereign advisory');
-    expect(text).toContain('OUR MISSION');
-    expect(text).toContain('Active Programs & Theaters');
-    expect(text).toContain('All Theaters');
-    httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
+    const text: string = fixture.nativeElement.textContent;
+    const markers = [
+      'An African-led institution for peace and dialogue.',
+      'Frontiers for peace and stability in the West African region',
+      'OUR MISSION',
+      'Our Partners',
+      'Why Baobab?',
+      'Our distinctive approach',
+      'Our values',
+      'We work across ECOWAS and AES countries.',
+    ];
+    const positions = markers.map((m) => text.indexOf(m));
+    positions.forEach((p, i) => expect(p, markers[i]).toBeGreaterThan(-1));
+    expect([...positions].sort((a, b) => a - b)).toEqual(positions);
   });
 
-  it('fills the program grid from GET /programs', async () => {
+  it('no longer renders the removed programs grid or theater map', () => {
     const fixture = TestBed.createComponent(AboutPage);
     fixture.detectChanges();
-    httpMock
-      .expectOne((r) => r.url.endsWith('/programs'))
-      .flush([makeProgram({ title: 'Registry Program Title' })]);
-    await fixture.whenStable();
-    fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('Registry Program Title');
+    const text: string = fixture.nativeElement.textContent;
+    expect(text).not.toContain('Active Programs & Theaters');
+    expect(text).not.toContain('All Theaters');
   });
 });

@@ -34,13 +34,7 @@ import { StatusPanel } from '../../../../../shared/ui/status-panel/status-panel'
 import { consoleValidators } from '../../../validators/console-validators';
 import { ConsoleFormPage, trimStrings } from '../../../utils/console-form-page';
 import { describeApiError } from '../../../utils/api-error';
-import {
-  ProgramContent,
-  ProgramMilestone,
-  ProgramPillar,
-  ProgramStat,
-} from '../../../../programs/models/program';
-import { PILLAR_ICONS } from '../../../../programs/models/pillar-icons';
+import { ProgramContent } from '../../../../programs/models/program';
 
 // Mirrors the backend's ProgramContent limits (app/schemas/content.py).
 const SHORT = [consoleValidators.notBlank, Validators.maxLength(200)];
@@ -53,26 +47,16 @@ const IMAGE_URL = [
 
 /** Row bounds per repeatable list — the detail page lays out at most these many. */
 const LIST_LIMITS = {
-  kpis: { min: 1, max: 4 },
-  doctrineParagraphs: { min: 1, max: 6 },
-  doctrineStats: { min: 1, max: 3 },
-  pillars: { min: 1, max: 3 },
-  milestones: { min: 1, max: 12 },
+  aboutParagraphs: { min: 1, max: 6 },
+  keyPoints: { min: 1, max: 6 },
 } as const;
 type ListName = keyof typeof LIST_LIMITS;
 
-/** At most 4 comma-separated tags of up to 100 characters each. */
-const tagsValidator: ValidatorFn = (control) => {
-  const tags = splitTags(control.value as string);
-  return tags.length > 4 || tags.some((tag) => tag.length > 100) ? { tags: true } : null;
+/** Validators for one row of each list. */
+const ROW_VALIDATORS: Record<ListName, ValidatorFn[]> = {
+  aboutParagraphs: LONG,
+  keyPoints: SHORT,
 };
-
-function splitTags(value: string): string[] {
-  return value
-    .split(',')
-    .map((tag) => tag.trim())
-    .filter((tag) => tag.length > 0);
-}
 
 export function slugify(text: string): string {
   return text
@@ -85,29 +69,7 @@ export function slugify(text: string): string {
     .replace(/-+$/, '');
 }
 
-type StatGroup = FormGroup<{
-  value: FormControl<string>;
-  unit: FormControl<string>;
-  label: FormControl<string>;
-}>;
-type PillarGroup = FormGroup<{
-  icon: FormControl<string>;
-  eyebrow: FormControl<string>;
-  title: FormControl<string>;
-  description: FormControl<string>;
-  footnote: FormControl<string>;
-}>;
-type MilestoneGroup = FormGroup<{
-  date: FormControl<string>;
-  kicker: FormControl<string>;
-  title: FormControl<string>;
-  description: FormControl<string>;
-  tags: FormControl<string>;
-}>;
-
-const PILLAR_NUMERALS = ['I', 'II', 'III'];
-
-export type SectionId = 'card' | 'header' | 'doctrine' | 'pillars' | 'timeline' | 'dispatch';
+export type SectionId = 'card' | 'about' | 'strategy';
 
 interface SectionDef {
   id: SectionId;
@@ -121,7 +83,7 @@ interface SectionDef {
 }
 
 /**
- * The detail page's ~40 fields, grouped by where they appear publicly so the
+ * The detail page's fields, grouped by where they appear publicly so the
  * editor only faces one topic at a time (progressive disclosure).
  */
 const SECTIONS: SectionDef[] = [
@@ -129,51 +91,30 @@ const SECTIONS: SectionDef[] = [
     id: 'card',
     label: 'Program card',
     heading: 'Program card',
-    description: 'Shown on program cards on the Programs and About pages.',
-    controls: ['title', 'description', 'badgeText', 'theater', 'imageUrl', 'imageAlt'],
-  },
-  {
-    id: 'header',
-    label: 'Page header & KPIs',
-    heading: 'Page header & KPIs',
     description:
-      "The top of this program's detail page: its subtitle, reference metadata and headline figures.",
-    controls: ['subtitle', 'referenceCode', 'clearanceLevel', 'statusTag', 'kpis'],
+      'Shown on program cards on the Programs page, and as the header and photo of the detail page.',
+    controls: ['title', 'description', 'badgeText', 'imageUrl', 'imageAlt'],
   },
   {
-    id: 'doctrine',
-    label: 'Doctrine',
-    heading: 'Operational doctrine',
-    description: 'The narrative section of the detail page, with its image and supporting figures.',
+    id: 'about',
+    label: 'About this program',
+    heading: 'About this program',
+    description: 'The "About this program:" text beside the program photo on the detail page.',
+    controls: ['aboutParagraphs'],
+  },
+  {
+    id: 'strategy',
+    label: 'Key points & strategy',
+    heading: 'Key points & strategy',
+    description:
+      'The key points list, "From our strategy" heading, expected impact and portrait on the detail page.',
     controls: [
-      'doctrineEyebrow',
-      'doctrineHeading',
-      'doctrineParagraphs',
-      'doctrineImageUrl',
-      'doctrineImageCaption',
-      'doctrineStats',
+      'keyPoints',
+      'strategyHeading',
+      'expectedImpact',
+      'strategyImageUrl',
+      'strategyImageAlt',
     ],
-  },
-  {
-    id: 'pillars',
-    label: 'Pillars',
-    heading: 'Operational pillars',
-    description: 'Up to three pillar cards on the detail page.',
-    controls: ['pillarsEyebrow', 'pillarsHeading', 'pillarsDescription', 'pillars'],
-  },
-  {
-    id: 'timeline',
-    label: 'Timeline',
-    heading: 'Accord timeline',
-    description: 'Dated milestones in the accord timeline on the detail page.',
-    controls: ['timelineEyebrow', 'timelineHeading', 'timelineDescription', 'milestones'],
-  },
-  {
-    id: 'dispatch',
-    label: 'Dispatch form',
-    heading: 'Confidential dispatch form',
-    description: 'The confidential dispatch sign-up at the foot of the detail page.',
-    controls: ['dispatchHeading', 'dispatchSubtext'],
   },
 ];
 
@@ -190,7 +131,7 @@ function countInvalid(control: AbstractControl): number {
 /**
  * Create or edit a program — every field its public `programs/:slug` page
  * renders (PROGRAMS EDIT.png covers the card fields; the detail sections
- * below follow the same console form pattern). The slug is only editable at
+ * follow the same console form pattern). The slug is only editable at
  * creation, since it is the program's public URL.
  */
 @Component({
@@ -219,7 +160,6 @@ export class ProgramEditPage extends ConsoleFormPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly hostEl = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  readonly pillarIcons = PILLAR_ICONS;
   readonly limits = LIST_LIMITS;
 
   readonly slug = this.route.snapshot.paramMap.get('slug');
@@ -243,34 +183,15 @@ export class ProgramEditPage extends ConsoleFormPage implements OnInit {
     description: ['', [consoleValidators.notBlank, Validators.maxLength(600)]],
     imageUrl: ['', IMAGE_URL],
     imageAlt: ['', SHORT],
-    theater: ['', SHORT],
-    badgeText: ['', SHORT],
+    badgeText: ['ALL REGIONS', SHORT],
 
-    referenceCode: ['', SHORT],
-    clearanceLevel: ['', SHORT],
-    statusTag: ['', SHORT],
-    subtitle: ['', LONG],
-    kpis: this.fb.array<StatGroup>([this.statGroup()]),
+    aboutParagraphs: this.fb.array<FormControl<string>>([this.row('aboutParagraphs')]),
 
-    doctrineEyebrow: ['STRATEGIC OPERATIONAL DOCTRINE', SHORT],
-    doctrineHeading: ['', SHORT],
-    doctrineParagraphs: this.fb.array<FormControl<string>>([this.fb.control('', LONG)]),
-    doctrineImageUrl: ['', IMAGE_URL],
-    doctrineImageCaption: ['', SHORT],
-    doctrineStats: this.fb.array<StatGroup>([this.statGroup()]),
-
-    pillarsEyebrow: ['GOVERNANCE ARCHITECTURE', SHORT],
-    pillarsHeading: ['Codified Operational Pillars', SHORT],
-    pillarsDescription: ['', LONG],
-    pillars: this.fb.array<PillarGroup>([this.pillarGroup(0)]),
-
-    timelineEyebrow: ['ACCORD TIMELINE', SHORT],
-    timelineHeading: ['Verified Accord Milestones & Field Chronicle', SHORT],
-    timelineDescription: ['', LONG],
-    milestones: this.fb.array<MilestoneGroup>([this.milestoneGroup()]),
-
-    dispatchHeading: ['', SHORT],
-    dispatchSubtext: ['', LONG],
+    keyPoints: this.fb.array<FormControl<string>>([this.row('keyPoints')]),
+    strategyHeading: ['', SHORT],
+    expectedImpact: ['', LONG],
+    strategyImageUrl: ['', IMAGE_URL],
+    strategyImageAlt: ['', SHORT],
   });
 
   protected get trackedForm() {
@@ -344,22 +265,8 @@ export class ProgramEditPage extends ConsoleFormPage implements OnInit {
     this.hostEl.nativeElement.querySelector<HTMLElement>(`#section-tab-${id}`)?.focus();
   }
 
-  pillarSummary(index: number): string {
-    return this.form.controls.pillars.at(index).controls.title.value;
-  }
-
-  milestoneSummary(index: number): string {
-    const { date, title } = this.form.controls.milestones.at(index).controls;
-    return [date.value, title.value].filter(Boolean).join(' · ');
-  }
-
-  statSummary(list: 'kpis' | 'doctrineStats', index: number): string {
-    const { value, unit, label } = this.form.controls[list].at(index).controls;
-    return [value.value, unit.value, label.value].filter(Boolean).join(' ');
-  }
-
   paragraphSummary(index: number): string {
-    const text = this.form.controls.doctrineParagraphs.at(index).value;
+    const text = this.form.controls.aboutParagraphs.at(index).value;
     return text.length > 60 ? `${text.slice(0, 60).trimEnd()}…` : text;
   }
 
@@ -414,42 +321,21 @@ export class ProgramEditPage extends ConsoleFormPage implements OnInit {
   /** Resizes every list to match `content`, then fills the form from it. */
   patchFromProgram(content: ProgramContent): void {
     const { controls } = this.form;
-    this.resize(controls.kpis, content.kpis.length, () => this.statGroup());
-    this.resize(controls.doctrineParagraphs, content.doctrineParagraphs.length, () =>
-      this.fb.control('', LONG),
-    );
-    this.resize(controls.doctrineStats, content.doctrineStats.length, () => this.statGroup());
-    this.resize(controls.pillars, content.pillars.length, (i) => this.pillarGroup(i));
-    this.resize(controls.milestones, content.milestones.length, () => this.milestoneGroup());
+    this.resize(controls.aboutParagraphs, content.aboutParagraphs.length, 'aboutParagraphs');
+    this.resize(controls.keyPoints, content.keyPoints.length, 'keyPoints');
 
     this.form.setValue({
       title: content.title,
       description: content.description,
       imageUrl: content.imageUrl,
       imageAlt: content.imageAlt,
-      theater: content.theater,
       badgeText: content.badgeText,
-      referenceCode: content.referenceCode,
-      clearanceLevel: content.clearanceLevel,
-      statusTag: content.statusTag,
-      subtitle: content.subtitle,
-      kpis: content.kpis.map(toStatValue),
-      doctrineEyebrow: content.doctrineEyebrow,
-      doctrineHeading: content.doctrineHeading,
-      doctrineParagraphs: [...content.doctrineParagraphs],
-      doctrineImageUrl: content.doctrineImageUrl,
-      doctrineImageCaption: content.doctrineImageCaption,
-      doctrineStats: content.doctrineStats.map(toStatValue),
-      pillarsEyebrow: content.pillarsEyebrow,
-      pillarsHeading: content.pillarsHeading,
-      pillarsDescription: content.pillarsDescription,
-      pillars: content.pillars.map((pillar) => ({ ...pillar })),
-      timelineEyebrow: content.timelineEyebrow,
-      timelineHeading: content.timelineHeading,
-      timelineDescription: content.timelineDescription,
-      milestones: content.milestones.map((m) => ({ ...m, tags: m.tags.join(', ') })),
-      dispatchHeading: content.dispatchHeading,
-      dispatchSubtext: content.dispatchSubtext,
+      aboutParagraphs: [...content.aboutParagraphs],
+      keyPoints: [...content.keyPoints],
+      strategyHeading: content.strategyHeading,
+      expectedImpact: content.expectedImpact,
+      strategyImageUrl: content.strategyImageUrl,
+      strategyImageAlt: content.strategyImageAlt,
     });
   }
 
@@ -469,27 +355,8 @@ export class ProgramEditPage extends ConsoleFormPage implements OnInit {
     }
   }
 
-  addKpi(): void {
-    if (this.canAdd('kpis')) this.form.controls.kpis.push(this.statGroup());
-  }
-
-  addDoctrineStat(): void {
-    if (this.canAdd('doctrineStats')) this.form.controls.doctrineStats.push(this.statGroup());
-  }
-
-  addParagraph(): void {
-    if (this.canAdd('doctrineParagraphs')) {
-      this.form.controls.doctrineParagraphs.push(this.fb.control('', LONG));
-    }
-  }
-
-  addPillar(): void {
-    const pillars = this.form.controls.pillars;
-    if (this.canAdd('pillars')) pillars.push(this.pillarGroup(pillars.length));
-  }
-
-  addMilestone(): void {
-    if (this.canAdd('milestones')) this.form.controls.milestones.push(this.milestoneGroup());
+  addRow(list: ListName): void {
+    if (this.canAdd(list)) this.form.controls[list].push(this.row(list));
   }
 
   // --- submit -------------------------------------------------------------
@@ -532,64 +399,17 @@ export class ProgramEditPage extends ConsoleFormPage implements OnInit {
   }
 
   private toContent(): ProgramContent {
-    const value = trimStrings(this.form.getRawValue());
-    return {
-      ...value,
-      kpis: value.kpis.map(fromStatValue),
-      doctrineStats: value.doctrineStats.map(fromStatValue),
-      pillars: value.pillars.map((pillar): ProgramPillar => ({ ...pillar })),
-      milestones: value.milestones.map((m): ProgramMilestone => ({
-        ...m,
-        tags: splitTags(m.tags),
-      })),
-    };
+    return trimStrings(this.form.getRawValue());
   }
 
   // --- row factories ------------------------------------------------------
 
-  private statGroup(): StatGroup {
-    return this.fb.group({
-      value: ['', [Validators.required, Validators.maxLength(50)]],
-      unit: ['', [Validators.maxLength(50)]],
-      label: ['', SHORT],
-    });
+  private row(list: ListName): FormControl<string> {
+    return this.fb.control('', ROW_VALIDATORS[list]);
   }
 
-  private pillarGroup(index: number): PillarGroup {
-    return this.fb.group({
-      icon: [PILLAR_ICONS[index % PILLAR_ICONS.length].emoji, Validators.required],
-      eyebrow: [`PILLAR ${PILLAR_NUMERALS[index] ?? index + 1}`, SHORT],
-      title: ['', SHORT],
-      description: ['', LONG],
-      footnote: ['', SHORT],
-    });
-  }
-
-  private milestoneGroup(): MilestoneGroup {
-    return this.fb.group({
-      date: ['', SHORT],
-      kicker: ['', SHORT],
-      title: ['', SHORT],
-      description: ['', LONG],
-      tags: ['', tagsValidator],
-    });
-  }
-
-  private resize<T extends FormArray>(
-    array: T,
-    length: number,
-    make: (index: number) => T['controls'][number],
-  ): void {
+  private resize(array: FormArray<FormControl<string>>, length: number, list: ListName): void {
     while (array.length > length) array.removeAt(array.length - 1);
-    while (array.length < length) array.push(make(array.length));
+    while (array.length < length) array.push(this.row(list));
   }
-}
-
-function toStatValue(stat: ProgramStat): { value: string; unit: string; label: string } {
-  return { value: stat.value, unit: stat.unit ?? '', label: stat.label };
-}
-
-function fromStatValue(stat: { value: string; unit: string; label: string }): ProgramStat {
-  const unit = stat.unit.trim();
-  return { value: stat.value, unit: unit.length > 0 ? unit : null, label: stat.label };
 }

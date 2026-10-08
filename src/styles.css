@@ -42,6 +42,9 @@
   --color-console-line: #e8ecf3;
   --shadow-console-card: 0 24px 64px -16px rgb(2 6 23 / 0.1), 0 0 32px rgb(2 6 23 / 0.04);
 
+  /* Warm accent sampled from design/about export (core-values icon tiles). */
+  --color-gold-500: #ffab03;
+
   --radius-card: 0.75rem;
 
   /* Motion system — used by shared UI hover states, the scroll-reveal directive, and route transitions */

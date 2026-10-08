@@ -5,63 +5,31 @@ import { test, expect } from '@playwright/test';
 // page refetches in the browser and gets this stub. With a local backend up,
 // the server-rendered real programs are used instead — hence no title check.
 const PROGRAM = {
-  slug: 'e2e-corridor',
+  slug: 'e2e-program',
   sortOrder: 1,
   updatedAt: '2026-01-01T00:00:00Z',
-  title: 'E2E Peace Corridor',
+  title: 'E2E Dialogue Program',
   description: 'A program served by the stubbed registry.',
-  imageUrl: '/images/shared/theaters/theater-liptako-gourma.jpg',
-  imageAlt: 'A border crossing',
-  theater: 'Sahel Central',
-  badgeText: 'SAHEL CENTRAL',
-  referenceCode: 'REF: BO-E2E-2026-T1',
-  clearanceLevel: 'DIPLOMATIC CLEARANCE L1',
-  statusTag: 'ACTIVE TRANSIT PROTOCOL',
-  subtitle: 'Stubbed subtitle.',
-  kpis: [{ value: '3', unit: 'Systems', label: 'States Bound' }],
-  doctrineEyebrow: 'STRATEGIC OPERATIONAL DOCTRINE',
-  doctrineHeading: 'Codified Corridors',
-  doctrineParagraphs: ['Doctrine paragraph.'],
-  doctrineImageUrl: '/images/shared/theaters/theater-liptako-gourma.jpg',
-  doctrineImageCaption: 'SECTOR · Joint Mission',
-  doctrineStats: [{ value: '184', unit: null, label: 'Village Pacts' }],
-  pillarsEyebrow: 'GOVERNANCE ARCHITECTURE',
-  pillarsHeading: 'Codified Operational Pillars',
-  pillarsDescription: 'Pillars.',
-  pillars: [
-    {
-      icon: '🕒',
-      eyebrow: 'PILLAR I',
-      title: 'Transit Windows',
-      description: 'Fixed dates.',
-      footnote: 'Synchronized',
-    },
-  ],
-  timelineEyebrow: 'ACCORD TIMELINE',
-  timelineHeading: 'Verified Accord Milestones',
-  timelineDescription: 'Chronology.',
-  milestones: [
-    {
-      date: 'October 2024',
-      kicker: 'Diplomatic Decree',
-      title: 'Charter Ratified',
-      description: 'Codified.',
-      tags: ['12 Border Posts'],
-    },
-  ],
-  dispatchHeading: 'Request Confidential Addenda',
-  dispatchSubtext: 'Restricted to accredited delegations.',
+  imageUrl: '/images/programs/detail-hero-community-gathering.jpg',
+  imageAlt: 'A community dialogue',
+  badgeText: 'ALL REGIONS',
+  aboutParagraphs: ['About paragraph.'],
+  keyPoints: ['First key point'],
+  strategyHeading: 'We support, not replace, state authority.',
+  expectedImpact: 'Stronger trust between states and communities.',
+  strategyImageUrl: '/images/home/spokesperson-portrait.jpg',
+  strategyImageAlt: 'Portrait of a senior official',
 };
 
-test.describe('Supporting flow: Programs → detail → confidential dispatch', () => {
+test.describe('Supporting flow: Programs → detail → subscribe', () => {
   test.beforeEach(async ({ page }) => {
     await page.route(/\/api\/v1\/programs$/, (route) => route.fulfill({ json: [PROGRAM] }));
-    await page.route(/\/api\/v1\/programs\/e2e-corridor$/, (route) =>
+    await page.route(/\/api\/v1\/programs\/e2e-program$/, (route) =>
       route.fulfill({ json: PROGRAM }),
     );
   });
 
-  test('visitor can open a program detail page and submit the dispatch form', async ({ page }) => {
+  test('visitor can open a program detail page and subscribe for updates', async ({ page }) => {
     await page.goto('/programs');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
@@ -73,8 +41,8 @@ test.describe('Supporting flow: Programs → detail → confidential dispatch', 
     await expect(page.getByRole('heading', { level: 1 })).not.toBeEmpty();
 
     await page.locator('#dispatch-email').fill('delegate@example.org');
-    await page.getByRole('button', { name: 'Request Dispatches' }).click();
+    await page.getByRole('button', { name: 'Subscribe' }).click();
 
-    await expect(page.getByText('Confirmation reference')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Return to homepage' })).toBeVisible();
   });
 });

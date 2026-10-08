@@ -1,7 +1,36 @@
 <article>
   <app-resources-hero />
-  <app-resource-highlight appScrollReveal />
-  <app-treaties-archive [entries]="archiveEntries()" appScrollReveal />
-  <app-sanctuary-doctrine appScrollReveal />
-  <app-data-protections [items]="protectionItems" appScrollReveal />
+
+  @if (status() === 'error') {
+    <section class="mx-auto max-w-7xl px-4">
+      <app-status-panel
+        variant="error"
+        title="Publications are unavailable"
+        message="We couldn't load our publications just now. Please try again."
+        actionLabel="Try again"
+        (action)="load()"
+      />
+    </section>
+  } @else if (status() === 'ready') {
+    @if (featured(); as document) {
+      <section class="mx-auto max-w-7xl px-4" appScrollReveal>
+        <div
+          data-testid="featured-publication"
+          class="rounded-card bg-surface-tint px-4 pt-8 pb-24 sm:px-10 sm:pt-10 sm:pb-28"
+        >
+          <app-publication-card [document]="document" [featured]="true" />
+        </div>
+      </section>
+    }
+
+    <app-publications-list [documents]="others()" appScrollReveal />
+  }
+
+  <app-dispatch-form
+    appScrollReveal
+    variant="subscribe"
+    heading="Receive new publications and updates from The Baobab Group."
+    protocolId="BB-RESOURCES-NEWSLETTER"
+    source="resources-newsletter"
+  />
 </article>

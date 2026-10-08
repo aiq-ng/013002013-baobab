@@ -1,0 +1,53 @@
+<section class="mx-auto max-w-7xl px-4 py-16">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <div>
+      <app-eyebrow text="THEMATIC ACTION" />
+      <h2 class="mt-4 text-2xl font-bold text-ink-950 sm:text-3xl md:text-4xl">Programs preview</h2>
+    </div>
+    <p class="max-w-sm text-sm text-slate-600 sm:text-base">
+      Six areas of work, shaped around communities, governments and regional bodies.
+    </p>
+  </div>
+
+  <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    @for (program of programs; track program.title) {
+      <article
+        class="group relative aspect-[4/5] w-full overflow-hidden rounded-card shadow-sm sm:aspect-[11/12]"
+      >
+        <img
+          [ngSrc]="program.imageUrl"
+          [alt]="program.imageAlt"
+          fill
+          loading="lazy"
+          appImgFadeIn
+          class="object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+        <div
+          class="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/40 to-ink-950/20"
+        ></div>
+        <div class="absolute inset-x-0 bottom-0 flex flex-col items-start gap-2 p-6">
+          <app-badge text="ALL REGIONS" />
+          <h3 class="text-lg font-semibold text-white sm:text-xl">{{ program.title }}</h3>
+          <p class="text-sm text-white/80">{{ program.description }}</p>
+          <a
+            routerLink="/programs"
+            class="mt-2 inline-flex items-center gap-1 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink-950 transition-colors hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            View Program <span aria-hidden="true">→</span>
+            <span class="sr-only">: {{ program.title }}</span>
+          </a>
+        </div>
+      </article>
+    }
+  </div>
+
+  <div class="mx-auto mt-14 max-w-xl">
+    <app-button
+      label="View All Programs"
+      variant="primary"
+      routerLink="/programs"
+      ctaId="home-programs-view-all"
+      [fullWidth]="true"
+    />
+  </div>
+</section>

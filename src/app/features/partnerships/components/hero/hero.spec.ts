@@ -16,27 +16,20 @@ describe('PartnershipsHero', () => {
     const fixture = TestBed.createComponent(PartnershipsHero);
     fixture.detectChanges();
     const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Partner with us for a stronger West Africa.');
+    expect(text).toContain('Partnerships');
     expect(text).toContain(
-      'Partnering to Anchor Enduring Sovereign Peace Across West Africa and the Sahel.',
+      'We collaborate with governments, communities, regional institutions and international partners to build durable peace.',
     );
-    expect(text).toContain('Strategic Alliances & Sovereign Mandates');
+    expect(text).not.toContain('Track 1.5 Protocol');
   });
 
-  it('shows a poster image with a labelled play control before playing', () => {
+  it('shows the hero image with no play control or video embed', () => {
     const fixture = TestBed.createComponent(PartnershipsHero);
     fixture.detectChanges();
-    const playButton = fixture.debugElement.query(By.css('button'));
-    expect(playButton).toBeTruthy();
-    expect(playButton.attributes['aria-label']).toContain('Play');
-    expect(fixture.componentInstance.isPlaying()).toBe(false);
-  });
-
-  it('switches to the video element when the play control is activated', () => {
-    const fixture = TestBed.createComponent(PartnershipsHero);
-    fixture.detectChanges();
-    fixture.debugElement.query(By.css('button')).nativeElement.click();
-    fixture.detectChanges();
-    expect(fixture.componentInstance.isPlaying()).toBe(true);
-    expect(fixture.debugElement.query(By.css('iframe'))).toBeTruthy();
+    const img = fixture.debugElement.query(By.css('img'));
+    expect(img.attributes['src']).toBe('/images/partnerships/community-hands.jpg');
+    expect(fixture.debugElement.query(By.css('button'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('iframe'))).toBeNull();
   });
 });

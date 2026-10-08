@@ -26,7 +26,7 @@ All design source material (2x exports and the PRD notes) lives under `design/`,
 ## Conversion/UX standard (from important_note.txt §1–10 top half)
 
 - [ ] **One primary CTA per section.** If a section design shows a secondary action too, it must be visually subordinate (secondary button style), never competing.
-- [ ] **Every form** (contact, dispatch, classified-access gate) has real client-side validation with useful error messages — never a silent or dead submit.
+- [ ] **Every form** (contact, dispatch, newsletter subscribe) has real client-side validation with useful error messages — never a silent or dead submit.
 - [ ] **No dead-click CTAs** — every button/link resolves to a real route or the shared success flow (per PRD plus the added Partnerships page, all 6 email-capture CTAs → one shared success component).
 - [ ] **Semantic HTML + metadata**: `nav`/`main`/`article`/`footer` used correctly, per-route `Title`/`Meta`/Open Graph via `SeoService` — set up per page as it's built, not retrofitted.
 - [ ] **Accessible by default**: sufficient contrast, keyboard navigation, ARIA on interactive shared components (accordion, theater-map filter pills, modals) — build this into the shared UI kit once, so every consumer inherits it.
@@ -44,4 +44,4 @@ All design source material (2x exports and the PRD notes) lives under `design/`,
 - [ ] **Run the full test suite after every implementation change** — `npm test` (all specs, not just the one touched) — before considering a unit of work done. A change that isn't proven not to break existing specs isn't finished.
 - [ ] `npm test` / `ng test` must run the entire spec suite with a single command — no manual listing of files. Keep every `*.spec.ts` discoverable by the default test config; don't hand-pick which specs run.
 - [ ] **Pre-push gate**: a git hook (Husky `pre-push`) runs format-check → lint → full test suite → build before any `git push` is allowed to leave the machine. A push is blocked if any step fails — no `--no-verify` bypass.
-- [ ] Critical logic (services, form validation, the shared Engagement submit→success flow, shared UI kit components) always gets unit tests. Primary conversion flows (contact form, dispatch forms, classified-access gate) get E2E coverage per Phase 8 — TDD applies at the unit level throughout, E2E is added once the flow exists end-to-end.
+- [ ] Critical logic (services, form validation, the shared Engagement submit→success flow, shared UI kit components) always gets unit tests. Primary conversion flows (contact form, dispatch forms, Resources newsletter subscribe) get E2E coverage per Phase 8 — TDD applies at the unit level throughout, E2E is added once the flow exists end-to-end.

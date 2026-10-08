@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Eyebrow } from '../../../../shared/ui/eyebrow/eyebrow';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 export interface StrategicPillar {
   code: string;
@@ -10,43 +9,40 @@ export interface StrategicPillar {
 
 const PILLARS: StrategicPillar[] = [
   {
-    code: 'PILLAR 01',
+    code: 'PRINCIPLE 01',
     icon: 'compass',
-    title: 'Transhumance Corridors',
-    description:
-      'Demilitarizing seasonal pastoral axes, GPS-mapping shared borehole coordinates, and securing transit corridors across contested savannah grazing lines.',
+    title: 'State primacy',
+    description: 'We support, not replace, state authority.',
   },
   {
-    code: 'PILLAR 02',
+    code: 'PRINCIPLE 02',
     icon: 'gavel',
-    title: 'Customary Jurisprudence',
-    description:
-      'Revitalizing customary truth circles, traditional chieftaincy pacts, and sultanate mediation tribunals to formalize local restitution treaties.',
+    title: 'Community ownership',
+    description: 'Communities lead, solutions are locally owned.',
   },
   {
-    code: 'PILLAR 03',
+    code: 'PRINCIPLE 03',
     icon: 'shield',
-    title: 'Restorative Security',
-    description:
-      'Grassroots civilian vetting panels, demobilization registries, and community-based civic re-entry frameworks for ex-combatant integration.',
+    title: 'Hybrid mediation',
+    description: 'Traditional systems, religious jurisprudence and modern practice together.',
   },
   {
-    code: 'PILLAR 04',
+    code: 'PRINCIPLE 04',
     icon: 'handshake',
-    title: 'Cross-Border Accords',
-    description:
-      'Interlinking provincial state governors directly with sovereign customary councils to eliminate statutory jurisdiction vacuums along remote border tracts.',
+    title: 'Regional harmonization',
+    description: 'Bridging ECOWAS and AES through shared learning.',
   },
 ];
 
-/** "The Four Strategic Pillars" section — coherent operational doctrine grid. */
+/** "Four principles" section — how The Baobab Group works. */
 @Component({
   selector: 'app-strategic-pillars',
   standalone: true,
-  imports: [Eyebrow],
   templateUrl: './strategic-pillars.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StrategicPillars {
+  /** Program detail pages show just the cards, under the program header. */
+  @Input() showHeading = true;
   readonly pillars = PILLARS;
 }

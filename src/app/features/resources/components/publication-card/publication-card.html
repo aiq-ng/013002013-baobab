@@ -1,0 +1,92 @@
+<div
+  [class]="
+    featured()
+      ? 'rounded-card bg-white p-6 shadow-sm sm:p-8'
+      : 'rounded-card border border-slate-100 bg-white p-5 shadow-sm sm:px-6'
+  "
+>
+  <div
+    [class]="
+      featured()
+        ? 'flex flex-col gap-6'
+        : 'flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'
+    "
+  >
+    <div class="min-w-0">
+      <p class="flex flex-wrap items-center gap-3 text-xs text-slate-600">
+        <span class="rounded-full bg-surface-tint px-2.5 py-1 font-medium text-ink-950">{{
+          batchLabel()
+        }}</span>
+        <span>Uploaded: {{ document().uploadedAt | date: 'MMMM y' }}</span>
+      </p>
+
+      @if (featured()) {
+        <h2 class="mt-4 text-2xl font-bold text-ink-950 sm:text-3xl">{{ document().title }}</h2>
+      } @else {
+        <h3 class="mt-3 text-lg font-semibold text-ink-950 sm:text-xl">{{ document().title }}</h3>
+      }
+      @if (document().description) {
+        <p [class]="'text-sm text-slate-600 ' + (featured() ? 'mt-4' : 'mt-2')">
+          {{ document().description }}
+        </p>
+      }
+    </div>
+
+    @if (fileUrl(); as url) {
+      <div class="flex shrink-0 items-center gap-3">
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 rounded-full bg-surface-tint px-4 py-2 text-sm font-medium text-ink-950 transition-colors hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          [attr.aria-expanded]="previewOpen()"
+          [attr.aria-controls]="previewId()"
+          (click)="togglePreview()"
+        >
+          Preview PDF
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-4 w-4 transition-transform"
+            [class.rotate-180]="previewOpen()"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <a
+          [href]="url"
+          download
+          [attr.aria-label]="'Download ' + document().title"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-4 w-4"
+          >
+            <path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14" />
+          </svg>
+        </a>
+      </div>
+    }
+  </div>
+
+  @if (previewOpen() && previewSrc()) {
+    <div [id]="previewId()" class="mt-6 overflow-hidden rounded-card border border-slate-100">
+      <iframe
+        [src]="previewSrc()"
+        [title]="'Preview of ' + document().title"
+        loading="lazy"
+        class="h-[32rem] w-full bg-surface-tint sm:h-[40rem]"
+      ></iframe>
+    </div>
+  }
+</div>

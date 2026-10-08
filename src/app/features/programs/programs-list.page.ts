@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
 import { ProgramsHero } from './components/hero/hero';
 import { StrategicPillars } from './components/strategic-pillars/strategic-pillars';
-import { ProgramsTheaterSection } from './components/theater-section/theater-section';
 import { DispatchForm } from '../../shared/ui/dispatch-form/dispatch-form';
+import { TrustBand } from '../../shared/ui/trust-band/trust-band';
 import { Eyebrow } from '../../shared/ui/eyebrow/eyebrow';
 import { ProgramGrid, ProgramPreview } from '../../shared/ui/program-grid/program-grid';
 import { SeoService } from '../../core/services/seo.service';
@@ -15,7 +15,7 @@ import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal.dir
   imports: [
     ProgramsHero,
     StrategicPillars,
-    ProgramsTheaterSection,
+    TrustBand,
     DispatchForm,
     Eyebrow,
     ProgramGrid,
@@ -47,7 +47,7 @@ export class ProgramsListPage implements OnInit {
     this.seo.update({
       title: 'Programs',
       description:
-        "The Baobab Group's active Track 1.5 programs and theaters — cross-border customary accords de-escalating conflict across the Sahel and West Africa.",
+        'The Baobab Group supports dialogue, mediation, community resilience, research, reintegration and policy across West Africa.',
     });
     void this.programsService.load();
   }

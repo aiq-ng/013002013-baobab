@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { MissionBlock } from './mission-block';
 
 describe('MissionBlock', () => {
@@ -7,26 +8,27 @@ describe('MissionBlock', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MissionBlock],
+      providers: [provideRouter([])],
     }).compileComponents();
     fixture = TestBed.createComponent(MissionBlock);
     fixture.detectChanges();
   });
 
-  it('renders the eyebrow badge and heading from the design export', () => {
+  it('renders the eyebrow and heading from the design export', () => {
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.textContent).toContain('KNOW ABOUT US');
-    expect(el.textContent).toContain(
-      'We provide an ancestral sanctuary for sovereign dialogue and restorative justice.',
+    expect(el.textContent).toContain('WHO WE ARE');
+    expect(el.textContent).toContain('We work across ECOWAS and AES countries.');
+  });
+
+  it('renders the "who we are" body copy', () => {
+    expect(fixture.nativeElement.textContent).toContain(
+      'support sovereign dialogue, community resilience and hybrid mediation',
     );
   });
 
-  it('renders a real download link for the doctrine summary, not a dead-click button', () => {
-    const link: HTMLAnchorElement = fixture.nativeElement.querySelector('a[href]');
-    expect(link).toBeTruthy();
-    expect(link.textContent).toContain('Download Doctrine Summary');
-  });
-
-  it('renders the revision caption next to the CTA', () => {
-    expect(fixture.nativeElement.textContent).toContain('Rev. 2025/S Sahel Mandate');
+  it('renders an "About Us" CTA routed to the About page', () => {
+    const links: HTMLAnchorElement[] = Array.from(fixture.nativeElement.querySelectorAll('a'));
+    const about = links.find((a) => a.textContent!.includes('About Us'));
+    expect(about!.getAttribute('href')).toBe('/about');
   });
 });

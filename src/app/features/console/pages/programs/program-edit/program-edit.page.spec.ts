@@ -14,7 +14,7 @@ describe('ProgramEditPage', () => {
   let toast: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
   let router: Router;
 
-  const program = makeProgram({ slug: 'program-1', title: 'Liptako-Gourma Peace Corridor' });
+  const program = makeProgram({ slug: 'program-1', title: 'Hybrid Mediation & Reconciliation' });
 
   async function setup(slug: string | null) {
     store = {
@@ -50,15 +50,12 @@ describe('ProgramEditPage', () => {
       const component = await setup('program-1');
       const value = component.form.getRawValue();
 
-      expect(value.title).toBe('Liptako-Gourma Peace Corridor');
-      expect(value.referenceCode).toBe(program.referenceCode);
-      expect(value.kpis).toEqual([
-        { value: '3', unit: 'Systems', label: 'States Bound' },
-        { value: '98%', unit: '', label: 'Community Acceptance' },
-      ]);
-      expect(value.doctrineParagraphs).toEqual(program.doctrineParagraphs);
-      expect(value.pillars[0].title).toBe('Hydraulic Rotational Clocks');
-      expect(value.milestones[0].tags).toBe('12 Wells');
+      expect(value.title).toBe('Hybrid Mediation & Reconciliation');
+      expect(value.badgeText).toBe('ALL REGIONS');
+      expect(value.aboutParagraphs).toEqual(program.aboutParagraphs);
+      expect(value.keyPoints).toEqual(program.keyPoints);
+      expect(value.strategyHeading).toBe(program.strategyHeading);
+      expect(value.strategyImageUrl).toBe(program.strategyImageUrl);
     });
 
     it('does not offer a slug field — the public URL never changes', async () => {
@@ -85,10 +82,10 @@ describe('ProgramEditPage', () => {
       expect(store.saveProgram).not.toHaveBeenCalled();
     });
 
-    it('saves the full content — blank units as null, tags split on commas — then confirms it', async () => {
+    it('saves the full content, trimmed, then confirms it', async () => {
       const component = await setup('program-1');
       component.form.controls.title.setValue('New Title');
-      component.form.controls.milestones.at(0).controls.tags.setValue(' A , B,, C ');
+      component.form.controls.keyPoints.at(0).setValue('  Trimmed point  ');
 
       await component.onSubmit();
 
@@ -96,7 +93,7 @@ describe('ProgramEditPage', () => {
       expect(store.saveProgram).toHaveBeenCalledWith('program-1', {
         ...content,
         title: 'New Title',
-        milestones: [{ ...program.milestones[0], tags: ['A', 'B', 'C'] }],
+        keyPoints: ['Trimmed point', program.keyPoints[1]],
       });
       expect(router.navigate).not.toHaveBeenCalled();
       fixture.detectChanges();
@@ -173,31 +170,30 @@ describe('ProgramEditPage', () => {
   });
 
   describe('repeatable lists', () => {
-    it('adds KPIs up to the four the detail grid holds', async () => {
+    it('adds key points up to the six the list holds', async () => {
       const component = await setup('program-1');
-      component.addKpi();
-      component.addKpi();
-      component.addKpi();
+      for (let i = 0; i < 5; i++) component.addRow('keyPoints');
 
-      expect(component.form.controls.kpis.length).toBe(4);
-      expect(component.canAdd('kpis')).toBe(false);
+      expect(component.form.controls.keyPoints.length).toBe(6);
+      expect(component.canAdd('keyPoints')).toBe(false);
     });
 
     it('never removes the last row of a list', async () => {
       const component = await setup('program-1');
-      component.removeAt('pillars', 0);
+      component.removeAt('aboutParagraphs', 0);
+      component.removeAt('aboutParagraphs', 0);
 
-      expect(component.form.controls.pillars.length).toBe(1);
-      expect(component.canRemove('pillars')).toBe(false);
+      expect(component.form.controls.aboutParagraphs.length).toBe(1);
+      expect(component.canRemove('aboutParagraphs')).toBe(false);
     });
 
     it('removes a row when more than one exists', async () => {
       const component = await setup('program-1');
-      component.addParagraph();
-      component.removeAt('doctrineParagraphs', 0);
+      component.addRow('aboutParagraphs');
+      component.removeAt('aboutParagraphs', 0);
 
-      expect(component.form.controls.doctrineParagraphs.getRawValue()).toEqual([
-        program.doctrineParagraphs[1],
+      expect(component.form.controls.aboutParagraphs.getRawValue()).toEqual([
+        program.aboutParagraphs[1],
         '',
       ]);
     });
@@ -210,10 +206,9 @@ describe('ProgramEditPage', () => {
 
       expect(component.isNew).toBe(true);
       expect(value.title).toBe('');
-      expect(value.doctrineEyebrow).toBe('STRATEGIC OPERATIONAL DOCTRINE');
-      expect(value.kpis).toHaveLength(1);
-      expect(value.pillars).toHaveLength(1);
-      expect(value.milestones).toHaveLength(1);
+      expect(value.badgeText).toBe('ALL REGIONS');
+      expect(value.aboutParagraphs).toEqual(['']);
+      expect(value.keyPoints).toEqual(['']);
     });
 
     it('derives the slug from the title until the slug is edited by hand', async () => {
@@ -235,12 +230,7 @@ describe('ProgramEditPage', () => {
 
     it('creates the program with its slug and confirms it', async () => {
       const component = await setup(null);
-      const body = createBodyOf(
-        makeProgram({
-          slug: 'new-program',
-          kpis: [{ value: '3', unit: null, label: 'States Bound' }],
-        }),
-      );
+      const body = createBodyOf(makeProgram({ slug: 'new-program', keyPoints: ['One point'] }));
       component.patchFromProgram(body);
       component.slugControl.setValue('new-program');
 
@@ -277,7 +267,7 @@ describe('ProgramEditPage', () => {
     expect(slugify('Côte d’Ivoire — Border Accords!')).toBe('cote-d-ivoire-border-accords');
   });
 
-  describe('section navigation (reduces a 40-field form to one topic at a time)', () => {
+  describe('section navigation (one topic of the detail page at a time)', () => {
     const tabs = (): HTMLElement[] =>
       Array.from(fixture.nativeElement.querySelectorAll('[role="tab"]'));
     const visiblePanels = (): HTMLElement[] =>
@@ -292,11 +282,8 @@ describe('ProgramEditPage', () => {
       expect(list.getAttribute('aria-label')).toBe('Program sections');
       expect(tabs().map((t) => t.textContent?.trim().split('\n')[0].trim())).toEqual([
         'Program card',
-        'Page header & KPIs',
-        'Doctrine',
-        'Pillars',
-        'Timeline',
-        'Dispatch form',
+        'About this program',
+        'Key points & strategy',
       ]);
       expect(tabs()[0].getAttribute('aria-selected')).toBe('true');
       expect(tabs()[1].getAttribute('tabindex')).toBe('-1');
@@ -307,16 +294,16 @@ describe('ProgramEditPage', () => {
     it('switches section on click and with arrow keys', async () => {
       await setup('program-1');
       fixture.detectChanges();
-      tabs()[2].click();
+      tabs()[1].click();
       fixture.detectChanges();
-      expect(visiblePanels()[0].textContent).toContain('Operational doctrine');
+      expect(visiblePanels()[0].textContent).toContain('About this program');
 
-      tabs()[2].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+      tabs()[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
       fixture.detectChanges();
-      expect(tabs()[3].getAttribute('aria-selected')).toBe('true');
-      expect(document.activeElement).toBe(tabs()[3]);
+      expect(tabs()[2].getAttribute('aria-selected')).toBe('true');
+      expect(document.activeElement).toBe(tabs()[2]);
 
-      tabs()[3].dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+      tabs()[2].dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
       fixture.detectChanges();
       expect(tabs()[0].getAttribute('aria-selected')).toBe('true');
     });
@@ -324,17 +311,17 @@ describe('ProgramEditPage', () => {
     it('explains where each section appears on the public site', async () => {
       await setup('program-1');
       fixture.detectChanges();
-      expect(visiblePanels()[0].textContent).toContain('Programs and About pages');
+      expect(visiblePanels()[0].textContent).toContain('program cards on the Programs page');
     });
 
     it('jumps to the first section with errors on a blocked publish and counts them', async () => {
       const component = await setup('program-1');
-      component.form.controls.pillars.at(0).controls.title.setValue('');
+      component.form.controls.keyPoints.at(0).setValue('');
       await component.onSubmit();
       fixture.detectChanges();
 
-      expect(tabs()[3].getAttribute('aria-selected')).toBe('true');
-      expect(tabs()[3].textContent).toContain('1 error');
+      expect(tabs()[2].getAttribute('aria-selected')).toBe('true');
+      expect(tabs()[2].textContent).toContain('1 error');
       expect(tabs()[0].textContent).not.toContain('error');
     });
 
@@ -344,7 +331,7 @@ describe('ProgramEditPage', () => {
       const next = visiblePanels()[0].querySelector(
         '[data-testid="next-section"]',
       ) as HTMLButtonElement;
-      expect(next.textContent).toContain('Page header & KPIs');
+      expect(next.textContent).toContain('About this program');
       next.click();
       fixture.detectChanges();
       expect(tabs()[1].getAttribute('aria-selected')).toBe('true');

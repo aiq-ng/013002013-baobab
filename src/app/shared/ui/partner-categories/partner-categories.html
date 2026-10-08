@@ -1,0 +1,54 @@
+<section class="mx-auto max-w-7xl px-4 pb-16">
+  <div class="flex items-center gap-6">
+    <p class="shrink-0 text-xs font-semibold uppercase tracking-widest text-ink-950/70">
+      Our Partners
+    </p>
+    <span class="h-px flex-1 bg-slate-100"></span>
+  </div>
+
+  <ul class="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
+    @for (category of categories; track category.label) {
+      <li
+        class="flex flex-col items-center gap-3 text-center text-xs uppercase tracking-widest text-ink-950 sm:text-sm"
+      >
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-7 w-7"
+        >
+          @switch (category.icon) {
+            @case ('government') {
+              <path
+                d="M3 21h18M5 21v-7h14v7M8 21v-4M12 21v-4M16 21v-4M4 14l8-4 8 4M12 10V3l4 1.5L12 6"
+              />
+            }
+            @case ('traditional') {
+              <path d="M4 8l3 3 5-6 5 6 3-3v6a8 8 0 0 1-16 0V8ZM9 15c1.5 1.5 4.5 1.5 6 0" />
+            }
+            @case ('regional') {
+              <path
+                d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM7 6.5c1 1.5 3 2 3 3.5s-2 1.5-2 3 2 2 2 4M14 4c-.5 1.5.5 3 2 3.5s2 2 1 3.5-2.5 1-3 2.5 1 2.5 0 4"
+              />
+            }
+            @case ('agency') {
+              <path
+                d="M12 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12ZM6 9h12M12 3c1.8 1.7 2.5 3.7 2.5 6s-.7 4.3-2.5 6c-1.8-1.7-2.5-3.7-2.5-6S10.2 4.7 12 3ZM4 21h16M7 21v-3h10v3"
+              />
+            }
+            @case ('civil') {
+              <path
+                d="M15 8a3 3 0 1 0-6 0M7 8h10a2 2 0 0 1 0 4H7a2 2 0 0 1 0-4ZM8 15a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM16 15a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM5 21a3 3 0 0 1 6 0M13 21a3 3 0 0 1 6 0"
+              />
+            }
+          }
+        </svg>
+        {{ category.label }}
+      </li>
+    }
+  </ul>
+</section>

@@ -33,15 +33,18 @@ describe('ProgramsListPage', () => {
     httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
   });
 
-  it('renders the hero, pillars, theater map, and dialogue form while the registry loads', () => {
+  it('renders the hero, trust band, principles, and subscribe band while the registry loads', () => {
     const fixture = TestBed.createComponent(ProgramsListPage);
     fixture.detectChanges();
     const text = fixture.nativeElement.textContent;
-    expect(text).toContain("We're building an enduring peace");
-    expect(text).toContain('The Four Strategic Pillars');
+    expect(text).toContain('We support dialogue, mediation');
+    expect(text).toContain('African-Led');
+    expect(text).toContain('Four principles');
+    expect(text).toContain('Programs and Services');
     expect(text).toContain('Active Programs & Theaters');
-    expect(text).toContain('All Theaters');
-    expect(text).toContain('Receive Verified Field Dispatches');
+    expect(text).not.toContain('All Theaters');
+    expect(text).toContain('Receive new publications and updates from The Baobab Group.');
+    expect(text).toContain('Subscribe');
     httpMock.expectOne((r) => r.url.endsWith('/programs')).flush([]);
   });
 
