@@ -352,6 +352,36 @@ describe('ConsoleStore', () => {
     expect(listResources).toHaveBeenCalled();
   });
 
+  it('updateResource renames without uploading when no new PDF is given', async () => {
+    const listResources = vi.fn().mockReturnValue(of([]));
+    const updateResource = vi.fn().mockReturnValue(of({ id: 'r1' }));
+    const upload = vi.fn();
+    const store = setup({ listResources, updateResource }, { upload });
+
+    await store.updateResource('r1', null, 'T2', 'Batch 2');
+
+    expect(upload).not.toHaveBeenCalled();
+    expect(updateResource).toHaveBeenCalledWith('r1', { title: 'T2', batchReference: 'Batch 2' });
+    expect(listResources).toHaveBeenCalled();
+  });
+
+  it('updateResource uploads a replacement PDF and sends its URL', async () => {
+    const updateResource = vi.fn().mockReturnValue(of({ id: 'r1' }));
+    const url = 'https://res.cloudinary.com/demo/raw/upload/v2/baobab/resources/v2.pdf';
+    const upload = vi.fn().mockReturnValue(of({ type: 'done', url, bytes: 77 }));
+    const store = setup({ updateResource }, { upload });
+    const file = new File(['x'], 'v2.pdf', { type: 'application/pdf' });
+
+    await store.updateResource('r1', file, 'T', 'B');
+
+    expect(updateResource).toHaveBeenCalledWith('r1', {
+      title: 'T',
+      batchReference: 'B',
+      fileUrl: url,
+      fileSizeBytes: 77,
+    });
+  });
+
   it('uploadResource creates nothing when the PDF upload fails', async () => {
     const createResource = vi.fn();
     const upload = vi.fn().mockReturnValue(throwError(() => new Error('nope')));

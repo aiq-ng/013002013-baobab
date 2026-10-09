@@ -6,7 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SeoService } from '../../../../../core/services/seo.service';
 import { ToastService } from '../../../../../shared/ui/toast/toast.service';
@@ -22,35 +22,22 @@ import { ConsoleFormPage, trimStrings } from '../../../utils/console-form-page';
 import { describeApiError } from '../../../utils/api-error';
 import { hasPdfSignature } from '../../../utils/pdf-signature';
 import { PdfUploadError } from '../../../services/pdf-uploader';
-import { formatDate, formatFileSize } from '../../../utils/format';
+import { formatFileSize } from '../../../utils/format';
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
-/** The backend's codex-details endpoint requires exactly 4 metadata rows. */
-const METADATA_ROW_COUNT = 4;
 
-/** Field limits — mirror the backend's resource + codex-details schemas. */
+/** Field limits — mirror the backend's resource create/update schemas. */
 export const RESOURCE_LIMITS = {
   title: 160,
   batchReference: 40,
-  batchLabel: 80,
-  releaseTag: 80,
-  documentDateLabel: 120,
-  description: 1000,
-  excerptHeading: 160,
-  excerptQuote: 1000,
-  excerptAttribution: 160,
-  onlineUrl: 300,
-  metadataLabel: 80,
-  metadataValue: 160,
 } as const;
 
 const text = (max: number) => ['', [consoleValidators.notBlank, Validators.maxLength(max)]];
 
 /**
- * Upload a new resource PDF with its codex details (RESOURCES EDIT.png →
- * RESOURCES SCUCCESS.png), or edit an existing resource's codex details.
- * The API can't replace a file or rename a resource after upload, so in
- * edit mode those show as read-only context.
+ * Upload a new resource (RESOURCES EDIT.png → RESOURCES SCUCCESS.png) or edit
+ * an existing one: just the PDF, its public name and a batch ID. On edit the
+ * PDF is optional — choosing one replaces the current file.
  */
 @Component({
   selector: 'app-console-resource-edit',
@@ -88,41 +75,11 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
   readonly uploadPercent = signal<number | null>(null);
 
   readonly formatSize = formatFileSize;
-  readonly formatDate = formatDate;
 
   readonly form = this.fb.nonNullable.group({
     title: text(RESOURCE_LIMITS.title),
     batchReference: text(RESOURCE_LIMITS.batchReference),
-    batchLabel: text(RESOURCE_LIMITS.batchLabel),
-    releaseTag: text(RESOURCE_LIMITS.releaseTag),
-    documentDateLabel: text(RESOURCE_LIMITS.documentDateLabel),
-    description: text(RESOURCE_LIMITS.description),
-    chapters: ['', [consoleValidators.notBlank]],
-    excerptHeading: text(RESOURCE_LIMITS.excerptHeading),
-    excerptQuote: text(RESOURCE_LIMITS.excerptQuote),
-    excerptAttribution: text(RESOURCE_LIMITS.excerptAttribution),
-    onlineUrl: [
-      '',
-      [
-        consoleValidators.notBlank,
-        Validators.maxLength(RESOURCE_LIMITS.onlineUrl),
-        consoleValidators.safeLink,
-      ],
-    ],
-    metadataRows: this.fb.array(
-      Array.from({ length: METADATA_ROW_COUNT }, () =>
-        this.fb.nonNullable.group({
-          label: text(RESOURCE_LIMITS.metadataLabel),
-          value: text(RESOURCE_LIMITS.metadataValue),
-          accent: [false],
-        }),
-      ),
-    ),
   });
-
-  get metadataRows(): FormArray<(typeof this.form.controls.metadataRows.controls)[number]> {
-    return this.form.controls.metadataRows;
-  }
 
   readonly file = signal<File | null>(null);
   readonly fileError = signal<string | null>(null);
@@ -132,7 +89,7 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
   }
 
   override hasUnsavedChanges(): boolean {
-    return this.form.dirty || (this.isNew && this.file() !== null && this.published() === null);
+    return this.form.dirty || (this.file() !== null && this.published() === null);
   }
 
   ngOnInit(): void {
@@ -142,9 +99,6 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
       noIndex: true,
     });
     if (!this.isNew) {
-      // Title and batch number can't change after upload; only codex details are edited.
-      this.form.controls.title.disable();
-      this.form.controls.batchReference.disable();
       void this.load();
     }
   }
@@ -161,23 +115,7 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
         this.notFound.set(true);
         return;
       }
-      this.form.reset({
-        title: resource.title,
-        batchReference: resource.batchReference,
-        batchLabel: resource.batchLabel,
-        releaseTag: resource.releaseTag,
-        documentDateLabel: resource.documentDateLabel,
-        description: resource.description,
-        chapters: resource.chapters.join('\n'),
-        excerptHeading: resource.excerptHeading,
-        excerptQuote: resource.excerptQuote,
-        excerptAttribution: resource.excerptAttribution,
-        onlineUrl: resource.onlineUrl,
-        metadataRows: Array.from(
-          { length: METADATA_ROW_COUNT },
-          (_, i) => resource.metadata[i] ?? { label: '', value: '', accent: false },
-        ),
-      });
+      this.form.reset({ title: resource.title, batchReference: resource.batchReference });
     } catch (error) {
       this.loadError.set(describeApiError(error, 'Could not load the resource.'));
     } finally {
@@ -210,7 +148,7 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
 
   private async validateFile(file: File | null): Promise<string | null> {
     if (!file) {
-      return 'A PDF file is required.';
+      return this.isNew ? 'A PDF file is required.' : null;
     }
     const namedPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
     if (!namedPdf) {
@@ -232,97 +170,67 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
     if (this.isNew && this.fileError() === null && this.file() === null) {
       this.fileError.set('A PDF file is required.');
     }
-    if (this.form.invalid || (this.isNew && this.fileError())) {
+    if (this.form.invalid || this.fileError()) {
       this.rejectInvalid();
       return;
     }
     if (this.isNew) {
       await this.publishNew();
     } else {
-      await this.saveDetails();
+      await this.saveChanges();
     }
   }
 
-  private codexDetails() {
-    const value = trimStrings(this.form.getRawValue());
-    return {
-      batchLabel: value.batchLabel,
-      releaseTag: value.releaseTag,
-      documentDateLabel: value.documentDateLabel,
-      description: value.description,
-      chapters: value.chapters
-        .split('\n')
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0),
-      excerptHeading: value.excerptHeading,
-      excerptQuote: value.excerptQuote,
-      excerptAttribution: value.excerptAttribution,
-      onlineUrl: value.onlineUrl,
-      metadata: value.metadataRows,
-    };
+  private onProgress = (percent: number) => this.uploadPercent.set(percent);
+
+  /** Runs one save with upload progress shown, clearing it however it ends. */
+  private async withProgress<T>(save: () => Promise<T>): Promise<T> {
+    try {
+      return await save();
+    } finally {
+      this.uploadPercent.set(null);
+    }
+  }
+
+  private describeError(error: unknown, fallback: string): string {
+    return error instanceof PdfUploadError ? error.message : describeApiError(error, fallback);
   }
 
   private async publishNew(): Promise<void> {
     const file = this.file() as File;
     const { title, batchReference } = trimStrings(this.form.getRawValue());
-    const details = this.codexDetails();
-    let created: AdminResource | null = null;
     try {
+      let created: AdminResource | null = null;
       await this.guardedSave(async () => {
-        try {
-          created = await this.store.uploadResource(file, title, batchReference, '', (percent) =>
-            this.uploadPercent.set(percent),
-          );
-        } finally {
-          this.uploadPercent.set(null);
-        }
-        await this.store.updateResourceCodexDetails(created.id, details);
+        created = await this.withProgress(() =>
+          this.store.uploadResource(file, title, batchReference, '', this.onProgress),
+        );
       });
       this.published.set(created);
     } catch (error) {
-      const orphan = created as AdminResource | null;
-      if (orphan) {
-        await this.quarantine(orphan);
-      } else {
-        this.toast.error(
-          error instanceof PdfUploadError
-            ? error.message
-            : describeApiError(error, 'Could not upload the resource.'),
-        );
-      }
+      this.toast.error(this.describeError(error, 'Could not upload the resource.'));
     }
   }
 
-  /**
-   * The PDF uploaded (and went live) but its codex details didn't save. Take
-   * it offline rather than leave a half-described document on the public
-   * site, then send the editor to finish it.
-   */
-  private async quarantine(resource: AdminResource): Promise<void> {
-    this.form.markAsPristine();
-    this.file.set(null);
-    try {
-      await this.store.setResourcePublished(resource.id, false);
-      this.toast.error(
-        "The PDF uploaded but its details didn't save, so it has been kept unpublished. Finish the details below, then publish it from the list.",
-      );
-    } catch {
-      this.toast.error(
-        "The PDF uploaded but its details didn't save, and it could not be unpublished automatically. Finish the details below or unpublish it from the list.",
-      );
-    }
-    await this.router.navigate(['/console/resources', resource.id]);
-  }
-
-  private async saveDetails(): Promise<void> {
+  private async saveChanges(): Promise<void> {
+    const { title, batchReference } = trimStrings(this.form.getRawValue());
     try {
       await this.guardedSave(() =>
-        this.store.updateResourceCodexDetails(this.id as string, this.codexDetails()),
+        this.withProgress(async () => {
+          await this.store.updateResource(
+            this.id as string,
+            this.file(),
+            title,
+            batchReference,
+            this.onProgress,
+          );
+        }),
       );
-      this.toast.success('Resource details updated.');
+      this.file.set(null);
+      this.toast.success('Resource updated.');
       await this.router.navigate(['/console/resources']);
     } catch (error) {
-      this.toast.error(describeApiError(error, 'Could not save the resource.'));
+      this.toast.error(this.describeError(error, 'Could not save the resource.'));
     }
   }
 

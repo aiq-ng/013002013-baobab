@@ -10,6 +10,7 @@ import {
   AdminProgram,
   AdminResource,
   AdminResourceCreate,
+  AdminResourceUpdate,
   AdminSession,
   ArchiveEntryWrite,
   CloudinaryUploadResult,
@@ -180,6 +181,13 @@ export class ConsoleApi {
   /** The PDF itself goes to Cloudinary first (`PdfUploader`); this only records it. */
   createResource(body: AdminResourceCreate): Observable<AdminResource> {
     return this.api.post<AdminResource>('admin/resources', body, {
+      withCredentials: true,
+      headers: this.csrfHeaders(),
+    });
+  }
+
+  updateResource(id: string, body: AdminResourceUpdate): Observable<AdminResource> {
+    return this.api.patch<AdminResource>(`admin/resources/${id}`, body, {
       withCredentials: true,
       headers: this.csrfHeaders(),
     });

@@ -110,6 +110,13 @@ describe('ConsoleLayout', () => {
     expect(current[0].textContent).toContain('Programs');
   });
 
+  it('points the Resources collection at the PDF resources page', async () => {
+    const harness = await setup({ email: 'admin@baobab.org', role: 'admin' });
+    const links = Array.from(el(harness).querySelectorAll<HTMLAnchorElement>('nav a'));
+    const resources = links.find((a) => a.textContent?.includes('Resources'));
+    expect(resources?.getAttribute('href')).toBe('/console/resources');
+  });
+
   it('collapses the nav behind a labelled disclosure button on small screens', async () => {
     const harness = await setup({ email: 'admin@baobab.org', role: 'admin' });
     const toggle = el(harness).querySelector('[data-testid="nav-toggle"]') as HTMLButtonElement;

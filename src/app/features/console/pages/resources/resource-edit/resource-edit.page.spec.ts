@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ToastService } from '../../../../../shared/ui/toast/toast.service';
 import { ResourceEditPage } from './resource-edit.page';
 import { ConsoleStore } from '../../../services/console-store';
@@ -64,19 +63,6 @@ describe('ResourceEditPage (new upload)', () => {
     await component.setFile(file);
     component.form.controls.title.setValue('2025 Sovereign Partnership Protocol');
     component.form.controls.batchReference.setValue('Batch 12');
-    component.form.controls.batchLabel.setValue('Annual Codex · Vol. IX');
-    component.form.controls.releaseTag.setValue('Permanent Archive Release');
-    component.form.controls.documentDateLabel.setValue('Annual Statecraft Review (2024-2025)');
-    component.form.controls.description.setValue('A definitive strategic audit synthesis.');
-    component.form.controls.chapters.setValue('Ch. I: One\nCh. II: Two\n\nCh. III: Three');
-    component.form.controls.excerptHeading.setValue('Excerpt: Article 14.3');
-    component.form.controls.excerptQuote.setValue('Where state cadastral maps diverge…');
-    component.form.controls.excerptAttribution.setValue('— Dakar Secretariat Depositary');
-    component.form.controls.onlineUrl.setValue('/documents/doc.html');
-    component.metadataRows.at(0).patchValue({ label: 'Label A', value: 'Value A', accent: true });
-    component.metadataRows.at(1).patchValue({ label: 'Label B', value: 'Value B', accent: false });
-    component.metadataRows.at(2).patchValue({ label: 'Label C', value: 'Value C', accent: false });
-    component.metadataRows.at(3).patchValue({ label: 'Label D', value: 'Value D', accent: true });
   }
 
   it('blocks submit when no file, name, or batch number are set', async () => {
@@ -102,7 +88,18 @@ describe('ResourceEditPage (new upload)', () => {
     expect(component.fileError()).toBeTruthy();
   });
 
-  it('calls createResource then updateResourceCodexDetails in sequence with the right payload, then confirms', async () => {
+  it('collects only the PDF, name and batch ID, matching the design', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toContain('Drop PDF here or click to browse');
+    expect(el.querySelector('#title')).toBeTruthy();
+    expect(el.querySelector('label[for="batchReference"]')?.textContent).toContain('Batch ID');
+    expect(el.querySelector('#batchLabel')).toBeNull();
+    expect(el.querySelector('#excerptHeading')).toBeNull();
+    expect(el.querySelector('[formArrayName="metadataRows"]')).toBeNull();
+    expect(el.querySelector('button[type="submit"]')?.textContent).toContain('Publish Resource');
+  });
+
+  it('publishes with just the PDF, name and batch ID, then confirms', async () => {
     const component = fixture.componentInstance;
     await fillRequiredFields(component);
 
@@ -115,29 +112,7 @@ describe('ResourceEditPage (new upload)', () => {
       '',
       expect.any(Function),
     );
-    expect(store.updateResourceCodexDetails).toHaveBeenCalledWith('r1', {
-      batchLabel: 'Annual Codex · Vol. IX',
-      releaseTag: 'Permanent Archive Release',
-      documentDateLabel: 'Annual Statecraft Review (2024-2025)',
-      description: 'A definitive strategic audit synthesis.',
-      chapters: ['Ch. I: One', 'Ch. II: Two', 'Ch. III: Three'],
-      excerptHeading: 'Excerpt: Article 14.3',
-      excerptQuote: 'Where state cadastral maps diverge…',
-      excerptAttribution: '— Dakar Secretariat Depositary',
-      onlineUrl: '/documents/doc.html',
-      metadata: [
-        { label: 'Label A', value: 'Value A', accent: true },
-        { label: 'Label B', value: 'Value B', accent: false },
-        { label: 'Label C', value: 'Value C', accent: false },
-        { label: 'Label D', value: 'Value D', accent: true },
-      ],
-    });
-
-    const uploadOrder = (store.uploadResource as ReturnType<typeof vi.fn>).mock
-      .invocationCallOrder[0];
-    const codexOrder = (store.updateResourceCodexDetails as ReturnType<typeof vi.fn>).mock
-      .invocationCallOrder[0];
-    expect(uploadOrder).toBeLessThan(codexOrder);
+    expect(store.updateResourceCodexDetails).not.toHaveBeenCalled();
 
     fixture.detectChanges();
     const el: HTMLElement = fixture.nativeElement;
@@ -192,15 +167,6 @@ describe('ResourceEditPage (new upload)', () => {
     expect(store.uploadResource).not.toHaveBeenCalled();
   });
 
-  it('rejects a javascript: online URL', async () => {
-    const component = fixture.componentInstance;
-    await fillRequiredFields(component);
-    component.form.controls.onlineUrl.setValue('javascript:alert(1)');
-    await component.onSubmit();
-
-    expect(store.uploadResource).not.toHaveBeenCalled();
-  });
-
   it('accepts a dropped file', async () => {
     const component = fixture.componentInstance;
     const file = new File(['%PDF-1.7'], 'dropped.pdf', { type: 'application/pdf' });
@@ -212,21 +178,6 @@ describe('ResourceEditPage (new upload)', () => {
     expect(component.file()?.name).toBe('dropped.pdf');
     expect(component.fileError()).toBeNull();
   });
-
-  it('keeps a half-created resource offline and sends the editor to finish it', async () => {
-    const component = fixture.componentInstance;
-    const toastError = vi.spyOn(TestBed.inject(ToastService), 'error');
-    await fillRequiredFields(component);
-    (store.updateResourceCodexDetails as ReturnType<typeof vi.fn>).mockRejectedValue(
-      new HttpErrorResponse({ status: 500 }),
-    );
-
-    await component.onSubmit();
-
-    expect(store.setResourcePublished).toHaveBeenCalledWith('r1', false);
-    expect(toastError).toHaveBeenCalledWith(expect.stringContaining('kept unpublished'));
-    expect(router.navigate).toHaveBeenCalledWith(['/console/resources', 'r1']);
-  });
 });
 
 describe('ResourceEditPage (editing an existing resource)', () => {
@@ -234,31 +185,14 @@ describe('ResourceEditPage (editing an existing resource)', () => {
   let store: Partial<ConsoleStore>;
   let router: Router;
 
-  const existing: AdminResource = {
-    ...CREATED_RESOURCE,
-    batchLabel: 'Annual Codex · Vol. IX',
-    releaseTag: 'Permanent Archive Release',
-    documentDateLabel: 'Review',
-    description: 'Desc',
-    chapters: ['Ch. I', 'Ch. II'],
-    excerptHeading: 'Excerpt',
-    excerptQuote: 'Quote',
-    excerptAttribution: 'Attribution',
-    onlineUrl: '/doc.html',
-    metadata: [
-      { label: 'A', value: '1', accent: true },
-      { label: 'B', value: '2', accent: false },
-      { label: 'C', value: '3', accent: false },
-      { label: 'D', value: '4', accent: true },
-    ],
-  };
+  const existing: AdminResource = { ...CREATED_RESOURCE, fileSizeBytes: 2 * 1024 * 1024 };
 
   async function setup(id: string) {
     store = {
       resources: signal([existing]),
       loadResources: vi.fn().mockResolvedValue(undefined),
       uploadResource: vi.fn(),
-      updateResourceCodexDetails: vi.fn().mockResolvedValue(undefined),
+      updateResource: vi.fn().mockResolvedValue(existing),
     };
     await TestBed.configureTestingModule({
       imports: [ResourceEditPage],
@@ -277,28 +211,55 @@ describe('ResourceEditPage (editing an existing resource)', () => {
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
   }
 
-  it('pre-fills the codex details and shows the document as read-only context', async () => {
+  it('shows the same three fields as the upload form, pre-filled', async () => {
     await setup('r1');
     const component = fixture.componentInstance;
-    expect(component.form.controls.chapters.value).toBe('Ch. I\nCh. II');
-    expect(component.metadataRows.at(3).value).toEqual({ label: 'D', value: '4', accent: true });
-    expect(fixture.nativeElement.textContent).toContain('2025 Sovereign Partnership Protocol');
-    expect(fixture.nativeElement.querySelector('input[type="file"]')).toBeNull();
+    const el: HTMLElement = fixture.nativeElement;
+
+    expect(component.form.getRawValue()).toEqual({
+      title: '2025 Sovereign Partnership Protocol',
+      batchReference: 'Batch 12',
+    });
+    expect(el.querySelector('input[type="file"]')).toBeTruthy();
+    expect(el.textContent).toContain('Current file: PDF · 2.0 MB');
+    expect(el.querySelector('label[for="batchReference"]')?.textContent).toContain('Batch ID');
+    expect(el.querySelector('#excerptHeading')).toBeNull();
     expect(component.hasUnsavedChanges()).toBe(false);
   });
 
-  it('saves only the codex details, never re-uploading', async () => {
+  it('saves a new name and batch ID without re-uploading the PDF', async () => {
     await setup('r1');
     const component = fixture.componentInstance;
-    component.form.controls.description.setValue('Updated');
+    component.form.controls.title.setValue('Renamed');
+    component.form.controls.batchReference.setValue('Batch 13');
+
     await component.onSubmit();
 
-    expect(store.uploadResource).not.toHaveBeenCalled();
-    expect(store.updateResourceCodexDetails).toHaveBeenCalledWith(
+    expect(store.updateResource).toHaveBeenCalledWith(
       'r1',
-      expect.objectContaining({ description: 'Updated', chapters: ['Ch. I', 'Ch. II'] }),
+      null,
+      'Renamed',
+      'Batch 13',
+      expect.any(Function),
     );
     expect(router.navigate).toHaveBeenCalledWith(['/console/resources']);
+  });
+
+  it('replaces the PDF when a new one is chosen', async () => {
+    await setup('r1');
+    const component = fixture.componentInstance;
+    const file = new File(['%PDF-1.7 v2'], 'v2.pdf', { type: 'application/pdf' });
+    await component.setFile(file);
+
+    await component.onSubmit();
+
+    expect(store.updateResource).toHaveBeenCalledWith(
+      'r1',
+      file,
+      '2025 Sovereign Partnership Protocol',
+      'Batch 12',
+      expect.any(Function),
+    );
   });
 
   it('says so when the resource does not exist', async () => {

@@ -121,6 +121,14 @@ export interface AdminResourceCreate {
   fileSizeBytes: number;
 }
 
+/** `PATCH /admin/resources/:id` — rename, optionally with a replacement PDF. */
+export interface AdminResourceUpdate {
+  title: string;
+  batchReference: string;
+  fileUrl?: string;
+  fileSizeBytes?: number;
+}
+
 /** The subset of Cloudinary's upload response the console uses. */
 export interface CloudinaryUploadResult {
   secure_url: string;

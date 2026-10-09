@@ -9,6 +9,7 @@ import {
   AdminMetadataItem,
   AdminProgram,
   AdminResource,
+  AdminResourceUpdate,
   AdminSession,
   ArchiveEntryWrite,
   ProgramCreate,
@@ -195,7 +196,44 @@ export class ConsoleStore {
     languages: string,
     onProgress?: (percent: number) => void,
   ): Promise<AdminResource> {
-    const done = await lastValueFrom(
+    const { url, bytes } = await this.uploadPdf(file, onProgress);
+    const created = await firstValueFrom(
+      this.api.createResource({
+        title,
+        batchReference,
+        languages,
+        fileUrl: url,
+        fileSizeBytes: bytes,
+      }),
+    );
+    await this.loadResources();
+    return created;
+  }
+
+  /** Renames a resource; with a `file`, uploads it first and swaps the PDF. */
+  async updateResource(
+    id: string,
+    file: File | null,
+    title: string,
+    batchReference: string,
+    onProgress?: (percent: number) => void,
+  ): Promise<AdminResource> {
+    const body: AdminResourceUpdate = { title, batchReference };
+    if (file) {
+      const { url, bytes } = await this.uploadPdf(file, onProgress);
+      body.fileUrl = url;
+      body.fileSizeBytes = bytes;
+    }
+    const updated = await firstValueFrom(this.api.updateResource(id, body));
+    await this.loadResources();
+    return updated;
+  }
+
+  private uploadPdf(
+    file: File,
+    onProgress?: (percent: number) => void,
+  ): Promise<{ url: string; bytes: number }> {
+    return lastValueFrom(
       this.pdfUploader.upload(file).pipe(
         tap((event) => {
           if (event.type === 'progress') onProgress?.(event.percent);
@@ -203,17 +241,6 @@ export class ConsoleStore {
         filter((event) => event.type === 'done'),
       ),
     );
-    const created = await firstValueFrom(
-      this.api.createResource({
-        title,
-        batchReference,
-        languages,
-        fileUrl: done.url,
-        fileSizeBytes: done.bytes,
-      }),
-    );
-    await this.loadResources();
-    return created;
   }
 
   async setResourcePublished(id: string, published: boolean): Promise<void> {
