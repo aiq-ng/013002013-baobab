@@ -57,8 +57,12 @@ function layOut(items: HTMLElement[], tops: number[]): void {
 describe('StaggerRevealDirective', () => {
   let originalIntersectionObserver: typeof IntersectionObserver;
   let originalMatchMedia: typeof window.matchMedia;
+  let originalRect: typeof HTMLElement.prototype.getBoundingClientRect;
 
   beforeEach(() => {
+    originalRect = HTMLElement.prototype.getBoundingClientRect;
+    // Default: everything starts below the fold, so it is hidden and waits to scroll in.
+    HTMLElement.prototype.getBoundingClientRect = () => ({ top: 5000, bottom: 5100 }) as DOMRect;
     originalIntersectionObserver = window.IntersectionObserver;
     originalMatchMedia = window.matchMedia;
     FakeIntersectionObserver.instances = [];
@@ -69,6 +73,7 @@ describe('StaggerRevealDirective', () => {
   });
 
   afterEach(() => {
+    HTMLElement.prototype.getBoundingClientRect = originalRect;
     window.IntersectionObserver = originalIntersectionObserver;
     window.matchMedia = originalMatchMedia;
   });
@@ -88,6 +93,28 @@ describe('StaggerRevealDirective', () => {
     setup();
     const margin = FakeIntersectionObserver.instances[0].options?.rootMargin ?? '0px';
     expect(margin).not.toMatch(/-/);
+  });
+
+  it('leaves columns already on screen at load visible, without a flash or animation', () => {
+    HTMLElement.prototype.getBoundingClientRect = () => ({ top: 100, bottom: 200 }) as DOMRect;
+
+    const { items } = setup();
+
+    for (const item of items) {
+      expect(item.classList).not.toContain('stagger-item');
+    }
+  });
+
+  it('hands each column back its own transitions once its reveal has finished', () => {
+    const { items } = setup();
+    layOut(items, [0, 0, 0, 0]);
+    FakeIntersectionObserver.instances[0].emit([items[1]]);
+
+    items[1].dispatchEvent(new Event('transitionend'));
+
+    expect(items[1].classList).not.toContain('stagger-item');
+    expect(items[1].classList).not.toContain('is-visible');
+    expect(items[1].style.transitionDelay).toBe('');
   });
 
   it('hides every column until it scrolls into view', () => {

@@ -21,6 +21,7 @@ import { consoleValidators } from '../../../validators/console-validators';
 import { ConsoleFormPage, trimStrings } from '../../../utils/console-form-page';
 import { describeApiError } from '../../../utils/api-error';
 import { hasPdfSignature } from '../../../utils/pdf-signature';
+import { PdfUploadError } from '../../../services/pdf-uploader';
 import { formatDate, formatFileSize } from '../../../utils/format';
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
@@ -83,6 +84,8 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
   readonly loadError = signal<string | null>(null);
   readonly published = signal<AdminResource | null>(null);
   readonly dragging = signal(false);
+  /** Percent of the PDF sent to Cloudinary, or null when no upload is running. */
+  readonly uploadPercent = signal<number | null>(null);
 
   readonly formatSize = formatFileSize;
   readonly formatDate = formatDate;
@@ -266,7 +269,13 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
     let created: AdminResource | null = null;
     try {
       await this.guardedSave(async () => {
-        created = await this.store.uploadResource(file, title, batchReference, '');
+        try {
+          created = await this.store.uploadResource(file, title, batchReference, '', (percent) =>
+            this.uploadPercent.set(percent),
+          );
+        } finally {
+          this.uploadPercent.set(null);
+        }
         await this.store.updateResourceCodexDetails(created.id, details);
       });
       this.published.set(created);
@@ -275,7 +284,11 @@ export class ResourceEditPage extends ConsoleFormPage implements OnInit {
       if (orphan) {
         await this.quarantine(orphan);
       } else {
-        this.toast.error(describeApiError(error, 'Could not upload the resource.'));
+        this.toast.error(
+          error instanceof PdfUploadError
+            ? error.message
+            : describeApiError(error, 'Could not upload the resource.'),
+        );
       }
     }
   }

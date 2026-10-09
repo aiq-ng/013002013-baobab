@@ -402,6 +402,18 @@ html {
   transform: translateY(0);
 }
 
+/* Sections whose columns stagger in only fade — the columns carry the movement, so nothing lifts
+   twice at once. */
+.scroll-reveal:has([appstaggerreveal]) {
+  transform: none;
+}
+
+/* Promote only while hidden/animating; the directives drop these classes afterwards. */
+.scroll-reveal:not(.is-visible),
+.stagger-item {
+  will-change: opacity, transform;
+}
+
 /* Staggered columns: applied per child by the [appStaggerReveal] directive, which also sets each
    child's transition-delay (150ms per column position in its row). */
 .stagger-item {

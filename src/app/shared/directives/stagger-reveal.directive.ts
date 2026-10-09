@@ -11,6 +11,9 @@ import { isPlatformBrowser } from '@angular/common';
 /** Delay between neighbouring columns in the same visual row. */
 export const STAGGER_STEP_MS = 150;
 
+/** Entrance length — matches `.stagger-item` in styles.css. */
+const REVEAL_MS = 600;
+
 /**
  * Put on any multi-column row (grid or flex). Each direct child fades/lifts in as it scrolls into
  * view, delayed by its column position within its visual row — so a row builds left to right, the
@@ -39,7 +42,8 @@ export class StaggerRevealDirective implements AfterViewInit, OnDestroy {
     this.intersection = new IntersectionObserver((entries) => this.reveal(entries), {
       threshold: 0.15,
     });
-    this.track(Array.from(host.children) as HTMLElement[]);
+    // Columns already on screen were painted visible by SSR — hiding them now would flash.
+    this.track(Array.from(host.children) as HTMLElement[], true);
 
     // Rows rendered from async data (@for after a fetch) gain children later.
     if (typeof MutationObserver !== 'undefined') {
@@ -61,9 +65,10 @@ export class StaggerRevealDirective implements AfterViewInit, OnDestroy {
     this.mutation?.disconnect();
   }
 
-  private track(items: HTMLElement[]): void {
+  private track(items: HTMLElement[], skipOnScreen = false): void {
     for (const item of items) {
       if (item.classList.contains('stagger-item')) continue;
+      if (skipOnScreen && isOnScreen(item)) continue;
       item.classList.add('stagger-item');
       this.intersection?.observe(item);
     }
@@ -73,10 +78,30 @@ export class StaggerRevealDirective implements AfterViewInit, OnDestroy {
     for (const entry of entries) {
       if (!entry.isIntersecting) continue;
       const item = entry.target as HTMLElement;
-      item.style.transitionDelay = `${this.columnIndex(item) * STAGGER_STEP_MS}ms`;
+      const delayMs = this.columnIndex(item) * STAGGER_STEP_MS;
+      item.style.transitionDelay = `${delayMs}ms`;
       item.classList.add('is-visible');
       this.intersection?.unobserve(item);
+      this.releaseAfterReveal(item, delayMs);
     }
+  }
+
+  /**
+   * Once the entrance finishes, drop the reveal classes and delay so the column's own hover
+   * transitions (card lift, colour) run at their normal speed instead of inheriting the stagger.
+   */
+  private releaseAfterReveal(item: HTMLElement, delayMs: number): void {
+    const release = () => {
+      item.classList.remove('stagger-item', 'is-visible');
+      item.style.transitionDelay = '';
+      item.removeEventListener('transitionend', onEnd);
+    };
+    const onEnd = (event: Event) => {
+      if (event.target === item) release();
+    };
+    item.addEventListener('transitionend', onEnd);
+    // transitionend never fires in a background tab — don't leave the delay attached forever.
+    setTimeout(release, delayMs + REVEAL_MS + 100);
   }
 
   /** Number of earlier siblings sitting on the same visual row as `item`. */
@@ -90,4 +115,9 @@ export class StaggerRevealDirective implements AfterViewInit, OnDestroy {
     }
     return index;
   }
+}
+
+function isOnScreen(el: HTMLElement): boolean {
+  const rect = el.getBoundingClientRect();
+  return rect.top < window.innerHeight && rect.bottom > 0;
 }

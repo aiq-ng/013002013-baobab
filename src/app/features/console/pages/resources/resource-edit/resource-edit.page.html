@@ -355,12 +355,16 @@
         </fieldset>
 
         <div class="console-save-bar">
-          <p class="text-sm text-console-muted">
-            {{
-              isNew
-                ? 'Publishing uploads the PDF and makes it public immediately.'
-                : 'Changes go live as soon as you save.'
-            }}
+          <p class="text-sm text-console-muted" aria-live="polite">
+            @if (uploadPercent() !== null) {
+              Uploading PDF… {{ uploadPercent() }}%
+            } @else {
+              {{
+                isNew
+                  ? 'Publishing uploads the PDF and makes it public immediately.'
+                  : 'Changes go live as soon as you save.'
+              }}
+            }
           </p>
           <app-button
             type="submit"

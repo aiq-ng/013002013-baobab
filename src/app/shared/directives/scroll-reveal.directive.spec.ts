@@ -40,8 +40,12 @@ class HostComponent {}
 describe('ScrollRevealDirective', () => {
   let originalIntersectionObserver: typeof IntersectionObserver;
   let originalMatchMedia: typeof window.matchMedia;
+  let originalRect: typeof HTMLElement.prototype.getBoundingClientRect;
 
   beforeEach(() => {
+    originalRect = HTMLElement.prototype.getBoundingClientRect;
+    // Default: everything starts below the fold, so it is hidden and waits to scroll in.
+    HTMLElement.prototype.getBoundingClientRect = () => ({ top: 5000, bottom: 5100 }) as DOMRect;
     originalIntersectionObserver = window.IntersectionObserver;
     originalMatchMedia = window.matchMedia;
     FakeIntersectionObserver.instances = [];
@@ -52,6 +56,7 @@ describe('ScrollRevealDirective', () => {
   });
 
   afterEach(() => {
+    HTMLElement.prototype.getBoundingClientRect = originalRect;
     window.IntersectionObserver = originalIntersectionObserver;
     window.matchMedia = originalMatchMedia;
   });
@@ -87,6 +92,16 @@ describe('ScrollRevealDirective', () => {
     observer.emitIntersecting(el);
 
     expect(observer.elements.has(el)).toBe(false);
+  });
+
+  it('shows content already on screen at load immediately, without a flash', () => {
+    HTMLElement.prototype.getBoundingClientRect = () => ({ top: 100, bottom: 200 }) as DOMRect;
+
+    const fixture = createFixture();
+    const el: HTMLElement = fixture.nativeElement.querySelector('div');
+
+    expect(el.classList.contains('is-visible')).toBe(true);
+    expect(FakeIntersectionObserver.instances.length).toBe(0);
   });
 
   it('reveals immediately when the user prefers reduced motion', () => {

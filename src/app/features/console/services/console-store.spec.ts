@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 import { of, throwError } from 'rxjs';
 import { ConsoleStore } from './console-store';
 import { ConsoleApi } from './console-api';
+import { PdfUploader } from './pdf-uploader';
 import { contentOf, createBodyOf, makeProgram } from '../../programs/testing/program-fixture';
 
 const CODEX_FIELDS = {
@@ -24,7 +25,7 @@ const CODEX_FIELDS = {
 };
 
 describe('ConsoleStore', () => {
-  function setup(apiOverrides: Partial<ConsoleApi> = {}) {
+  function setup(apiOverrides: Partial<ConsoleApi> = {}, pdfUploader: Partial<PdfUploader> = {}) {
     const apiStub: Partial<ConsoleApi> = {
       readSession: () => of({ email: 'a@b.example', role: 'reviewer' }),
       signIn: () => of({ email: 'a@b.example', role: 'reviewer' }),
@@ -111,7 +112,10 @@ describe('ConsoleStore', () => {
     };
 
     TestBed.configureTestingModule({
-      providers: [{ provide: ConsoleApi, useValue: apiStub }],
+      providers: [
+        { provide: ConsoleApi, useValue: apiStub },
+        { provide: PdfUploader, useValue: pdfUploader },
+      ],
     });
     return TestBed.inject(ConsoleStore);
   }
@@ -312,7 +316,7 @@ describe('ConsoleStore', () => {
     expect(store.resourcesLoading()).toBe(false);
   });
 
-  it('uploadResource calls the API then reloads the list', async () => {
+  it('uploadResource sends the PDF to Cloudinary, creates the resource from its URL, then reloads', async () => {
     const listResources = vi.fn().mockReturnValue(of([]));
     const createResource = vi.fn().mockReturnValue(
       of({
@@ -326,13 +330,36 @@ describe('ConsoleStore', () => {
         ...CODEX_FIELDS,
       }),
     );
-    const store = setup({ listResources, createResource });
+    const url = 'https://res.cloudinary.com/demo/raw/upload/v1/baobab/resources/x.pdf';
+    const upload = vi
+      .fn()
+      .mockReturnValue(of({ type: 'progress', percent: 40 }, { type: 'done', url, bytes: 1000 }));
+    const store = setup({ listResources, createResource }, { upload });
+    const file = new File(['x'], 'x.pdf', { type: 'application/pdf' });
+    const onProgress = vi.fn();
+
+    await store.uploadResource(file, 'T', 'Batch 1', 'English', onProgress);
+
+    expect(upload).toHaveBeenCalledWith(file);
+    expect(onProgress).toHaveBeenCalledWith(40);
+    expect(createResource).toHaveBeenCalledWith({
+      title: 'T',
+      batchReference: 'Batch 1',
+      languages: 'English',
+      fileUrl: url,
+      fileSizeBytes: 1000,
+    });
+    expect(listResources).toHaveBeenCalled();
+  });
+
+  it('uploadResource creates nothing when the PDF upload fails', async () => {
+    const createResource = vi.fn();
+    const upload = vi.fn().mockReturnValue(throwError(() => new Error('nope')));
+    const store = setup({ createResource }, { upload });
     const file = new File(['x'], 'x.pdf', { type: 'application/pdf' });
 
-    await store.uploadResource(file, 'T', 'Batch 1', 'English');
-
-    expect(createResource).toHaveBeenCalledWith(file, 'T', 'Batch 1', 'English');
-    expect(listResources).toHaveBeenCalled();
+    await expect(store.uploadResource(file, 'T', 'Batch 1', '')).rejects.toThrow('nope');
+    expect(createResource).not.toHaveBeenCalled();
   });
 
   it('setResourcePublished calls the API then reloads the list', async () => {

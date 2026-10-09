@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, lastValueFrom, tap } from 'rxjs';
 import { ConsoleApi } from './console-api';
+import { PdfUploader } from './pdf-uploader';
 import {
   AdminAccessRequest,
   AdminArchiveEntry,
@@ -25,6 +26,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ConsoleStore {
   private readonly api = inject(ConsoleApi);
+  private readonly pdfUploader = inject(PdfUploader);
 
   private readonly _session = signal<AdminSession | null>(null);
   private readonly _sessionChecked = signal(false);
@@ -185,14 +187,30 @@ export class ConsoleStore {
     }
   }
 
+  /** Uploads the PDF straight to Cloudinary, then records the resource. */
   async uploadResource(
     file: File,
     title: string,
     batchReference: string,
     languages: string,
+    onProgress?: (percent: number) => void,
   ): Promise<AdminResource> {
+    const done = await lastValueFrom(
+      this.pdfUploader.upload(file).pipe(
+        tap((event) => {
+          if (event.type === 'progress') onProgress?.(event.percent);
+        }),
+        filter((event) => event.type === 'done'),
+      ),
+    );
     const created = await firstValueFrom(
-      this.api.createResource(file, title, batchReference, languages),
+      this.api.createResource({
+        title,
+        batchReference,
+        languages,
+        fileUrl: done.url,
+        fileSizeBytes: done.bytes,
+      }),
     );
     await this.loadResources();
     return created;

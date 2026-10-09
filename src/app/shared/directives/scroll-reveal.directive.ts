@@ -32,6 +32,13 @@ export class ScrollRevealDirective implements OnInit, OnDestroy {
       return;
     }
 
+    // Already on screen (painted visible by SSR) — hiding it now would make it flash.
+    const rect = element.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      element.classList.add('is-visible');
+      return;
+    }
+
     this.observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {

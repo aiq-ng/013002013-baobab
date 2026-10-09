@@ -9,6 +9,7 @@ import {
   AdminMetadataItem,
   AdminProgram,
   AdminResource,
+  AdminResourceCreate,
   AdminSession,
   ArchiveEntryWrite,
   CloudinaryUploadResult,
@@ -17,7 +18,6 @@ import {
   ProgramWrite,
   SubmissionStatus,
 } from '../models/admin';
-import { environment } from '../../../../environments/environment';
 
 const CSRF_COOKIE_NAME = 'baobab_admin_csrf';
 
@@ -143,10 +143,20 @@ export class ConsoleApi {
     );
   }
 
+  /** Mints a short-lived signature for one direct-to-Cloudinary resource PDF upload. */
+  signPdfUpload(): Observable<ImageUploadSignature> {
+    return this.api.post<ImageUploadSignature>(
+      'admin/media/pdf-uploads',
+      {},
+      { withCredentials: true, headers: this.csrfHeaders() },
+    );
+  }
+
   /**
    * Sends the file straight to Cloudinary with the signed fields, reporting
    * upload progress. Never `withCredentials` — the console's session cookie
    * must not travel to a third party; the signature is the authorisation.
+   * Used for both images and resource PDFs.
    */
   uploadImage(
     signature: ImageUploadSignature,
@@ -167,27 +177,9 @@ export class ConsoleApi {
     return this.api.get<AdminResource[]>('admin/resources', { withCredentials: true });
   }
 
-  /**
-   * Multipart upload. `ApiClient` only exposes JSON-body helpers, so this
-   * issues the request directly via `HttpClient` (same base-url resolution,
-   * withCredentials + CSRF header pattern as every other mutating call here).
-   * Content-Type is deliberately left unset so the browser attaches the
-   * multipart boundary itself.
-   */
-  createResource(
-    file: File,
-    title: string,
-    batchReference: string,
-    languages: string,
-  ): Observable<AdminResource> {
-    const form = new FormData();
-    form.append('file', file);
-    form.append('title', title);
-    form.append('batch_reference', batchReference);
-    form.append('languages', languages);
-
-    const trimmedBase = environment.apiBaseUrl.replace(/\/+$/, '');
-    return this.http.post<AdminResource>(`${trimmedBase}/admin/resources`, form, {
+  /** The PDF itself goes to Cloudinary first (`PdfUploader`); this only records it. */
+  createResource(body: AdminResourceCreate): Observable<AdminResource> {
+    return this.api.post<AdminResource>('admin/resources', body, {
       withCredentials: true,
       headers: this.csrfHeaders(),
     });

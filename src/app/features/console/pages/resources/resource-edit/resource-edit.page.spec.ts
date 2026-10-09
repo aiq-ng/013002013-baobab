@@ -7,6 +7,7 @@ import { ResourceEditPage } from './resource-edit.page';
 import { ConsoleStore } from '../../../services/console-store';
 import { SeoService } from '../../../../../core/services/seo.service';
 import { AdminResource } from '../../../models/admin';
+import { PdfUploadError } from '../../../services/pdf-uploader';
 
 const CREATED_RESOURCE: AdminResource = {
   id: 'r1',
@@ -112,6 +113,7 @@ describe('ResourceEditPage (new upload)', () => {
       '2025 Sovereign Partnership Protocol',
       'Batch 12',
       '',
+      expect.any(Function),
     );
     expect(store.updateResourceCodexDetails).toHaveBeenCalledWith('r1', {
       batchLabel: 'Annual Codex · Vol. IX',
@@ -146,6 +148,38 @@ describe('ResourceEditPage (new upload)', () => {
     expect(el.querySelector('a[href="/console/resources"]')?.textContent).toContain(
       'View in Resources List',
     );
+  });
+
+  it('shows upload progress while the PDF is sending', async () => {
+    const component = fixture.componentInstance;
+    await fillRequiredFields(component);
+    (store.uploadResource as ReturnType<typeof vi.fn>).mockImplementation(
+      async (...args: unknown[]) => {
+        (args[4] as (percent: number) => void)(42);
+        fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Uploading PDF… 42%');
+        return CREATED_RESOURCE;
+      },
+    );
+
+    await component.onSubmit();
+
+    expect(component.uploadPercent()).toBeNull();
+  });
+
+  it("shows the uploader's own message when the PDF upload fails", async () => {
+    const component = fixture.componentInstance;
+    const toast = TestBed.inject(ToastService);
+    const errorSpy = vi.spyOn(toast, 'error');
+    await fillRequiredFields(component);
+    (store.uploadResource as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new PdfUploadError("PDF uploads aren't set up yet on this server."),
+    );
+
+    await component.onSubmit();
+
+    expect(errorSpy).toHaveBeenCalledWith("PDF uploads aren't set up yet on this server.");
+    expect(store.updateResourceCodexDetails).not.toHaveBeenCalled();
   });
 
   it('rejects a file that claims to be a PDF but is not one', async () => {

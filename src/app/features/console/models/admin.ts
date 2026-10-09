@@ -112,6 +112,15 @@ export interface ImageUploadSignature {
   allowedFormats: string[];
 }
 
+/** `POST /admin/resources` — a resource whose PDF is already on Cloudinary. */
+export interface AdminResourceCreate {
+  title: string;
+  batchReference: string;
+  languages: string;
+  fileUrl: string;
+  fileSizeBytes: number;
+}
+
 /** The subset of Cloudinary's upload response the console uses. */
 export interface CloudinaryUploadResult {
   secure_url: string;
