@@ -3,6 +3,9 @@ import { Program, ProgramContent } from '../../programs/models/program';
 export interface AdminSession {
   email: string;
   role: string;
+  /** Double-submit CSRF token; echoed in the body because the API's cookie
+   * is on another site and unreadable from the console. */
+  csrfToken?: string | null;
 }
 
 export type SubmissionStatus = 'new' | 'read' | 'actioned' | 'spam';

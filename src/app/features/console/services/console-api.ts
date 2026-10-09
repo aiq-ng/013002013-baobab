@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { ApiClient } from '../../../core/api/api-client';
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import {
@@ -43,23 +43,32 @@ export class ConsoleApi {
   private readonly api = inject(ApiClient);
   private readonly http = inject(HttpClient);
 
+  /** In production the API is on a different site, so its CSRF cookie is
+   * invisible to document.cookie — the session response carries the token. */
+  private csrfToken = '';
+
   private csrfHeaders(): Record<string, string> {
-    return { 'X-CSRF-Token': readCsrfCookie() };
+    return { 'X-CSRF-Token': this.csrfToken || readCsrfCookie() };
   }
 
+  private rememberCsrf = (session: AdminSession): void => {
+    this.csrfToken = session.csrfToken ?? '';
+  };
+
   signIn(email: string, password: string): Observable<AdminSession> {
-    return this.api.post<AdminSession>(
-      'admin/session',
-      { email, password },
-      { withCredentials: true },
-    );
+    return this.api
+      .post<AdminSession>('admin/session', { email, password }, { withCredentials: true })
+      .pipe(tap(this.rememberCsrf));
   }
 
   readSession(): Observable<AdminSession> {
-    return this.api.get<AdminSession>('admin/session', { withCredentials: true });
+    return this.api
+      .get<AdminSession>('admin/session', { withCredentials: true })
+      .pipe(tap(this.rememberCsrf));
   }
 
   signOut(): Observable<void> {
+    this.csrfToken = '';
     return this.api.delete<void>('admin/session', { withCredentials: true });
   }
 
