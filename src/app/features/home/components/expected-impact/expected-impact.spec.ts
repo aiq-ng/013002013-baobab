@@ -30,4 +30,13 @@ describe('ExpectedImpact', () => {
       '06 A more cohesive and stable West Africa.',
     ]);
   });
+
+  it('gives each outcome its own decorative Hugeicons glyph', () => {
+    const icons: SVGElement[] = Array.from(fixture.nativeElement.querySelectorAll('li svg'));
+    expect(icons.length).toBe(6);
+    icons.forEach((svg) => expect(svg.closest('[aria-hidden="true"]')).not.toBeNull());
+    const paths = icons.map((svg) => svg.querySelector('path')?.getAttribute('d'));
+    expect(paths.every((d) => !!d)).toBe(true);
+    expect(new Set(paths).size).toBe(6);
+  });
 });

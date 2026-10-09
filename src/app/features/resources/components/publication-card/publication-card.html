@@ -34,32 +34,21 @@
 
     @if (fileUrl(); as url) {
       <div class="flex shrink-0 items-center gap-3">
-        <button
-          type="button"
-          class="inline-flex items-center gap-2 rounded-full bg-surface-tint px-4 py-2 text-sm font-medium text-ink-950 transition-colors hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-          [attr.aria-expanded]="previewOpen()"
-          [attr.aria-controls]="previewId()"
-          (click)="togglePreview()"
-        >
-          Preview PDF
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="h-4 w-4 transition-transform"
-            [class.rotate-180]="previewOpen()"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
         <a
           [href]="url"
-          download
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-full bg-surface-tint px-4 py-2 text-sm font-medium text-ink-950 transition-colors hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        >
+          Preview PDF
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+        <a
+          [href]="url"
+          target="_blank"
+          rel="noopener noreferrer"
           [attr.aria-label]="'Download ' + document().title"
+          (click)="download($event, url)"
           class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white transition-colors hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
         >
           <svg
@@ -78,15 +67,4 @@
       </div>
     }
   </div>
-
-  @if (previewOpen() && previewSrc()) {
-    <div [id]="previewId()" class="mt-6 overflow-hidden rounded-card border border-slate-100">
-      <iframe
-        [src]="previewSrc()"
-        [title]="'Preview of ' + document().title"
-        loading="lazy"
-        class="h-[32rem] w-full bg-surface-tint sm:h-[40rem]"
-      ></iframe>
-    </div>
-  }
 </div>

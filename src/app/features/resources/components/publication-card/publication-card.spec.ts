@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PublicationCard } from './publication-card';
 import { createRegistryDocument } from '../../testing/resource-fixture';
@@ -13,11 +14,6 @@ describe('PublicationCard', () => {
     fixture.detectChanges();
     return fixture.nativeElement;
   }
-
-  const previewToggle = (el: HTMLElement) =>
-    Array.from(el.querySelectorAll('button')).find((b) =>
-      b.textContent!.includes('Preview PDF'),
-    ) as HTMLButtonElement;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [PublicationCard] });
@@ -41,50 +37,77 @@ describe('PublicationCard', () => {
     expect(render(createRegistryDocument(), false).querySelector('h3')).toBeTruthy();
   });
 
-  it('renders a labelled download link to the document', () => {
+  const links = (el: HTMLElement) => Array.from(el.querySelectorAll<HTMLAnchorElement>('a'));
+
+  it('opens the PDF in a new tab from Preview', () => {
     const el = render(createRegistryDocument());
-    const link = el.querySelector('a[download]') as HTMLAnchorElement;
-    expect(link.getAttribute('href')).toBe('https://cdn.example.com/doc-1.pdf');
-    expect(link.getAttribute('aria-label')).toContain(
+    const [preview] = links(el);
+
+    expect(preview.textContent).toContain('Preview PDF');
+    expect(preview.getAttribute('href')).toBe('https://cdn.example.com/doc-1.pdf');
+    expect(preview.getAttribute('target')).toBe('_blank');
+    expect(preview.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(el.querySelector('iframe')).toBeNull();
+  });
+
+  it('downloads the PDF as a file named after the document, without opening it', async () => {
+    const blob = new Blob(['%PDF-1.7'], { type: 'application/pdf' });
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(blob, { status: 200 }));
+    const saved: { href: string; download: string }[] = [];
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+      this: HTMLAnchorElement,
+    ) {
+      saved.push({ href: this.href, download: this.download });
+    });
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(null);
+    URL.createObjectURL = vi.fn().mockReturnValue('blob:pdf');
+    URL.revokeObjectURL = vi.fn();
+
+    const el = render(createRegistryDocument());
+    const download = links(el)[1];
+    expect(download.getAttribute('aria-label')).toBe(
       'Download Policy Advisory & Regional Harmonization',
     );
+    const click = new MouseEvent('click', { cancelable: true });
+    download.dispatchEvent(click);
+    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(click.defaultPrevented).toBe(true);
+    expect(fetchSpy).toHaveBeenCalledWith('https://cdn.example.com/doc-1.pdf');
+    expect(saved).toEqual([
+      { href: 'blob:pdf', download: 'Policy Advisory & Regional Harmonization.pdf' },
+    ]);
+    expect(openSpy).not.toHaveBeenCalled();
+    vi.restoreAllMocks();
+    clickSpy.mockRestore();
   });
 
-  it('keeps the inline preview collapsed until "Preview PDF" is pressed', () => {
+  it('falls back to opening the PDF in a new tab when the download fails', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('', { status: 401 }));
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(null);
+
     const el = render(createRegistryDocument());
-    const toggle = previewToggle(el);
-    expect(toggle.getAttribute('aria-expanded')).toBe('false');
-    expect(el.querySelector('iframe')).toBeNull();
+    links(el)[1].dispatchEvent(new MouseEvent('click', { cancelable: true }));
+    await new Promise((resolve) => setTimeout(resolve));
 
-    toggle.click();
-    fixture.detectChanges();
-
-    expect(toggle.getAttribute('aria-expanded')).toBe('true');
-    const frame = el.querySelector('iframe') as HTMLIFrameElement;
-    expect(frame.getAttribute('src')).toBe('https://cdn.example.com/doc-1.pdf');
-    expect(frame.getAttribute('title')).toContain('Policy Advisory & Regional Harmonization');
-    expect(toggle.getAttribute('aria-controls')).toBe(frame.parentElement!.id);
+    expect(openSpy).toHaveBeenCalledWith(
+      'https://cdn.example.com/doc-1.pdf',
+      '_blank',
+      'noopener,noreferrer',
+    );
+    vi.restoreAllMocks();
   });
 
-  it('collapses the preview again on a second press', () => {
-    const el = render(createRegistryDocument());
-    const toggle = previewToggle(el);
-    toggle.click();
-    fixture.detectChanges();
-    toggle.click();
-    fixture.detectChanges();
-    expect(el.querySelector('iframe')).toBeNull();
-  });
-
-  it('never embeds a non-http(s) document URL', () => {
+  it('never links a non-http(s) document URL', () => {
     const el = render(createRegistryDocument({ downloadUrl: 'javascript:alert(1)' }));
-    expect(previewToggle(el)).toBeUndefined();
-    expect(el.querySelector('a[download]')).toBeNull();
+    expect(links(el)).toHaveLength(0);
   });
 
   it('hides preview and download when the document has no file URL', () => {
     const el = render(createRegistryDocument({ downloadUrl: null }));
-    expect(previewToggle(el)).toBeUndefined();
-    expect(el.querySelector('a[download]')).toBeNull();
+    expect(links(el)).toHaveLength(0);
   });
 });
